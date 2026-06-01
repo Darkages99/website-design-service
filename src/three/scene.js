@@ -3,24 +3,26 @@ import * as THREE from 'three'
 // so mobile/lite never downloads or parses it.
 
 /**
- * The Catalytic Surface (chemistry-lab branch).
+ * Liquid Gold / Mercury Flow (chemistry-lab branch).
  *
- * A low-contrast crystalline grid plane viewed at a slight downward angle fills
- * the lower portion of the viewport. "Reactant" particles (cool gray) drift across
- * the surface; at a conversion threshold they FLASH and become "product" particles
- * (gold→green) that rise off the surface and fade — a live reaction on a catalyst.
- * You are the catalyst: the cursor is a hotspot that converts reactants early.
+ * A pool of molten metal sits along the bottom of the viewport — viscous, mirror-
+ * bright, gold transmuting toward emerald/cyan. It oozes with heavy inertia: slow
+ * surface waves, drifting specular streaks, and a glowing meniscus line at the
+ * surface. Scrolling raises the level and makes the surface more reflective; the
+ * final CTA shifts it green/cyan (the "product"). The cursor leaves a single soft
+ * dimple that fills back in — gentle and local, never a field-wide cascade.
  *
- * Everything animates on the GPU (one Points draw + one grid mesh), so there are
- * no per-frame CPU loops. The whole reaction sits in the lower screen and the
- * particles fade before they reach the headline zone — the readability safeguard.
+ * Implemented as ONE full-screen fragment shader (a 2-D height-field), so it's
+ * cheap and rock-steady — no 3-D scene, no per-particle work, no mouse cascade.
+ * It stays anchored to the bottom, leaving the whole upper screen clear for text.
  *
- * Returns a controller: { setScroll(0..1), setReaction(0..1), setHover(0..1), destroy() }.
- *   - setScroll:   raises the global reaction rate + brightens the grid (hero → page).
- *   - setReaction: pushes product colour toward green/cyan + adds glow (driven at the CTA).
- *   - setHover:    general energy; the cursor also acts as a local catalyst hotspot.
+ * Returns the standard controller: { setScroll(0..1), setReaction(0..1), setHover(0..1), destroy() }
+ * so main.js / scroll.js (reaction-progress scroll + bar) need no changes.
  *
- * Tiers: 'full' — desktop: ~900 particles + bloom, DPR ≤ 2 · 'lite' — mobile: ~320, no bloom, DPR 1.
+ * Tiers: 'full' — desktop: + bloom, DPR ≤ 2 · 'lite' — mobile: no bloom, DPR 1.
+ *
+ * (The previous "Catalytic Surface" background is preserved in
+ *  src/three/scene-catalytic-surface.js — copy it back over this file to restore it.)
  */
 export function mountScene(canvas, { tier = 'full' } = {}) {
   const isFull = tier === 'full'
@@ -29,7 +31,7 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   try {
     renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: isFull,
+      antialias: false, // full-screen shader — AA is irrelevant, save the cost
       alpha: true,
       powerPreference: 'high-performance',
       failIfMajorPerformanceCaveat: false,
@@ -48,157 +50,98 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   renderer.toneMappingExposure = 1.0
 
   const scene = new THREE.Scene()
-  scene.background = buildBackdrop() // dark, with a low glow near the surface
-
-  const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.1, 100)
-  const camBase = new THREE.Vector3(0, 1.35, 3.4)
-  camera.position.copy(camBase)
-  camera.lookAt(0, 0.05, -3.6)
-
-  // --- Catalytic grid plane (lower screen, low contrast) --------------------
-  const planeGeo = new THREE.PlaneGeometry(60, 48)
-  const gridUniforms = {
-    uTime: { value: 0 },
-    uScroll: { value: 0 },
-    uReaction: { value: 0 },
-  }
-  const planeMat = new THREE.ShaderMaterial({
-    uniforms: gridUniforms,
-    transparent: true,
-    depthWrite: false,
-    vertexShader: /* glsl */ `
-      varying vec3 vWorld;
-      void main(){
-        vec4 wp = modelMatrix * vec4(position, 1.0);
-        vWorld = wp.xyz;
-        gl_Position = projectionMatrix * viewMatrix * wp;
-      }
-    `,
-    fragmentShader: /* glsl */ `
-      precision highp float;
-      varying vec3 vWorld;
-      uniform float uTime, uScroll, uReaction;
-      void main(){
-        // grid flows toward the camera (camera "travels" along the surface)
-        vec2 g = vec2(vWorld.x, vWorld.z + uTime * 0.55 + uScroll * 4.0) * 0.62;
-        vec2 cell = abs(fract(g) - 0.5);
-        float m = max(cell.x, cell.y);
-        float line = smoothstep(0.46, 0.5, m);
-        // fade with distance: near = visible, far = gone
-        float depth = clamp((vWorld.z + 20.0) / 20.0, 0.0, 1.0);
-        float fade = depth * depth;
-        vec3 base    = vec3(0.045, 0.055, 0.085);
-        vec3 lineCol = mix(vec3(0.10, 0.14, 0.20), vec3(0.10, 0.34, 0.40), clamp(uScroll * 0.6 + uReaction * 0.5, 0.0, 1.0));
-        vec3 col = mix(base, lineCol, line);
-        float alpha = (0.05 + line * 0.40) * fade;
-        gl_FragColor = vec4(col, alpha);
-      }
-    `,
-  })
-  const plane = new THREE.Mesh(planeGeo, planeMat)
-  plane.rotation.x = -Math.PI / 2
-  plane.position.y = 0
-  plane.renderOrder = 0
-  scene.add(plane)
-
-  // --- Reactant → product particles (GPU lifecycle) -------------------------
-  const COUNT = isFull ? 900 : 320
-  const aLane = new Float32Array(COUNT)
-  const aSeed = new Float32Array(COUNT)
-  const aSpeed = new Float32Array(COUNT)
-  const aOff = new Float32Array(COUNT)
-  for (let i = 0; i < COUNT; i++) {
-    aLane[i] = (pseudoRandom(i * 1.13) * 2 - 1) * 8.5
-    aSeed[i] = pseudoRandom(i * 2.31 + 0.7)
-    aSpeed[i] = 0.6 + pseudoRandom(i * 3.77 + 1.3) * 0.9
-    aOff[i] = pseudoRandom(i * 5.19 + 2.9)
-  }
-  const pGeo = new THREE.BufferGeometry()
-  // 'position' is required by Points but unused (real position is computed in the
-  // shader from the attributes) — so disable frustum culling on the object.
-  pGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3))
-  pGeo.setAttribute('aLane', new THREE.BufferAttribute(aLane, 1))
-  pGeo.setAttribute('aSeed', new THREE.BufferAttribute(aSeed, 1))
-  pGeo.setAttribute('aSpeed', new THREE.BufferAttribute(aSpeed, 1))
-  pGeo.setAttribute('aOff', new THREE.BufferAttribute(aOff, 1))
+  scene.background = buildBackdrop() // near-black with a faint warm floor glow
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
   const uniforms = {
     uTime: { value: 0 },
     uScroll: { value: 0 },
     uReaction: { value: 0 },
     uHover: { value: 0 },
-    uMouse: { value: new THREE.Vector2(100, 100) },
-    uSize: { value: isFull ? 26 : 30 },
-    uPixelRatio: { value: pixelRatio },
-    uGray: { value: new THREE.Color(0x8a93a6) }, // reactant
-    uGold: { value: new THREE.Color(0xffb15c) }, // product (catalyst gold)
-    uGreen: { value: new THREE.Color(0x1fe08a) }, // product (reagent green)
-    uCyan: { value: new THREE.Color(0x38e1ff) }, // product at full reaction
+    uMouse: { value: new THREE.Vector2(0.5, 0.0) },
+    uAspect: { value: window.innerWidth / Math.max(1, window.innerHeight) },
+    uGold: { value: new THREE.Color(0xffb15c) },
+    uGreen: { value: new THREE.Color(0x1fe08a) },
+    uCyan: { value: new THREE.Color(0x38e1ff) },
+    uDeep: { value: new THREE.Color(0x07120c) },
   }
 
-  const pMat = new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     uniforms,
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    depthTest: false,
     vertexShader: /* glsl */ `
-      uniform float uTime, uScroll, uReaction, uHover, uSize, uPixelRatio;
-      uniform vec2 uMouse;
-      attribute float aLane, aSeed, aSpeed, aOff;
-      varying float vConv;
-      varying float vFlash;
-      varying float vAlpha;
-      varying float vSeed;
+      varying vec2 vUv;
       void main(){
-        float rate = 0.045 + uScroll * 0.085 + uHover * 0.02;
-        float life = fract(aOff + uTime * rate * aSpeed);
-        float z = mix(-16.0, 2.0, life);
-        float x = aLane + sin(life * 6.2831 + aSeed * 6.2831) * 0.25;
-
-        float conv = 0.5 + (aSeed - 0.5) * 0.06;
-        // cursor = catalyst hotspot: nearby reactants convert earlier + flare
-        float md = distance(vec2(x, z), uMouse);
-        float hot = smoothstep(2.4, 0.0, md);
-        conv -= hot * 0.22;
-
-        float risen = clamp((life - conv) / (1.0 - conv), 0.0, 1.0);
-        float y = risen * risen * 1.2; // rise after conversion
-
-        vConv = smoothstep(conv - 0.01, conv + 0.05, life);
-        vFlash = exp(-pow((life - conv) / 0.05, 2.0)); // bright spike at conversion
-        vSeed = aSeed;
-        vAlpha = smoothstep(0.0, 0.05, life) * (1.0 - smoothstep(0.78, 1.0, life));
-
-        vec4 mv = modelViewMatrix * vec4(x, y, z, 1.0);
-        gl_Position = projectionMatrix * mv;
-        float sz = uSize * (0.55 + aSeed * 0.7) * (1.0 + vConv * 0.5 + hot * 1.6);
-        gl_PointSize = sz * uPixelRatio * (1.0 / -mv.z);
+        vUv = uv;
+        gl_Position = vec4(position.xy, 0.0, 1.0); // full-screen clip-space quad
       }
     `,
     fragmentShader: /* glsl */ `
       precision highp float;
-      uniform vec3 uGray, uGold, uGreen, uCyan;
-      uniform float uReaction;
-      varying float vConv, vFlash, vAlpha, vSeed;
+      varying vec2 vUv;
+      uniform float uTime, uScroll, uReaction, uHover, uAspect;
+      uniform vec2 uMouse;
+      uniform vec3 uGold, uGreen, uCyan, uDeep;
+
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
+      float noise(vec2 p){
+        vec2 i = floor(p); vec2 f = fract(p);
+        float a = hash(i), b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+      }
+
       void main(){
-        vec2 c = gl_PointCoord - 0.5;
-        float d = length(c);
-        if (d > 0.5) discard;
-        float soft = smoothstep(0.5, 0.0, d);
-        vec3 prodBase = mix(uGold, uGreen, vSeed);          // product varies gold↔green
-        vec3 prod = mix(prodBase, uCyan, uReaction * 0.5);  // → cyan as the reaction completes
-        vec3 col = mix(uGray, prod, vConv);
-        col += vFlash * 1.4;                                // conversion flash (feeds bloom)
-        col += pow(max(1.0 - d * 2.0, 0.0), 3.0) * 0.5;     // soft core
-        gl_FragColor = vec4(col, soft * vAlpha);
+        float x = vUv.x;
+        // base level rises as you scroll; product reaction nudges it a touch higher
+        float level = 0.15 + uScroll * 0.20 + uReaction * 0.04;
+        // viscous surface: slow low-frequency waves + a little drifting noise
+        float w = sin(x * 6.0 + uTime * 0.55) * 0.011
+                + sin(x * 11.0 - uTime * 0.42) * 0.006
+                + (noise(vec2(x * 3.0, uTime * 0.14)) - 0.5) * 0.012;
+        // gentle, local cursor dimple — eased + gated by hover so it never cascades
+        float mdx = (x - uMouse.x) * uAspect;
+        float dip = exp(-mdx * mdx * 7.0) * 0.020 * smoothstep(0.0, 0.2, uHover);
+        float surface = level + w - dip;
+
+        float below = surface - vUv.y; // > 0 inside the liquid
+
+        if (below < 0.0){
+          // above the surface: a soft glow rising off the metal, otherwise transparent
+          float ag = exp(-pow((vUv.y - surface) / 0.11, 2.0)) * 0.13;
+          vec3 gcol = mix(uGold, mix(uGreen, uCyan, uReaction), uReaction);
+          gl_FragColor = vec4(gcol * ag, ag);
+          return;
+        }
+
+        float depth = clamp(below, 0.0, 1.0);
+        // molten gradient: bright metal at the surface → dark deep
+        vec3 surfCol = mix(uGold, uCyan, uReaction * 0.55);
+        surfCol = mix(surfCol, uGreen, smoothstep(0.0, 0.5, depth) * 0.45);
+        vec3 col = mix(surfCol, uDeep, smoothstep(0.0, 0.40, depth));
+
+        // drifting specular streaks — reflective "mercury/gold"; more mirror-like with scroll
+        float streak = sin(x * 22.0 + sin(x * 5.0 + uTime * 0.5) * 2.0 - uTime * 0.8);
+        streak = pow(max(streak, 0.0), 6.0);
+        float reflectivity = 0.32 + uScroll * 0.4;
+        col += streak * reflectivity * (1.0 - depth * 1.5) * mix(uGold, uCyan, uReaction);
+
+        // bright meniscus highlight right at the surface line (feeds bloom)
+        float edge = exp(-pow((vUv.y - surface) / 0.0055, 2.0));
+        col += edge * 1.3 * mix(uGold, uCyan, uReaction * 0.5);
+
+        col *= (0.82 + 0.18 * depth);
+        gl_FragColor = vec4(col, 1.0);
       }
     `,
   })
 
-  const points = new THREE.Points(pGeo, pMat)
-  points.renderOrder = 1
-  points.frustumCulled = false
-  scene.add(points)
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material)
+  quad.frustumCulled = false
+  scene.add(quad)
 
   // --- Postprocessing (bloom on the full tier only, loaded on demand) -------
   let composer = null
@@ -208,9 +151,9 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
         const cmp = new EffectComposer(renderer)
         cmp.addPass(new RenderPass(scene, camera))
         cmp.addPass(new EffectPass(camera, new BloomEffect({
-          intensity: 0.55,
-          luminanceThreshold: 0.55,
-          luminanceSmoothing: 0.4,
+          intensity: 0.7,
+          luminanceThreshold: 0.6,
+          luminanceSmoothing: 0.45,
           mipmapBlur: true,
           kernelSize: KernelSize.LARGE,
         })))
@@ -224,40 +167,20 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   function layout() {
     const w = window.innerWidth
     const h = window.innerHeight
-    const aspect = w / h
-    camera.aspect = aspect
-    // On portrait screens lift the camera + widen FOV so the surface still reads.
-    camBase.set(0, aspect < 0.9 ? 1.7 : 1.35, aspect < 0.9 ? 3.9 : 3.4)
-    camera.fov = aspect < 0.9 ? 52 : 44
-    camera.position.copy(camBase)
-    camera.lookAt(0, 0.05, -3.6)
-    camera.updateProjectionMatrix()
     renderer.setSize(w, h)
     if (composer) composer.setSize(w, h)
+    uniforms.uAspect.value = w / Math.max(1, h)
   }
   layout()
 
-  // --- Interaction: cursor → plane intersection (catalyst hotspot) ----------
-  const pointer = { x: 0, y: 0 }
-  const pointerSmooth = { x: 0, y: 0 }
-  const ray = new THREE.Raycaster()
-  const ndc = new THREE.Vector2()
-  const mouseTarget = new THREE.Vector2(100, 100)
+  // --- Interaction (a single gentle dimple; heavily eased) ------------------
+  const mouseTarget = new THREE.Vector2(0.5, 0.0)
   let hoverTarget = 0
   let scrollTarget = 0
   let reactionTarget = 0
 
   function onPointerMove(e) {
-    pointer.x = (e.clientX / window.innerWidth) * 2 - 1
-    pointer.y = (e.clientY / window.innerHeight) * 2 - 1
-    ndc.set(pointer.x, -pointer.y)
-    ray.setFromCamera(ndc, camera)
-    const o = ray.ray.origin
-    const dir = ray.ray.direction
-    if (Math.abs(dir.y) > 1e-4) {
-      const t = -o.y / dir.y
-      if (t > 0 && t < 60) mouseTarget.set(o.x + dir.x * t, o.z + dir.z * t)
-    }
+    mouseTarget.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight)
     hoverTarget = 1
   }
   const finePointer = window.matchMedia('(pointer: fine)').matches
@@ -271,26 +194,15 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   function frame() {
     if (!running) return
     raf = requestAnimationFrame(frame)
-    const dt = Math.min(clock.getDelta(), 0.05)
-    const t = clock.elapsedTime
-    uniforms.uTime.value = t
-    gridUniforms.uTime.value = t
+    clock.getDelta()
+    uniforms.uTime.value = clock.elapsedTime
 
-    pointerSmooth.x += (pointer.x - pointerSmooth.x) * 0.045
-    pointerSmooth.y += (pointer.y - pointerSmooth.y) * 0.045
     uniforms.uHover.value += (hoverTarget - uniforms.uHover.value) * 0.05
     uniforms.uScroll.value += (scrollTarget - uniforms.uScroll.value) * 0.08
     uniforms.uReaction.value += (reactionTarget - uniforms.uReaction.value) * 0.06
-    gridUniforms.uScroll.value = uniforms.uScroll.value
-    gridUniforms.uReaction.value = uniforms.uReaction.value
-    uniforms.uMouse.value.x += (mouseTarget.x - uniforms.uMouse.value.x) * 0.12
-    uniforms.uMouse.value.y += (mouseTarget.y - uniforms.uMouse.value.y) * 0.12
-    hoverTarget *= 0.96
-
-    // subtle cursor parallax on the camera (kept small so the surface stays steady)
-    camera.position.x = camBase.x + pointerSmooth.x * 0.18
-    camera.position.y = camBase.y - pointerSmooth.y * 0.10
-    camera.lookAt(0, 0.05, -3.6)
+    uniforms.uMouse.value.x += (mouseTarget.x - uniforms.uMouse.value.x) * 0.05
+    uniforms.uMouse.value.y += (mouseTarget.y - uniforms.uMouse.value.y) * 0.05
+    hoverTarget *= 0.94
 
     if (composer) composer.render()
     else renderer.render(scene, camera)
@@ -323,10 +235,8 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
       window.removeEventListener('resize', onResize)
       window.removeEventListener('pointermove', onPointerMove)
       document.removeEventListener('visibilitychange', onVisibility)
-      planeGeo.dispose()
-      planeMat.dispose()
-      pGeo.dispose()
-      pMat.dispose()
+      quad.geometry.dispose()
+      material.dispose()
       if (scene.background && scene.background.dispose) scene.background.dispose()
       if (composer) composer.dispose()
       renderer.dispose()
@@ -334,14 +244,8 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   }
 }
 
-/* Deterministic per-index pseudo-random (no Math.random at module scope). */
-function pseudoRandom(n) {
-  const s = Math.sin(n * 127.1 + 311.7) * 43758.5453
-  return s - Math.floor(s)
-}
-
-/* Dark backdrop with a soft glow low on the screen (light off the catalytic
-   surface), keeping the upper area near-black so headline text stays legible.
+/* Near-black backdrop with a faint warm glow along the bottom (ambient light off
+   the molten pool), keeping the upper screen dark so headline text stays legible.
    Matches the CSS gradient fallback in main.css. */
 function buildBackdrop() {
   const c = document.createElement('canvas')
@@ -350,19 +254,14 @@ function buildBackdrop() {
   const ctx = c.getContext('2d')
   ctx.fillStyle = '#08090e'
   ctx.fillRect(0, 0, 512, 512)
-  let g = ctx.createRadialGradient(256, 480, 0, 256, 480, 320)
+  let g = ctx.createRadialGradient(256, 512, 0, 256, 512, 330)
   g.addColorStop(0, 'rgba(255,153,51,0.16)')
   g.addColorStop(1, 'rgba(255,153,51,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
-  g = ctx.createRadialGradient(90, 470, 0, 90, 470, 300)
-  g.addColorStop(0, 'rgba(31,224,138,0.13)')
+  g = ctx.createRadialGradient(120, 500, 0, 120, 500, 260)
+  g.addColorStop(0, 'rgba(31,224,138,0.10)')
   g.addColorStop(1, 'rgba(31,224,138,0)')
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, 512, 512)
-  g = ctx.createRadialGradient(430, 450, 0, 430, 450, 280)
-  g.addColorStop(0, 'rgba(56,225,255,0.09)')
-  g.addColorStop(1, 'rgba(56,225,255,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
   const tex = new THREE.CanvasTexture(c)

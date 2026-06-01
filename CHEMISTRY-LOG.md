@@ -4,7 +4,44 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 6 ✅ — background swapped to **The Catalytic Surface** + a round of content/layout fixes.
+**Current phase:** Phase 7 ✅ — background swapped to **Liquid Gold / Mercury Flow** (Catalytic Surface preserved).
+
+## 2026-06-01 — Phase 7: background → Liquid Gold / Mercury Flow ✅
+
+User feedback: the Catalytic Surface was **too mouse-sensitive** — moving the cursor triggered a
+field-wide conversion "cascade" that felt disorienting. Asked to preserve it but switch `scene.js` to a
+calmer "wow-factor" background (suggested the Meniscus or any other).
+
+**Done**
+- **Preserved** the Catalytic Surface verbatim at `src/three/scene-catalytic-surface.js` (not imported, so
+  not bundled). **Restore it** by copying that file back over `src/three/scene.js` + `npm run build` + `./sync.ps1`.
+  (The earlier molecular-bond-network background remains recoverable from git commit `9fd341c`.)
+- **New `src/three/scene.js` = Liquid Gold / Mercury Flow:** a pool of molten metal anchored along the
+  bottom of the viewport — viscous slow waves, drifting specular streaks, a glowing meniscus line, gold
+  transmuting toward emerald/cyan. Built as ONE full-screen fragment shader (a 2-D height-field on a
+  clip-space quad, ortho camera) — cheap, steady, and with **no per-pixel cursor cascade**. The cursor only
+  leaves a single soft, heavily-eased dimple (lerp 0.05, hover-gated) that fills back in.
+  - Kept the controller contract `{setScroll,setReaction,setHover,destroy}` → `main.js`/`scroll.js` unchanged.
+    `setScroll` raises the liquid level + reflectivity (hero→page); `setReaction` (final CTA) shifts it
+    green/cyan + glows. Bloom full-tier only (intensity 0.7). `buildBackdrop()` = near-black with a faint
+    bottom floor-glow. Readability: liquid is bottom-anchored, upper screen stays dark → headline crisp.
+- Why this concept: user wanted "wow"; their own brief calls Liquid Gold the "premium, heavy, expensive"
+  option, and bottom-anchoring + a single gentle dimple directly fixes the cascade complaint.
+
+**Verified**
+- Forced-tier desktop screenshot: molten-gold pool with a glowing wavy meniscus along the bottom of the
+  hero, headline crisp above it — clear wow, no clutter. Reverted the forced-tier hack + rebuilt/synced.
+- HTTP 200, no PHP errors, content unchanged (this was a background-only swap — all Phase 6 content stands).
+- `scene-catalytic-surface.js` present; `scene.js` forced-tier hack reverted.
+
+**Notes**
+- Liquid params (level 0.15 + scroll·0.20, wave amps, streak freq 22, bloom 0.7, dimple amp 0.020/ease 0.05)
+  are first-pass — easy to tune. Live motion only on a real desktop browser (Studio screenshot = reduced-motion).
+- Backgrounds now available to swap into `scene.js`: Liquid Gold (current), Catalytic Surface
+  (`scene-catalytic-surface.js`), Molecular Bond Network (git `9fd341c`).
+
+---
+
 **Branch:** `chemistry-lab` (off `main`). **Live site:** `http://localhost:8881` (Studio `Brand-alchemy.info`).
 **Active theme now:** `brand-alchemy-chem` (this branch). Revert to original look = activate `brand-alchemy`.
 **Deploy target (this branch):** Studio theme folder `brand-alchemy-chem` (separate from the original
