@@ -10,11 +10,9 @@
   --green: #1fe08a;             /* reagent green (brightened from #00d26a) */
   --cyan: #38e1ff;              /* glassware / molecular bonds — used sparingly */
 
-  /* Surfaces: near-opaque "lab panel" instead of see-through glass.
-     A small blur is kept only as a frosted hint at the edges. */
-  --glass-bg: rgba(18, 20, 28, 0.88);
-  --glass-border: rgba(96, 196, 222, 0.20);   /* faint cyan rim, like lab glass */
-  --glass-blur: 6px;
+  /* Surfaces: SOLID opaque panels — no glass, no translucency, no backdrop blur. */
+  --glass-bg: #14161d;
+  --glass-border: rgba(255, 255, 255, 0.08);
   --scrim: rgba(8, 9, 14, 0.85);               /* behind text sitting directly over the canvas */
   --panel-scrim: rgba(8, 9, 14, 0.66);         /* quiets the animated bg behind the content column */
 

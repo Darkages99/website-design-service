@@ -4,7 +4,17 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 7 ✅ — background swapped to **Liquid Gold / Mercury Flow** (Catalytic Surface preserved).
+**Current phase:** Phase 8 ✅ — **de-glassed** all surfaces (solid panels); background concept TBD (user choosing).
+
+## 2026-06-01 — Phase 8: remove glassmorphism (solid surfaces) ✅
+
+User: "I really don't like the glass thing so remove that." Removed ALL frosted/translucent glass:
+- `--glass-bg` → solid `#14161d`; dropped `--glass-blur`; `--glass-border` → plain hairline `rgba(255,255,255,0.08)`.
+- Removed every `backdrop-filter: blur()` — `.ba-card`, `.ba-nav` (now solid `#0b0c12`), `.ba-final__inner`.
+- Form fields → solid fills (`#181b24` / focus `#1d212c`). Verified: **no `backdrop-filter` in output**, no PHP errors,
+  cards render as solid opaque panels (screenshot). Background still Liquid Gold for now (user is picking a new one).
+
+
 
 ## 2026-06-01 — Phase 7: background → Liquid Gold / Mercury Flow ✅
 
