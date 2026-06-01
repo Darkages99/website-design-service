@@ -3,9 +3,40 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 4 ✅ → starting Phase 5 (SEO/AEO/GEO + schema + tracking + forms)
+**Current phase:** Phase 5 ✅ → starting Phase 6 (performance & accessibility hardening)
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 5: SEO/AEO/GEO + schema + tracking + form ✅
+
+**Done**
+- `inc/seo.php` — `title-tag` support + curated front-page `<title>`, meta description, canonical,
+  single `wp_robots` tag (index/follow/max-image-preview), Open Graph + Twitter cards. `og:image`
+  degrades to a comment until `assets/static/og-image.png` exists.
+- `inc/schema.php` — one JSON-LD `@graph` on the front page: Organization, WebSite,
+  LocalBusiness+ProfessionalService (Chennai/TN, areaServed Chennai/Coimbatore/Madurai/Bangalore),
+  WebPage, Service (Essential Web Presence, INR 35k–75k PriceSpecification), **FAQPage (6 Q&As mirroring
+  the on-page FAQ — AEO)**, BreadcrumbList. **Verified: parses cleanly (7 nodes), ₹ renders correctly.**
+- `inc/tracking.php` — GA4 / GTM / Meta Pixel snippets, **inert** until `BA_GA4_ID` / `BA_GTM_ID` /
+  `BA_META_PIXEL_ID` are set (empty → nothing output). Clearly commented for the founder.
+- Contact form in the Final CTA — Name / Phone-or-email / message, honeypot + `_subject`, posts to a
+  **Formspree placeholder** (`formspree.io/f/your-form-id`). Glass styling; `<button>` now shares `.ba-btn-link`.
+- Calendly (`#calendly-placeholder`) + WhatsApp (`wa.me` placeholder) links already in place.
+- **Verified** server-side via `Invoke-WebRequest` (head tags + JSON-LD) — no browser/reduced-motion
+  dependency — and via screenshot (form renders, page intact, no PHP errors).
+
+**Notes / refine later**
+- AEO/GEO: concise question-led FAQ + FAQPage schema + scannable section summaries are in place. Google's
+  FAQ *rich result* is now limited to gov/health, but the markup still aids other engines/LLMs — keep it.
+- Placeholders to fill (plan §12): Formspree endpoint, Calendly URL, real WhatsApp number (FAB + buttons +
+  schema telephone), GA4/GTM/Pixel IDs, og-image.png + logo.png, street/postal in LocalBusiness, sameAs socials.
+- If schema FAQ copy changes, update BOTH `inc/schema.php` and the FAQ in `templates/front-page.html`.
+
+**Next**
+- Phase 6: dequeue remaining WP bloat, confirm 3D is fully off the critical path, check scroll length vs the
+  ≤10vh budget, run Lighthouse/CWV against §9 (LCP/TBT/contrast), tighten as needed.
 
 ---
 

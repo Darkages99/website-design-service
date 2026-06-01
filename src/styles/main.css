@@ -114,19 +114,23 @@ html.lenis body { height: auto; }
    Buttons
    --------------------------------------------------------------------------- */
 .ba-btn .wp-block-button__link,
-a.ba-btn-link {
+.ba-btn-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.85rem 1.5rem;
   border-radius: 999px;
   font-weight: 700;
+  font-family: inherit;
+  font-size: inherit;
   text-decoration: none;
   line-height: 1;
+  border: 0;
+  cursor: pointer;
   transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
 .ba-btn--primary .wp-block-button__link,
-a.ba-btn-link.ba-btn--primary {
+.ba-btn-link.ba-btn--primary {
   background: var(--gold);
   color: #0a0a0f;
   box-shadow: 0 8px 30px rgba(255, 153, 51, 0.25);
@@ -134,7 +138,7 @@ a.ba-btn-link.ba-btn--primary {
 .ba-btn--primary .wp-block-button__link:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(255, 153, 51, 0.35); }
 
 .ba-btn--ghost .wp-block-button__link,
-a.ba-btn-link.ba-btn--ghost {
+.ba-btn-link.ba-btn--ghost {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--glass-border);
@@ -589,6 +593,37 @@ a.ba-btn-link.ba-btn--ghost {
   font-size: clamp(1rem, 1.8vw, 1.2rem);
 }
 .ba-final__cta { justify-content: center; }
+.ba-btn-link.ba-btn--primary:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(255, 153, 51, 0.35); }
+
+/* Contact form (secondary conversion path; Formspree placeholder) */
+.ba-form { margin: 2.2rem auto 0; max-width: 560px; text-align: left; }
+.ba-form__lead { margin: 0 0 1.1rem; text-align: center; color: var(--text-muted); font-size: 0.95rem; }
+.ba-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+@media (max-width: 560px) { .ba-form__grid { grid-template-columns: 1fr; } }
+.ba-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.9rem; }
+.ba-field label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+.ba-field label span { font-weight: 400; opacity: 0.7; }
+.ba-form input,
+.ba-form textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text);
+  font: inherit;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.ba-form input::placeholder,
+.ba-form textarea::placeholder { color: rgba(240, 240, 245, 0.4); }
+.ba-form input:focus,
+.ba-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.06);
+}
+.ba-form textarea { resize: vertical; min-height: 88px; }
+.ba-form__submit { margin-top: 0.4rem; }
 
 /* ---------------------------------------------------------------------------
    Footer

@@ -385,6 +385,30 @@
 				<!-- /wp:button -->
 			</div>
 			<!-- /wp:buttons -->
+
+			<!-- wp:html -->
+			<form class="ba-form" action="https://formspree.io/f/your-form-id" method="POST">
+				<p class="ba-form__lead">Prefer email? Send your details and we'll reach out.</p>
+				<div class="ba-form__grid">
+					<div class="ba-field">
+						<label for="ba-name">Name</label>
+						<input id="ba-name" name="name" type="text" autocomplete="name" required>
+					</div>
+					<div class="ba-field">
+						<label for="ba-contact">Phone or email</label>
+						<input id="ba-contact" name="contact" type="text" autocomplete="tel" required>
+					</div>
+				</div>
+				<div class="ba-field">
+					<label for="ba-message">What does your business do? <span>(optional)</span></label>
+					<textarea id="ba-message" name="message" rows="3"></textarea>
+				</div>
+				<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+				<input type="hidden" name="_subject" value="New website enquiry — Brand-Alchemy">
+				<button class="ba-btn-link ba-btn--primary ba-form__submit" type="submit">Send Enquiry</button>
+			</form>
+			<!-- PLACEHOLDER: replace formspree.io/f/your-form-id with the real endpoint (plan.md §12). -->
+			<!-- /wp:html -->
 		</div>
 		<!-- /wp:group -->
 	</section>
