@@ -1,11 +1,27 @@
 {
   "src/main.js": {
-    "file": "assets/main-BXNSa-OL.js",
+    "file": "assets/main-B9g6oHfC.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
+    "dynamicImports": [
+      "src/three/scene.js",
+      "src/scroll.js"
+    ],
     "css": [
-      "assets/main-BYUWTRE5.css"
+      "assets/main-BOCqLtoJ.css"
     ]
+  },
+  "src/scroll.js": {
+    "file": "assets/scroll-Bl5JrcG4.js",
+    "name": "scroll",
+    "src": "src/scroll.js",
+    "isDynamicEntry": true
+  },
+  "src/three/scene.js": {
+    "file": "assets/scene-CqPXfDbE.js",
+    "name": "scene",
+    "src": "src/three/scene.js",
+    "isDynamicEntry": true
   }
 }

@@ -24,6 +24,13 @@ a { color: var(--gold); }
 
 img { max-width: 100%; height: auto; }
 
+/* Lenis smooth scroll (classes are added to <html> when active) */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
@@ -154,6 +161,24 @@ a.ba-btn-link.ba-btn--ghost {
   max-width: 760px;
   /* scrim ensures WCAG-AA text contrast over the 3D scene */
   position: relative;
+  z-index: 1;
+}
+/* Soft feathered scrim that travels with the text block so copy stays ≥4.5:1
+   over the bright metal of the Alchemy Sphere, while the orb shows around it. */
+.ba-hero__inner::before {
+  content: '';
+  position: absolute;
+  inset: -12% -16% -14% -16%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    82% 78% at 40% 48%,
+    rgba(10, 10, 15, 0.92) 0%,
+    rgba(10, 10, 15, 0.82) 42%,
+    rgba(10, 10, 15, 0.45) 68%,
+    rgba(10, 10, 15, 0) 88%
+  );
+  filter: blur(10px);
 }
 .ba-eyebrow {
   display: inline-block;

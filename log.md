@@ -3,9 +3,55 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 1 ✅ → starting Phase 2 (3D Alchemy Sphere hero)
+**Current phase:** Phase 2 ✅ → starting Phase 3 (build sections §§2–10)
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 2: Three.js Alchemy Sphere hero ✅
+
+**Done**
+- `src/three/glsl.js` — inlined GLSL: Ashima simplex-3D noise, 4-octave fbm, radial
+  displacement field, normal-recompute (tangent-neighbour) chunk, and a gold→green
+  emissive shimmer chunk. All GLSL-ES-1.00 safe (injected into stock shader chunks).
+- `src/three/scene.js` — the orb: high-detail `IcosahedronGeometry` driven by a real
+  `MeshStandardMaterial` patched via `onBeforeCompile` (keeps PBR metalness + env-map
+  reflections while morphing). Procedural gold→dark→green **equirect env map** via
+  `PMREMGenerator` (no HDR download, on-brand reflections). 3-point light rig + ambient.
+  Bloom (threshold 0.85, intensity 0.32, mipmapBlur) on the **full** tier only via
+  `postprocessing` `EffectComposer`. Cursor parallax (eased), idle drift, hover energy,
+  and a `setScroll(0..1)` that drifts/shrinks/dims the orb as the hero leaves. DPR-capped,
+  tab-visibility-paused, `destroy()` disposes everything. `alpha:true` composites over
+  the CSS gradient.
+- `src/scroll.js` — Lenis (lerp 0.1) ↔ GSAP ScrollTrigger sync (the Phase-4 foundation):
+  `lenis.on('scroll', ScrollTrigger.update)` + `gsap.ticker.add(t => lenis.raf(t*1000))`
+  + `lagSmoothing(0)`. A hero ScrollTrigger feeds `onHeroProgress` → `scene.setScroll`.
+- `src/main.js` — capability gate → tier `full` (desktop, fine pointer) / `lite` (capable
+  phone: detail 32, no bloom, DPR 1, native scroll) / `none` (reduced-motion, no WebGL, or
+  weak phone → static CSS gradient). Scene + scroll chunks **dynamically imported after
+  first paint** via `requestIdleCallback` so they never block LCP.
+- `src/styles/main.css` — feathered radial **scrim** behind `.ba-hero__inner` (AA contrast
+  over the metal) + recommended Lenis CSS classes.
+- Code-split bundle: `main` 1.26 kB gz (critical, paints hero), `scroll` 49.7 kB gz,
+  `scene` 145.8 kB gz (Three+postprocessing) — both deferred.
+- **Verified via screenshots** (forced tier, then reverted): desktop renders a molten
+  metallic gold-green orb with correct lighting; hero copy stays legible over it (scrim);
+  reduced-motion/headless + mobile both fall back to the clean static gradient.
+
+**Notes / refine later**
+- Studio's screenshot browser reports `prefers-reduced-motion: reduce`, so the live 3D is
+  suppressed there by design — verify the sphere by temporarily forcing `tier='full'`
+  (the build pipeline is otherwise identical). Real desktop visitors get the orb.
+- Phase 4 will hang section choreography off the existing Lenis+ScrollTrigger plumbing.
+- `scene.js` chunk is 581 kB raw (Three.js) — fine deferred, but a Phase-6 candidate for
+  trimming (e.g. drop postprocessing on a budget, or a leaner bloom).
+
+**Next**
+- Phase 3: build sections §§2–10 — Problem, Process, Services (Tier 1 active; Tiers 2 & 3
+  "Coming Soon", locked, no CTA), Get-vs-Don't (AEO/GEO honesty), Portfolio **placeholder
+  gallery** (all "View Case Study" = `#`), Proof ("Concept Work — Your Brand Here"), About,
+  FAQ, Final CTA. Keep ≤10 viewport-heights total.
 
 ---
 
