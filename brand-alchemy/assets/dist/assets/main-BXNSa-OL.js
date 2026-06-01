@@ -1,0 +1,1 @@
+var e=window.matchMedia(`(prefers-reduced-motion: reduce)`).matches;function t(){document.getElementById(`alchemy-bg`)&&console.info(`[Brand-Alchemy] bundle loaded. canvas ready · reduced-motion:`,e)}document.readyState===`loading`?document.addEventListener(`DOMContentLoaded`,t,{once:!0}):t();

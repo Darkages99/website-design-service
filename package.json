@@ -1,0 +1,20 @@
+{
+  "name": "brand-alchemy",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Brand-Alchemy WordPress block theme — 3D interactive portfolio. Vite-built JS/CSS/Three.js bundle.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^8.0.15"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.23",
+    "postprocessing": "^6.39.1",
+    "three": "^0.184.0"
+  }
+}

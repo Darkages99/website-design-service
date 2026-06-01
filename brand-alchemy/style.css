@@ -1,0 +1,18 @@
+/*
+Theme Name: Brand-Alchemy
+Theme URI: https://brand-alchemy.info
+Author: Brand-Alchemy
+Author URI: https://brand-alchemy.info
+Description: High-performance 3D/interactive portfolio block theme for Brand-Alchemy — AI-powered, conversion-optimised web design for Chennai SMBs. Vanilla Three.js + GSAP + Lenis, bundled with Vite.
+Version: 0.1.0
+Requires at least: 6.5
+Tested up to: 6.8
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: brand-alchemy
+Tags: portfolio, one-page, full-site-editing, block-theme, custom-colors
+*/
+
+/* Real styling is bundled by Vite (src/styles/main.css) and enqueued via inc/enqueue.php.
+   This file exists for the WordPress theme header + as a minimal fallback. */

@@ -5,6 +5,10 @@ node_modules/
 .vite/
 *.local
 
+# ...but KEEP the built manifest under dist (enqueue.php reads it; dist is committed).
+!brand-alchemy/assets/dist/.vite/
+!brand-alchemy/assets/dist/.vite/manifest.json
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

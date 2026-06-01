@@ -1,0 +1,19 @@
+/* Design tokens — mirror of theme.json palette, plus layout/motion vars used by CSS & JS. */
+:root {
+  --bg: #0a0a0f;
+  --bg-soft: #101018;
+  --text: #f0f0f5;
+  --text-muted: #a0a0b0;
+  --gold: #ff9933;
+  --green: #00d26a;
+
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --scrim: rgba(10, 10, 15, 0.75);
+
+  --nav-h: 72px;
+  --maxw: 1200px;
+  --radius: 16px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --section-pad: clamp(3.5rem, 9vh, 8rem);
+}
