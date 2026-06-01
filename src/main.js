@@ -63,7 +63,12 @@ function init() {
     if (tier === 'full') {
       import('./scroll.js')
         .then(({ initSmoothScroll }) => {
-          initSmoothScroll({ onHeroProgress: (p) => sceneCtl && sceneCtl.setScroll(p) })
+          initSmoothScroll({
+            // Hero scroll disperses + fades the nebula …
+            onHeroProgress: (p) => sceneCtl && sceneCtl.setScroll(p),
+            // … then it re-gathers + glows as the final CTA arrives.
+            onContactProgress: (p) => sceneCtl && sceneCtl.setScroll(1 - p * 0.9),
+          })
         })
         .catch((err) => console.warn('[Brand-Alchemy] scroll failed to load:', err))
     }

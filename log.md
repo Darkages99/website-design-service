@@ -3,9 +3,39 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 3 ✅ → starting Phase 4 (scroll choreography & 3D reactions)
+**Current phase:** Phase 4 ✅ → starting Phase 5 (SEO/AEO/GEO + schema + tracking + forms)
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 4: Scroll choreography & 3D reactions ✅
+
+**Done** — all in `src/scroll.js` (loaded ONLY on the desktop "full" tier):
+- **Scroll-reveal**: staggered batch reveals for every card grid (problems, steps, tiers, works,
+  metrics, boundary cols, FAQ items) + fade-up for section heads / prose / final CTA panel.
+- **Metric count-ups**: numbers animate 0→target on first view, preserving prefix/suffix
+  (`<2s`, `90-day`). Verified live — a forced-tier screenshot caught "85-day" mid-count.
+- **Card tilt** ≤5° toward the cursor (desktop fine-pointer); locked "Coming Soon" tiers stay flat.
+- **Nebula scroll reactions**: hero scroll disperses + fades the nebula; as the **final CTA** enters
+  it re-gathers + glows (`onContactProgress` eases scroll 1→0.1). FAQ +→× icon already CSS-driven.
+- `ScrollTrigger.refresh()` on init + on `load` so Lenis-virtualised positions stay correct.
+- **Safety**: reveals are JS-only (no CSS `opacity:0`), and `scroll.js` only loads on the full tier
+  → reduced-motion / mobile / no-WebGL paths render the page fully visible (verified via screenshot).
+
+**Notes / refine later**
+- Could not see the live motion through Studio's screenshot tool (it reports reduced-motion →
+  tier `none` → no scroll module). Verified by **forcing `tier='full'`**: page renders, reveals engage,
+  count-up animates, no crash. Real desktop visitors get the full choreography; user confirms live.
+- Process "connectors" (plan §8) not added — the staggered numbered-step reveal carries the flow;
+  optional polish for later.
+- `scroll` chunk is ~50 kB gz (GSAP+ScrollTrigger+Lenis), deferred after first paint.
+
+**Next**
+- Phase 5: `inc/seo.php` (title/meta/OG/Twitter/canonical), `inc/schema.php` (JSON-LD: Organization,
+  LocalBusiness, Service, FAQPage, WebSite, BreadcrumbList), `inc/tracking.php` (GA4/GTM/Meta Pixel
+  placeholders), contact form (Formspree placeholder), Calendly/WhatsApp placeholder links. Mark all
+  placeholders clearly (plan §12).
 
 ---
 
