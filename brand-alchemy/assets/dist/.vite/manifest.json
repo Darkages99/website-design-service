@@ -1,19 +1,19 @@
 {
-  "_three.module-CMjASxHW.js": {
-    "file": "assets/three.module-CMjASxHW.js",
+  "_three.module-CCOjopKd.js": {
+    "file": "assets/three.module-CCOjopKd.js",
     "name": "three.module"
   },
   "node_modules/postprocessing/build/index.js": {
-    "file": "assets/build-0QODJHu6.js",
+    "file": "assets/build-iGLCNCty.js",
     "name": "build",
     "src": "node_modules/postprocessing/build/index.js",
     "isDynamicEntry": true,
     "imports": [
-      "_three.module-CMjASxHW.js"
+      "_three.module-CCOjopKd.js"
     ]
   },
   "src/main.js": {
-    "file": "assets/main-blG7SExY.js",
+    "file": "assets/main-DyUxmEp5.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
@@ -22,7 +22,7 @@
       "src/scroll.js"
     ],
     "css": [
-      "assets/main-D4E9QiLs.css"
+      "assets/main-Dm5eRUD7.css"
     ]
   },
   "src/scroll.js": {
@@ -32,13 +32,13 @@
     "isDynamicEntry": true
   },
   "src/three/scene.js": {
-    "file": "assets/scene-k9idb3_P.js",
+    "file": "assets/scene-BnlT5NRK.js",
     "name": "scene",
     "src": "src/three/scene.js",
     "isDynamicEntry": true,
     "imports": [
       "src/main.js",
-      "_three.module-CMjASxHW.js"
+      "_three.module-CCOjopKd.js"
     ],
     "dynamicImports": [
       "node_modules/postprocessing/build/index.js"

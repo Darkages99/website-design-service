@@ -64,9 +64,9 @@ html.lenis body { height: auto; }
   display: block;
   pointer-events: none; /* never blocks CTAs/forms */
   background:
-    radial-gradient(60% 60% at 75% 28%, rgba(255, 153, 51, 0.10), transparent 60%),
-    radial-gradient(70% 70% at 18% 82%, rgba(31, 224, 138, 0.07), transparent 60%),
-    radial-gradient(55% 55% at 50% 55%, rgba(56, 225, 255, 0.045), transparent 65%),
+    radial-gradient(72% 55% at 50% 94%, rgba(255, 153, 51, 0.10), transparent 62%),
+    radial-gradient(60% 50% at 15% 90%, rgba(31, 224, 138, 0.08), transparent 60%),
+    radial-gradient(60% 46% at 82% 88%, rgba(56, 225, 255, 0.05), transparent 62%),
     var(--bg);
 }
 
@@ -227,7 +227,7 @@ html.lenis body { height: auto; }
 .ba-hero__title .ba-accent { color: var(--gold); }
 .ba-hero__sub {
   margin: 0 0 2rem;
-  max-width: 36ch;
+  max-width: 54ch;
   font-size: clamp(1.05rem, 2.2vw, 1.35rem);
   color: var(--text-muted);
 }

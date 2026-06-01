@@ -39,7 +39,7 @@ add_action(
 add_action(
 	'wp_footer',
 	function () {
-		$number  = '910000000000'; // PLACEHOLDER — replace with real WhatsApp number.
+		$number  = '919940140907'; // WhatsApp number (91 = India country code).
 		$message = rawurlencode( 'Hi Brand-Alchemy team, I want to discuss a new website for my business.' );
 		$href    = 'https://wa.me/' . $number . '?text=' . $message;
 		?>

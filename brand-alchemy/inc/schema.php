@@ -87,7 +87,7 @@ add_action(
 					'addressCountry'  => 'IN',
 					// 'streetAddress' / 'postalCode' pending — plan.md §12.
 				),
-				// 'telephone' => '+91-...', // pending — plan.md §12.
+				'telephone'          => '+919940140907',
 			),
 			array(
 				'@type'      => 'WebPage',

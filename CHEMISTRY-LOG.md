@@ -4,11 +4,62 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phases 0–5 ✅ — **chemistry-lab re-theme is feature-complete and verified.**
+**Current phase:** Phase 6 ✅ — background swapped to **The Catalytic Surface** + a round of content/layout fixes.
 **Branch:** `chemistry-lab` (off `main`). **Live site:** `http://localhost:8881` (Studio `Brand-alchemy.info`).
 **Active theme now:** `brand-alchemy-chem` (this branch). Revert to original look = activate `brand-alchemy`.
 **Deploy target (this branch):** Studio theme folder `brand-alchemy-chem` (separate from the original
 `brand-alchemy`, which stays untouched — activate either to compare).
+
+---
+
+## 2026-06-01 — Phase 6: background → Catalytic Surface + content/layout fixes ✅
+
+User picked from 8 proposed concepts and asked me to choose + implement, plus several edits.
+
+**Background — replaced the molecular bond network with THE CATALYTIC SURFACE** (`src/three/scene.js`):
+- A low-contrast crystalline grid plane viewed at a downward angle fills the LOWER viewport (horizon
+  mid-screen, upper area kept dark = headline-safe). Grid flows toward the camera (uTime + uScroll) so it
+  reads as travelling along the surface.
+- GPU particle lifecycle (one `THREE.Points`, `frustumCulled=false`, ~900 full / 320 lite): "reactant"
+  gray particles drift across, FLASH at a conversion threshold, become "product" (gold↔green, → cyan with
+  reaction) and rise + fade before reaching the headline zone (readability safeguard). No per-frame CPU loops.
+- **Cursor = catalyst hotspot**: pointer→plane raycast feeds `uMouse`; nearby reactants convert early + flare.
+- Kept the controller contract `{setScroll,setReaction,setHover,destroy}` — so `main.js`/`scroll.js`
+  (reaction-progress scroll + bar) needed NO changes. `setScroll`→reaction rate + grid brightness;
+  `setReaction` (final CTA)→product greener/cyan + glow. Bloom full-tier only. `buildBackdrop()` re-tinted
+  (dark top, low glow). Chose vanilla Three.js (not R3F) to keep the bundle light — scene chunk ~3 kB gz.
+  Why this concept: user's #1 rec; visualises reactant→product = visitor→lead; pairs with the reaction scroll.
+
+**Content / layout fixes (front-page.html + theme-setup.php + schema.php + main.css):**
+- **WhatsApp number → 9940140907** → `wa.me/919940140907` on the hero button, final-CTA button, and the
+  floating FAB (`theme-setup.php`); also added `telephone +919940140907` to the LocalBusiness JSON-LD.
+- **About → "we", two students:** heading "Built by students, powered by AI."; lead rewritten to
+  "We're two Chennai-based students — me and a friend — …".
+- **Removed pricing from the two Coming-Soon tiers** (Lead Generation, Digital Growth) — price groups deleted;
+  name → features → lock only. Essential stays ₹4,999.
+- **Hero subtext alignment:** it was a narrow `max-width:36ch` column hugging the left (looked "off to the
+  side"); widened to `54ch` so it flows as the heading's own paragraph. Lowered the `#alchemy-bg` CSS
+  fallback glow to sit with the surface.
+- **FAQ "What does it cost?"** on-page answer still said ₹35,000–₹75,000 (Phase 1 had only updated the schema
+  copy) — fixed to ₹4,999. (Same FAQ↔schema sync gotcha as the SEO answers; both now match.)
+
+**Verified**
+- Forced-tier desktop screenshot: catalytic surface renders (perspective grid + horizon + particles),
+  headline crisp over the dark upper area, hero subtext now reads as a paragraph under the heading. Reverted
+  the forced-tier hack + rebuilt/synced (deployed theme has correct capability gating).
+- Rendered-output audit: **0 old-price leftovers** (35,000/75,000/1,50,000/3,00,000/15,000/mo all gone),
+  ₹4,999 present, money-back heading present, `919940140907` ×4 (2 buttons + FAB + schema tel),
+  "Built by students" + "me and a friend" present, **no PHP errors**, HTTP 200.
+- `validate_blocks` **100/110** — same 10 pre-existing `core/html` advisories (card grids + form); the lower
+  total is the 6 blocks removed with the two price groups. No new invalid blocks / no regression.
+- Note: the earlier "stale deploy" scare was a false alarm — the `ba-tier__amount` string double-counts
+  (block comment + element); the real "75,000" was the FAQ answer, now fixed.
+
+**Open / notes**
+- Catalytic surface params (grid contrast/scale, particle count/size, bloom 0.55, rise height) are first-pass
+  — tune to taste. Live motion + cursor-catalyst only on a real desktop browser (Studio screenshot = reduced-motion).
+- Coming-Soon tiers now show no price; revisit when those services + their pricing are ready.
+- ₹4,999 intro price + removed off-page-SEO referral are intentional "for now" decisions (see Phase 1).
 
 ---
 
