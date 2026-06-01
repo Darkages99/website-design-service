@@ -35,18 +35,21 @@ function ba_vite_asset( $entry = 'src/main.js' ) {
 		return null;
 	}
 
-	$item = $manifest[ $entry ];
-	$js   = isset( $item['file'] ) ? $dist_uri . '/' . $item['file'] : null;
-	$css  = array();
+	$item      = $manifest[ $entry ];
+	$js        = isset( $item['file'] ) ? $dist_uri . '/' . $item['file'] : null;
+	$css       = array();
+	$css_paths = array();
 	if ( ! empty( $item['css'] ) ) {
 		foreach ( $item['css'] as $css_file ) {
-			$css[] = $dist_uri . '/' . $css_file;
+			$css[]       = $dist_uri . '/' . $css_file;
+			$css_paths[] = $dist_dir . '/' . $css_file;
 		}
 	}
 
 	return array(
-		'js'  => $js,
-		'css' => $css,
+		'js'        => $js,
+		'css'       => $css,
+		'css_paths' => $css_paths,
 	);
 }
 
@@ -66,8 +69,17 @@ add_action(
 			return;
 		}
 
+		// Inline the (small) critical CSS so it never render-blocks before the
+		// LCP headline. Falls back to an external <link> if the file is missing.
+		wp_register_style( 'ba-main', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+		wp_enqueue_style( 'ba-main' );
 		foreach ( $asset['css'] as $i => $href ) {
-			wp_enqueue_style( 'ba-main-' . $i, $href, array(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			$path = isset( $asset['css_paths'][ $i ] ) ? $asset['css_paths'][ $i ] : '';
+			if ( $path && file_exists( $path ) ) {
+				wp_add_inline_style( 'ba-main', file_get_contents( $path ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			} else {
+				wp_enqueue_style( 'ba-main-ext-' . $i, $href, array(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			}
 		}
 
 		if ( $asset['js'] ) {

@@ -1,6 +1,7 @@
 import * as THREE from 'three'
-import { EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize } from 'postprocessing'
 import { NOISE_GLSL } from './glsl.js'
+// `postprocessing` (bloom) is imported dynamically below, ONLY on the full tier,
+// so mobile/lite never downloads or parses it.
 
 /**
  * The Alchemy Nebula.
@@ -130,19 +131,27 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   const points = new THREE.Points(geometry, material)
   scene.add(points)
 
-  // --- Postprocessing (bloom on the full tier only) -------------------------
+  // --- Postprocessing (bloom on the full tier only, loaded on demand) -------
+  // The render loop starts immediately with the plain renderer and switches to
+  // the composer once it resolves — so bloom never blocks first frame and never
+  // ships to mobile.
   let composer = null
   if (isFull) {
-    composer = new EffectComposer(renderer)
-    composer.addPass(new RenderPass(scene, camera))
-    const bloom = new BloomEffect({
-      intensity: 0.7,
-      luminanceThreshold: 0.5,
-      luminanceSmoothing: 0.4,
-      mipmapBlur: true,
-      kernelSize: KernelSize.LARGE,
-    })
-    composer.addPass(new EffectPass(camera, bloom))
+    import('postprocessing')
+      .then(({ EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize }) => {
+        const c = new EffectComposer(renderer)
+        c.addPass(new RenderPass(scene, camera))
+        c.addPass(new EffectPass(camera, new BloomEffect({
+          intensity: 0.7,
+          luminanceThreshold: 0.5,
+          luminanceSmoothing: 0.4,
+          mipmapBlur: true,
+          kernelSize: KernelSize.LARGE,
+        })))
+        c.setSize(window.innerWidth, window.innerHeight)
+        composer = c
+      })
+      .catch((err) => console.warn('[Brand-Alchemy] bloom unavailable:', err))
   }
 
   // --- Layout: bias the nebula toward center-right on wide screens ----------

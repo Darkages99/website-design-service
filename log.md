@@ -3,9 +3,42 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 5 ✅ → starting Phase 6 (performance & accessibility hardening)
+**Current phase:** Phase 6 ✅ → starting Phase 7 (content editability + founder handoff)
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 6: Performance & accessibility hardening ✅
+
+**Done**
+- **Inline critical CSS** (`inc/enqueue.php`): the theme CSS (3.7 kB gz) is now inlined via
+  `wp_add_inline_style` on a src-less `ba-main` handle instead of a render-blocking `<link>` —
+  verified: no external main-CSS link, `<style id='ba-main-inline-css'>` present.
+- **Mobile JS trim** (`src/three/scene.js`): `postprocessing` (bloom) is now a **dynamically-imported,
+  full-tier-only** chunk (`build-*.js`, 14 kB gz). Mobile/lite ships three (128 kB gz) + scene (3.5 kB gz)
+  only; the render loop starts on the plain renderer and swaps to the composer when it resolves.
+  Verified bloom still renders (forced-tier screenshot).
+- **Bloat trim** (`inc/dequeue-bloat.php`): dequeued `classic-theme-styles`, removed oEmbed discovery,
+  oEmbed host JS, and the REST `<head>` link. Verified all absent; page unaffected.
+- 3D + scroll remain fully off the critical path (dynamic import on `requestIdleCallback`); critical
+  payload = inline CSS + `main` (1.37 kB gz module, footer).
+- **Accessibility pass** (manual): AA contrast holds (muted text ~7.6:1, gold ~8:1 on `--bg`; dark text
+  on gold CTAs ~8:1); `:focus-visible` ring; skip link; decorative canvas `aria-hidden`; WhatsApp FAB +
+  form fields labelled; heading order h1→h2→h3 with no skips; do/don't uses icon+label (colour not sole carrier);
+  reduced-motion fully static (no 3D/scroll JS, CSS animations neutralised).
+- **No PHP notices/warnings** in output; HTTP 200; 10 sections; HTML 70 kB (incl. inline CSS + JSON-LD).
+
+**Notes / refine later**
+- **Lighthouse/CWV must be run on the deployed site** (Studio runs PHP-WASM/SQLite; no headless Chrome here).
+  Architecture targets the §9 budgets: LCP = inline-styled HTML H1 (no blocking CSS/JS), 3D deferred,
+  code-split, single robots tag. Founder/dev: run PageSpeed Insights post-deploy and record results here.
+- Scroll length ≈ 6–7 viewport-heights by inspection (within the ≤10vh budget).
+- `three.module` is 128 kB gz — inherent to Three.js; deferred so it doesn't affect LCP/TBT.
+
+**Next**
+- Phase 7: expose key copy/prices/FAQ as founder-editable core blocks in the Site Editor (convert the
+  §§2–7 `core/html` bodies), document editing + the plan §12 placeholders for the founder in README.
 
 ---
 

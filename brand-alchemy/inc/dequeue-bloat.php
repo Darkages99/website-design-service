@@ -34,3 +34,17 @@ remove_action( 'wp_head', 'feed_links_extra', 3 );
 
 // Drop the WP global-styles SVG filter duotone block (we don't use duotone).
 remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
+
+// Drop classic-theme alignment styles (unused by this block theme) + the
+// oEmbed discovery links / host JS we don't need on a single-page site.
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		wp_dequeue_style( 'classic-theme-styles' );
+	},
+	20
+);
+remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+remove_action( 'wp_head', 'rest_output_link_wp_head' ); // we don't expose the REST link on the front end
+

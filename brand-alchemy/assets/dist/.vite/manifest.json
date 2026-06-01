@@ -1,6 +1,19 @@
 {
+  "_three.module-C16rtgpX.js": {
+    "file": "assets/three.module-C16rtgpX.js",
+    "name": "three.module"
+  },
+  "node_modules/postprocessing/build/index.js": {
+    "file": "assets/build-DFAspLsd.js",
+    "name": "build",
+    "src": "node_modules/postprocessing/build/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_three.module-C16rtgpX.js"
+    ]
+  },
   "src/main.js": {
-    "file": "assets/main-D1qL0oke.js",
+    "file": "assets/main-DZR0gE4D.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
@@ -19,9 +32,16 @@
     "isDynamicEntry": true
   },
   "src/three/scene.js": {
-    "file": "assets/scene-C9znG1a0.js",
+    "file": "assets/scene-Bp8ki_jE.js",
     "name": "scene",
     "src": "src/three/scene.js",
-    "isDynamicEntry": true
+    "isDynamicEntry": true,
+    "imports": [
+      "src/main.js",
+      "_three.module-C16rtgpX.js"
+    ],
+    "dynamicImports": [
+      "node_modules/postprocessing/build/index.js"
+    ]
   }
 }
