@@ -7,8 +7,9 @@ import './styles/main.css'
  * AFTER first paint (via requestIdleCallback) so they never block the LCP — the
  * hero headline paints from the critical CSS bundle alone.
  *
- * - The Through-Line (src/through-line.js, pure SVG) loads on every device; it
- *   self-gates motion (reduced-motion → drawn static).
+ * - The Self-Building Blueprint (src/blueprint.js, pure SVG) loads on every device;
+ *   it self-gates motion (reduced-motion → every frame shown already built).
+ *   (The Through-Line, src/through-line.js, is a preserved alternative.)
  * - Smooth scroll + section reveals + count-ups + tilt (src/scroll.js) load only
  *   on the desktop "full" tier; phones/reduced-motion keep native scroll.
  *
@@ -46,11 +47,11 @@ function init() {
   console.info('[Brand-Alchemy] bundle loaded · tier:', tier, '· reduced-motion:', prefersReducedMotion)
 
   const start = () => {
-    // The Through-Line background — drawn on every device (it self-gates motion:
-    // reduced-motion renders it fully + statically). Pure SVG, no WebGL.
-    import('./through-line.js')
-      .then(({ initThroughLine }) => initThroughLine())
-      .catch((err) => console.warn('[Brand-Alchemy] through-line failed to load:', err))
+    // The Self-Building Blueprint background — drawn on every device (it self-gates
+    // motion: reduced-motion shows every frame already built). Pure SVG, no WebGL.
+    import('./blueprint.js')
+      .then(({ initBlueprint }) => initBlueprint())
+      .catch((err) => console.warn('[Brand-Alchemy] blueprint failed to load:', err))
 
     // Smooth scroll + section reveals + metric count-ups + card tilt — desktop
     // "full" tier only; phones/reduced-motion keep native scroll and render fully.

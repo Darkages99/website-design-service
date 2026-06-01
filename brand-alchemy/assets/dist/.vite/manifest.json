@@ -1,27 +1,27 @@
 {
+  "src/blueprint.js": {
+    "file": "assets/blueprint-DosKtr3R.js",
+    "name": "blueprint",
+    "src": "src/blueprint.js",
+    "isDynamicEntry": true
+  },
   "src/main.js": {
-    "file": "assets/main-B4PprRVS.js",
+    "file": "assets/main-DR32PUvT.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
     "dynamicImports": [
-      "src/through-line.js",
+      "src/blueprint.js",
       "src/scroll.js"
     ],
     "css": [
-      "assets/main-Y3m_UzkY.css"
+      "assets/main-CoXLc24_.css"
     ]
   },
   "src/scroll.js": {
     "file": "assets/scroll-BF47DXGu.js",
     "name": "scroll",
     "src": "src/scroll.js",
-    "isDynamicEntry": true
-  },
-  "src/through-line.js": {
-    "file": "assets/through-line-BTP4V5b6.js",
-    "name": "through-line",
-    "src": "src/through-line.js",
     "isDynamicEntry": true
   }
 }

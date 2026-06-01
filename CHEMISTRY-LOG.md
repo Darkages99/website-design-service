@@ -4,7 +4,40 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 9 ✅ — background is now **The Through-Line** (SVG); Three.js dropped from the bundle.
+**Current phase:** Phase 10 ✅ — background is now **The Self-Building Blueprint** (SVG, content-integrated).
+
+## 2026-06-01 — Phase 10: background → The Self-Building Blueprint ✅
+
+User found the Through-Line "too simple, no wow"; chose concept #3 **Self-Building Blueprint** instead.
+
+**Done — `src/blueprint.js` (new, pure SVG + IntersectionObserver, no Three/GSAP):**
+- A faint **drafting grid** behind everything (CSS on `#alchemy-bg`: fine 16 px + major 80 px cyan lines +
+  a vignette so edges fade and text stays clean). Then per real element a **construction frame** that draws
+  itself in as the element scrolls into view: an outline rect (`stroke-dashoffset` draw-on), 4 corner
+  **registration brackets** (snap/scale in), and corner **node dots**. Framed targets: `.ba-hero__inner`,
+  every `.ba-card`, `.ba-faq__item`, `.ba-final__inner`. The **active Services tier frames gold**
+  (`.ba-tier--active`), the **final CTA frames green** ("build complete"); everything else cyan.
+- Frames sit just OUTSIDE each element and BEHIND content (z-0) → they live in the gutters/gaps and never
+  cover text. Geometry via the **offsetParent chain** (layout coords) so the scroll-reveal transforms don't
+  offset them. `IntersectionObserver` (threshold 0.15, `-8%` bottom margin) toggles `.is-built` once per
+  element → CSS animates the draw-on. Rebuild on resize/load via `ResizeObserver` (debounced).
+  **Reduced-motion → every frame shown already built** (so it renders in Studio's screenshot — confirmed).
+- `main.js` now imports `./blueprint.js` (was `./through-line.js`); scroll.js still desktop-only; still no
+  Three.js in the bundle. The Through-Line (`src/through-line.js` + its `.ba-thread` CSS) is preserved as an
+  alternative; Liquid Gold / Catalytic Surface / Molecular also still available (see Phase 9 notes).
+
+**Verified**
+- Desktop screenshot (reduced-motion → all frames built): blueprint grid + bracketed/outlined frames around
+  the hero and every card, corner nodes, **gold frame on the ₹4,999 Essential tier**, over the drafting grid.
+  HTTP 200, no PHP errors. The section-by-section draw-on (the real "engineering itself" effect) only runs in
+  a real desktop browser (Studio = reduced-motion = all-built static).
+
+**Notes / tuning knobs**
+- Frame inset (PAD 6), bracket length (ARM 14), draw-on timing (0.9 s rect + 0.3 s bracket delay), grid
+  spacing/opacity, glow — all easy to tune. Could add dimension lines / spec labels / a sweeping "scan" line
+  for more drafting flavour if wanted.
+
+
 
 ## 2026-06-01 — Phase 9: background → The Through-Line ✅
 
