@@ -3,18 +3,18 @@ import './styles/main.css'
 /**
  * Brand-Alchemy front-end entry.
  *
- * The Through-Line background and the Lenis smooth-scroll layer load dynamically
+ * The Alchemy Nebula background and the Lenis smooth-scroll layer load dynamically
  * AFTER first paint (via requestIdleCallback) so they never block the LCP — the
  * hero headline paints from the critical CSS bundle alone.
  *
- * - The Self-Building Blueprint (src/blueprint.js, pure SVG) loads on every device;
- *   it self-gates motion (reduced-motion → every frame shown already built).
- *   (The Through-Line, src/through-line.js, is a preserved alternative.)
+ * - The Alchemy Nebula (src/three/scene.js, WebGL) mounts on 'lite'/'full' tiers;
+ *   reduced-motion / no-WebGL ('none') keeps the static CSS gradient. It listens to
+ *   scroll itself, so the particles burst continuously down the whole page.
  * - Smooth scroll + section reveals + count-ups + tilt (src/scroll.js) load only
  *   on the desktop "full" tier; phones/reduced-motion keep native scroll.
  *
- * (Three.js backgrounds — Liquid Gold, Catalytic Surface, Molecular — are kept in
- *  src/three/scene-*.js; to use one, import its mountScene here instead.)
+ * (Alternative backgrounds kept as modules: Self-Building Blueprint src/blueprint.js,
+ *  Through-Line src/through-line.js, Liquid Gold / Catalytic Surface src/three/scene-*.js.)
  */
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -43,18 +43,23 @@ function decideTier() {
 }
 
 function init() {
+  const canvas = document.getElementById('alchemy-bg')
+  if (!canvas) return
+
   const tier = decideTier()
   console.info('[Brand-Alchemy] bundle loaded · tier:', tier, '· reduced-motion:', prefersReducedMotion)
 
+  if (tier === 'none') return // reduced-motion / no-WebGL → static CSS gradient
+
   const start = () => {
-    // The Self-Building Blueprint background — drawn on every device (it self-gates
-    // motion: reduced-motion shows every frame already built). Pure SVG, no WebGL.
-    import('./blueprint.js')
-      .then(({ initBlueprint }) => initBlueprint())
-      .catch((err) => console.warn('[Brand-Alchemy] blueprint failed to load:', err))
+    // The Alchemy Nebula — luminous particles that swirl, drift with the cursor,
+    // and burst continuously with scroll energy (the scene listens to scroll itself).
+    import('./three/scene.js')
+      .then(({ mountScene }) => mountScene(canvas, { tier }))
+      .catch((err) => console.warn('[Brand-Alchemy] scene failed to load:', err))
 
     // Smooth scroll + section reveals + metric count-ups + card tilt — desktop
-    // "full" tier only; phones/reduced-motion keep native scroll and render fully.
+    // "full" tier only; phones keep native scroll and render fully.
     if (tier === 'full') {
       import('./scroll.js')
         .then(({ initSmoothScroll }) => initSmoothScroll())

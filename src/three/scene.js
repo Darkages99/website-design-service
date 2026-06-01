@@ -1,28 +1,24 @@
 import * as THREE from 'three'
+import { NOISE_GLSL } from './glsl.js'
 // `postprocessing` (bloom) is imported dynamically below, ONLY on the full tier,
 // so mobile/lite never downloads or parses it.
 
 /**
- * Liquid Gold / Mercury Flow (chemistry-lab branch).
+ * The Alchemy Nebula — continuously scroll-reactive.
  *
- * A pool of molten metal sits along the bottom of the viewport — viscous, mirror-
- * bright, gold transmuting toward emerald/cyan. It oozes with heavy inertia: slow
- * surface waves, drifting specular streaks, and a glowing meniscus line at the
- * surface. Scrolling raises the level and makes the surface more reflective; the
- * final CTA shifts it green/cyan (the "product"). The cursor leaves a single soft
- * dimple that fills back in — gentle and local, never a field-wide cascade.
+ * A luminous cloud of points on a sphere shell, flowed along a curl-noise field so
+ * it swirls like a slow galaxy, additive-blended with bloom so dense regions glow.
+ * It drifts with the cursor (parallax) and BURSTS with scroll energy.
  *
- * Implemented as ONE full-screen fragment shader (a 2-D height-field), so it's
- * cheap and rock-steady — no 3-D scene, no per-particle work, no mouse cascade.
- * It stays anchored to the bottom, leaving the whole upper screen clear for text.
+ * The fix vs. the original: the old build drove a one-shot "disperse + fade" from a
+ * hero-only scroll trigger, so it went inert after the first viewport. This version
+ * listens to the page scroll itself and keeps a decaying ENERGY value — every scroll
+ * gesture, anywhere on the page, pushes the points outward (proportional to scroll
+ * speed) and brightens them; they ease back when you stop. Overall scroll PROGRESS
+ * also tints the cloud gold → green as you move down the page. So it never stops.
  *
- * Returns the standard controller: { setScroll(0..1), setReaction(0..1), setHover(0..1), destroy() }
- * so main.js / scroll.js (reaction-progress scroll + bar) need no changes.
- *
- * Tiers: 'full' — desktop: + bloom, DPR ≤ 2 · 'lite' — mobile: no bloom, DPR 1.
- *
- * (The previous "Catalytic Surface" background is preserved in
- *  src/three/scene-catalytic-surface.js — copy it back over this file to restore it.)
+ * Returns { setHover(v), destroy() }. Tiers: 'full' = ~5000 pts + bloom, DPR ≤ 2;
+ * 'lite' = ~1000 pts, no bloom, DPR 1.
  */
 export function mountScene(canvas, { tier = 'full' } = {}) {
   const isFull = tier === 'full'
@@ -31,7 +27,7 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   try {
     renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: false, // full-screen shader — AA is irrelevant, save the cost
+      antialias: isFull,
       alpha: true,
       powerPreference: 'high-performance',
       failIfMajorPerformanceCaveat: false,
@@ -50,141 +46,163 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   renderer.toneMappingExposure = 1.0
 
   const scene = new THREE.Scene()
-  scene.background = buildBackdrop() // near-black with a faint warm floor glow
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+  scene.background = buildBackdrop()
+
+  const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100)
+  camera.position.set(0, 0, 3.6)
+
+  // --- Point cloud (Fibonacci sphere shell) ---------------------------------
+  const COUNT = isFull ? 5000 : 1000
+  const positions = new Float32Array(COUNT * 3)
+  const rands = new Float32Array(COUNT)
+  const golden = Math.PI * (3 - Math.sqrt(5))
+  for (let i = 0; i < COUNT; i++) {
+    const y = 1 - (i / (COUNT - 1)) * 2
+    const r = Math.sqrt(1 - y * y)
+    const theta = golden * i
+    const jitter = 0.82 + pseudoRandom(i) * 0.34
+    positions[i * 3 + 0] = Math.cos(theta) * r * jitter
+    positions[i * 3 + 1] = y * jitter
+    positions[i * 3 + 2] = Math.sin(theta) * r * jitter
+    rands[i] = pseudoRandom(i * 7.13 + 2.0)
+  }
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geometry.setAttribute('aRand', new THREE.BufferAttribute(rands, 1))
 
   const uniforms = {
     uTime: { value: 0 },
-    uScroll: { value: 0 },
-    uReaction: { value: 0 },
+    uEnergy: { value: 0 },     // scroll-burst energy (decays); keeps it alive on every scroll
+    uProgress: { value: 0 },   // overall page scroll progress → colour shift
     uHover: { value: 0 },
-    uMouse: { value: new THREE.Vector2(0.5, 0.0) },
-    uAspect: { value: window.innerWidth / Math.max(1, window.innerHeight) },
-    uGold: { value: new THREE.Color(0xffb15c) },
-    uGreen: { value: new THREE.Color(0x1fe08a) },
-    uCyan: { value: new THREE.Color(0x38e1ff) },
-    uDeep: { value: new THREE.Color(0x07120c) },
+    uFlow: { value: 0.2 },
+    uFreq: { value: 0.85 },
+    uSize: { value: isFull ? 26 : 30 },
+    uPixelRatio: { value: pixelRatio },
+    uColorA: { value: new THREE.Color(0xffb15c) }, // gold
+    uColorB: { value: new THREE.Color(0x1fe08a) }, // reagent green
+    uColorC: { value: new THREE.Color(0x38e1ff) }, // aqua cyan (sparkle)
   }
 
   const material = new THREE.ShaderMaterial({
     uniforms,
     transparent: true,
     depthWrite: false,
-    depthTest: false,
+    blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */ `
-      varying vec2 vUv;
+      uniform float uTime, uEnergy, uProgress, uHover, uFlow, uFreq, uSize, uPixelRatio;
+      attribute float aRand;
+      varying float vMix;
+      varying float vAlpha;
+      varying float vProg;
+      ${NOISE_GLSL}
       void main(){
-        vUv = uv;
-        gl_Position = vec4(position.xy, 0.0, 1.0); // full-screen clip-space quad
+        vec3 base = position;
+        // swirl along the curl-noise field; energy + hover widen the swirl
+        vec3 flow = ba_curl(base * uFreq + uTime * 0.05);
+        float amp = uFlow * (1.0 + uHover * 0.6 + uEnergy * 1.3);
+        vec3 pos = base + flow * amp;
+        // gentle breathing
+        pos *= 1.0 + 0.05 * sin(uTime * 0.5 + aRand * 6.2831);
+        // CONTINUOUS scroll burst: every scroll pushes points outward, returns on ease-out
+        pos += normalize(base) * uEnergy * (0.55 + aRand * 0.9);
+
+        vMix = clamp(pos.y * 0.5 + 0.55, 0.0, 1.0);
+        vProg = uProgress;
+        // stays bright the whole page; brightens on scroll bursts
+        vAlpha = clamp(0.82 + uEnergy * 0.5, 0.0, 1.4);
+
+        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mv;
+        float size = uSize * (0.45 + aRand) * uPixelRatio * (1.0 + uEnergy * 0.6);
+        gl_PointSize = size * (1.0 / -mv.z);
       }
     `,
     fragmentShader: /* glsl */ `
-      precision highp float;
-      varying vec2 vUv;
-      uniform float uTime, uScroll, uReaction, uHover, uAspect;
-      uniform vec2 uMouse;
-      uniform vec3 uGold, uGreen, uCyan, uDeep;
-
-      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
-      float noise(vec2 p){
-        vec2 i = floor(p); vec2 f = fract(p);
-        float a = hash(i), b = hash(i + vec2(1.0, 0.0));
-        float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-      }
-
+      uniform vec3 uColorA, uColorB, uColorC;
+      varying float vMix;
+      varying float vAlpha;
+      varying float vProg;
       void main(){
-        float x = vUv.x;
-        // base level rises as you scroll; product reaction nudges it a touch higher
-        float level = 0.15 + uScroll * 0.20 + uReaction * 0.04;
-        // viscous surface: slow low-frequency waves + a little drifting noise
-        float w = sin(x * 6.0 + uTime * 0.55) * 0.011
-                + sin(x * 11.0 - uTime * 0.42) * 0.006
-                + (noise(vec2(x * 3.0, uTime * 0.14)) - 0.5) * 0.012;
-        // gentle, local cursor dimple — eased + gated by hover so it never cascades
-        float mdx = (x - uMouse.x) * uAspect;
-        float dip = exp(-mdx * mdx * 7.0) * 0.020 * smoothstep(0.0, 0.2, uHover);
-        float surface = level + w - dip;
-
-        float below = surface - vUv.y; // > 0 inside the liquid
-
-        if (below < 0.0){
-          // above the surface: a soft glow rising off the metal, otherwise transparent
-          float ag = exp(-pow((vUv.y - surface) / 0.11, 2.0)) * 0.13;
-          vec3 gcol = mix(uGold, mix(uGreen, uCyan, uReaction), uReaction);
-          gl_FragColor = vec4(gcol * ag, ag);
-          return;
-        }
-
-        float depth = clamp(below, 0.0, 1.0);
-        // molten gradient: bright metal at the surface → dark deep
-        vec3 surfCol = mix(uGold, uCyan, uReaction * 0.55);
-        surfCol = mix(surfCol, uGreen, smoothstep(0.0, 0.5, depth) * 0.45);
-        vec3 col = mix(surfCol, uDeep, smoothstep(0.0, 0.40, depth));
-
-        // drifting specular streaks — reflective "mercury/gold"; more mirror-like with scroll
-        float streak = sin(x * 22.0 + sin(x * 5.0 + uTime * 0.5) * 2.0 - uTime * 0.8);
-        streak = pow(max(streak, 0.0), 6.0);
-        float reflectivity = 0.32 + uScroll * 0.4;
-        col += streak * reflectivity * (1.0 - depth * 1.5) * mix(uGold, uCyan, uReaction);
-
-        // bright meniscus highlight right at the surface line (feeds bloom)
-        float edge = exp(-pow((vUv.y - surface) / 0.0055, 2.0));
-        col += edge * 1.3 * mix(uGold, uCyan, uReaction * 0.5);
-
-        col *= (0.82 + 0.18 * depth);
-        gl_FragColor = vec4(col, 1.0);
+        vec2 c = gl_PointCoord - 0.5;
+        float d = length(c);
+        if (d > 0.5) discard;
+        float soft = smoothstep(0.5, 0.0, d);
+        vec3 col = mix(uColorB, uColorA, vMix);   // green(low) → gold(high)
+        col = mix(col, uColorC, vProg * 0.28);     // tinge cyan as you scroll down
+        col += pow(max(1.0 - d * 2.0, 0.0), 3.0) * 0.7; // bright core → feeds bloom
+        gl_FragColor = vec4(col * soft * vAlpha, 1.0);
       }
     `,
   })
 
-  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material)
-  quad.frustumCulled = false
-  scene.add(quad)
+  const points = new THREE.Points(geometry, material)
+  scene.add(points)
 
-  // --- Postprocessing (bloom on the full tier only, loaded on demand) -------
+  // --- Bloom (full tier only, loaded on demand) -----------------------------
   let composer = null
   if (isFull) {
     import('postprocessing')
       .then(({ EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize }) => {
-        const cmp = new EffectComposer(renderer)
-        cmp.addPass(new RenderPass(scene, camera))
-        cmp.addPass(new EffectPass(camera, new BloomEffect({
+        const c = new EffectComposer(renderer)
+        c.addPass(new RenderPass(scene, camera))
+        c.addPass(new EffectPass(camera, new BloomEffect({
           intensity: 0.7,
-          luminanceThreshold: 0.6,
-          luminanceSmoothing: 0.45,
+          luminanceThreshold: 0.5,
+          luminanceSmoothing: 0.4,
           mipmapBlur: true,
           kernelSize: KernelSize.LARGE,
         })))
-        cmp.setSize(window.innerWidth, window.innerHeight)
-        composer = cmp
+        c.setSize(window.innerWidth, window.innerHeight)
+        composer = c
       })
       .catch((err) => console.warn('[Brand-Alchemy] bloom unavailable:', err))
   }
 
-  // --- Layout ---------------------------------------------------------------
+  // --- Layout: bias the nebula center-right on wide screens -----------------
   function layout() {
     const w = window.innerWidth
     const h = window.innerHeight
+    const aspect = w / h
+    camera.aspect = aspect
+    camera.updateProjectionMatrix()
     renderer.setSize(w, h)
     if (composer) composer.setSize(w, h)
-    uniforms.uAspect.value = w / Math.max(1, h)
+    const offsetX = aspect > 1 ? THREE.MathUtils.clamp((aspect - 1) * 1.2, 0, 1.7) : 0
+    points.position.x = offsetX
+    camera.position.z = aspect < 0.85 ? 4.6 : 3.6
   }
   layout()
 
-  // --- Interaction (a single gentle dimple; heavily eased) ------------------
-  const mouseTarget = new THREE.Vector2(0.5, 0.0)
+  // --- Interaction: cursor parallax + continuous scroll energy --------------
+  const pointer = { x: 0, y: 0 }
+  const pointerSmooth = { x: 0, y: 0 }
   let hoverTarget = 0
-  let scrollTarget = 0
-  let reactionTarget = 0
 
   function onPointerMove(e) {
-    mouseTarget.set(e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight)
+    pointer.x = (e.clientX / window.innerWidth) * 2 - 1
+    pointer.y = (e.clientY / window.innerHeight) * 2 - 1
     hoverTarget = 1
   }
   const finePointer = window.matchMedia('(pointer: fine)').matches
   if (finePointer) window.addEventListener('pointermove', onPointerMove, { passive: true })
+
+  // Scroll → energy. Accumulate per-event impulse from scroll distance; the frame
+  // loop decays it, so holding a scroll keeps energy up and stopping eases it down.
+  let lastY = window.scrollY || 0
+  let impulse = 0
+  let energy = 0
+  let progressTarget = 0
+  function maxScroll() {
+    return Math.max(1, (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight)
+  }
+  function onScroll() {
+    const y = window.scrollY || window.pageYOffset || 0
+    impulse += Math.min(Math.abs(y - lastY) / 38, 0.7)
+    lastY = y
+    progressTarget = THREE.MathUtils.clamp(y / maxScroll(), 0, 1)
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
 
   // --- Render loop ----------------------------------------------------------
   const clock = new THREE.Clock()
@@ -194,15 +212,24 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   function frame() {
     if (!running) return
     raf = requestAnimationFrame(frame)
-    clock.getDelta()
-    uniforms.uTime.value = clock.elapsedTime
+    const dt = Math.min(clock.getDelta(), 0.05)
+    uniforms.uTime.value += dt
 
+    // energy: add impulse, then decay → continuous reactivity that settles when idle
+    energy += impulse
+    impulse = 0
+    energy *= 0.90
+    energy = Math.min(energy, 1.5)
+    uniforms.uEnergy.value += (energy - uniforms.uEnergy.value) * 0.25
+    uniforms.uProgress.value += (progressTarget - uniforms.uProgress.value) * 0.06
+
+    pointerSmooth.x += (pointer.x - pointerSmooth.x) * 0.045
+    pointerSmooth.y += (pointer.y - pointerSmooth.y) * 0.045
     uniforms.uHover.value += (hoverTarget - uniforms.uHover.value) * 0.05
-    uniforms.uScroll.value += (scrollTarget - uniforms.uScroll.value) * 0.08
-    uniforms.uReaction.value += (reactionTarget - uniforms.uReaction.value) * 0.06
-    uniforms.uMouse.value.x += (mouseTarget.x - uniforms.uMouse.value.x) * 0.05
-    uniforms.uMouse.value.y += (mouseTarget.y - uniforms.uMouse.value.y) * 0.05
-    hoverTarget *= 0.94
+    hoverTarget *= 0.96
+
+    points.rotation.y = uniforms.uTime.value * 0.05 + pointerSmooth.x * 0.4
+    points.rotation.x = -pointerSmooth.y * 0.3
 
     if (composer) composer.render()
     else renderer.render(scene, camera)
@@ -226,16 +253,15 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   document.addEventListener('visibilitychange', onVisibility)
 
   return {
-    setScroll(p) { scrollTarget = THREE.MathUtils.clamp(p, 0, 1) },
-    setReaction(p) { reactionTarget = THREE.MathUtils.clamp(p, 0, 1) },
     setHover(v) { hoverTarget = Math.max(hoverTarget, v) },
     destroy() {
       running = false
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('scroll', onScroll)
       document.removeEventListener('visibilitychange', onVisibility)
-      quad.geometry.dispose()
+      geometry.dispose()
       material.dispose()
       if (scene.background && scene.background.dispose) scene.background.dispose()
       if (composer) composer.dispose()
@@ -244,24 +270,34 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   }
 }
 
-/* Near-black backdrop with a faint warm glow along the bottom (ambient light off
-   the molten pool), keeping the upper screen dark so headline text stays legible.
-   Matches the CSS gradient fallback in main.css. */
+/* Deterministic per-index pseudo-random (no Math.random at module scope). */
+function pseudoRandom(n) {
+  const s = Math.sin(n * 127.1 + 311.7) * 43758.5453
+  return s - Math.floor(s)
+}
+
+/* Dark backdrop with a soft gold (top-right) + green (bottom-left) glow + a faint
+   cyan center, matching the CSS atmosphere so the canvas reads consistently. */
 function buildBackdrop() {
   const c = document.createElement('canvas')
   c.width = 512
   c.height = 512
   const ctx = c.getContext('2d')
-  ctx.fillStyle = '#08090e'
+  ctx.fillStyle = '#0a0a0f'
   ctx.fillRect(0, 0, 512, 512)
-  let g = ctx.createRadialGradient(256, 512, 0, 256, 512, 330)
-  g.addColorStop(0, 'rgba(255,153,51,0.16)')
+  let g = ctx.createRadialGradient(370, 140, 0, 370, 140, 360)
+  g.addColorStop(0, 'rgba(255,153,51,0.22)')
   g.addColorStop(1, 'rgba(255,153,51,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
-  g = ctx.createRadialGradient(120, 500, 0, 120, 500, 260)
-  g.addColorStop(0, 'rgba(31,224,138,0.10)')
+  g = ctx.createRadialGradient(120, 410, 0, 120, 410, 340)
+  g.addColorStop(0, 'rgba(31,224,138,0.15)')
   g.addColorStop(1, 'rgba(31,224,138,0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, 512, 512)
+  g = ctx.createRadialGradient(256, 270, 0, 256, 270, 300)
+  g.addColorStop(0, 'rgba(56,225,255,0.06)')
+  g.addColorStop(1, 'rgba(56,225,255,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
   const tex = new THREE.CanvasTexture(c)

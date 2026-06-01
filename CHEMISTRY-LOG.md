@@ -4,7 +4,41 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 10 ✅ — background is now **The Self-Building Blueprint** (SVG, content-integrated).
+**Current phase:** Phase 11 ✅ — background back to the **Alchemy Nebula**, now **continuously** scroll-reactive.
+
+## 2026-06-01 — Phase 11: back to the Alchemy Nebula (continuous scroll bursts) ✅
+
+User: "switch back to the original light particles that explode on scroll and move with mouse… enhance it to
+be more continuously scroll interactive, it stopped after first scroll."
+
+**Root cause of the stop:** the original drove a one-shot `setScroll` "disperse + fade" from a HERO-only
+ScrollTrigger (`start top top / end bottom top`) → it maxed out + faded once the hero left, then went inert.
+
+**Done — rewrote `src/three/scene.js` as the Alchemy Nebula, self-driven by scroll:**
+- Same curl-noise point cloud (~5000 full / 1000 lite, additive + bloom, `glsl.js` reused), cursor parallax
+  (rotation), gold→green by height. **No more hero-only fade.**
+- The scene now **listens to `window` scroll itself** and keeps a decaying `uEnergy`: each scroll event adds
+  impulse ∝ scroll distance; the frame loop decays it (×0.90/frame). So scrolling ANYWHERE bursts the points
+  outward (`pos += normalize(base)*uEnergy`) + brightens + grows them, and they ease back when you stop —
+  continuous reactivity down the whole page. `uProgress` (scrollY/maxScroll) tinges the cloud cyan→green as
+  you descend. Stays bright throughout (`vAlpha = 0.82 + uEnergy*0.5`) instead of fading to nothing.
+- `main.js` mounts the nebula again (canvas + tier; 'none' = static gradient) and no longer needs to feed it
+  scroll callbacks — `initSmoothScroll()` runs purely for smooth-scroll/reveals/count-ups/tilt on full tier.
+  Restored the `#alchemy-bg` nebula atmosphere gradient (gold TR / green BL / faint cyan). Three.js is back
+  in the bundle (the nebula needs it).
+- De-glassed solid surfaces (Phase 8) kept. The Blueprint/Through-Line/Liquid Gold/Catalytic modules remain
+  preserved as alternatives.
+
+**Verified**
+- Forced-tier desktop screenshot: gold→green luminous particle cloud in the hero, hero text legible, count-up
+  running ("82 days" mid-count). Reverted the forced-tier hack + rebuilt/synced. HTTP 200, no PHP errors.
+  The continuous scroll-burst + cursor drift only run in a real desktop browser (Studio = reduced-motion =
+  static gradient) — confirm the "keeps reacting on every scroll" behaviour live.
+
+**Tuning knobs:** impulse scale (`/38`, cap 0.7), energy decay (0.90), burst distance (`uEnergy*(0.55+rand*0.9)`),
+brightness floor (0.82). Raise decay→longer-lasting bursts; raise burst distance→bigger explosions.
+
+
 
 ## 2026-06-01 — Phase 10: background → The Self-Building Blueprint ✅
 
