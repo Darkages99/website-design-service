@@ -7,6 +7,8 @@ Chennai/Tamil Nadu SMBs. Built as a custom **WordPress block theme** with a vani
 ## Read these first
 - **`plan.md`** — the full build plan, architecture, design system, section specs, phases. Source of truth.
 - **`log.md`** — running status: what's done, what's in progress, what's broken.
+- **`HANDOFF.md`** — founder-facing guide: how to edit content (no code), the pre-launch
+  placeholder checklist (WhatsApp / Calendly / form / analytics / logo / etc.), and dev notes.
 
 ## Where things live
 - **Source / repo (edit here):** `E:\Website design service\`

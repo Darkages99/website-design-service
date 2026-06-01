@@ -3,9 +3,38 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 6 ✅ → starting Phase 7 (content editability + founder handoff)
+**Current phase:** Phase 7 ✅ — **all 7 phases complete.** Build is feature-complete pending the
+founder placeholders in `HANDOFF.md` Part 2 + a post-deploy Lighthouse run.
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 7: Content editability + founder handoff ✅
+
+**Done**
+- **Editability conversions** (front-end verified pixel-identical; `validate_blocks` 105/115):
+  - **Services tiers → core blocks**: plan name = `core/heading`, price = `core/paragraph` ×2 in a
+    `ba-tier__price` group, features = `core/list`, active CTA = `core/button`. Founder can now edit
+    **prices, names, and feature lists** in the Site Editor. Badges + lock pills stay as tiny `core/html`
+    chrome. Added `.ba-grid/.ba-tier/.ba-tier__price > * { margin-block-start: 0 }` to neutralise WP's
+    injected layout block-gap so spacing matched the old design exactly.
+  - **FAQ → `core/details` blocks** (native, editable accordion). Restyled: `.ba-faq__item summary` +
+    a rotating `+`→`×` glyph via `summary::after`; answer = `.ba-faq__item > :not(summary)`.
+  - Already-editable since Phase 3: hero copy, every section title/intro, About, final CTA copy (all core blocks).
+- **`HANDOFF.md`** — founder guide: Part 1 (edit content, no code), Part 2 (pre-launch placeholder checklist
+  with exact file locations), Part 3 (developer build/deploy + the FAQ↔schema sync rule). Linked from README.
+- **README** updated with the HANDOFF pointer.
+
+**Notes / refine later**
+- Remaining `core/html` (10): the 5 lower-edit-frequency card grids (Problem/Process/Concept-Work/Proof/
+  Boundary) + 4 tier badge/lock chrome bits + the contact form. All render fine and are parser-valid; the
+  validator’s lint prefers core blocks (grids) or Jetpack Forms (form). Converting the grids is optional
+  future polish (documented in HANDOFF Part 3); the form is intentionally a lightweight Formspree `<form>`.
+- **FAQ↔schema sync**: editing FAQ copy in the Site Editor does NOT auto-update the JSON-LD in
+  `inc/schema.php` — a dev must mirror changes. Documented in HANDOFF.
+
+**Project status: feature-complete.** Outstanding = founder inputs (HANDOFF Part 2) + deploy + Lighthouse.
 
 ---
 

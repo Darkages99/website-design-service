@@ -13,7 +13,7 @@
     ]
   },
   "src/main.js": {
-    "file": "assets/main-DZR0gE4D.js",
+    "file": "assets/main-BWmN_Gfo.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
@@ -22,7 +22,7 @@
       "src/scroll.js"
     ],
     "css": [
-      "assets/main-BgogSJnr.css"
+      "assets/main-Dh8-s-5z.css"
     ]
   },
   "src/scroll.js": {
@@ -32,7 +32,7 @@
     "isDynamicEntry": true
   },
   "src/three/scene.js": {
-    "file": "assets/scene-Bp8ki_jE.js",
+    "file": "assets/scene-CKoK3WeI.js",
     "name": "scene",
     "src": "src/three/scene.js",
     "isDynamicEntry": true,
