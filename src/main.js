@@ -64,10 +64,15 @@ function init() {
       import('./scroll.js')
         .then(({ initSmoothScroll }) => {
           initSmoothScroll({
-            // Hero scroll disperses + fades the nebula …
+            // Hero scroll disperses + fades the molecule (the reaction begins) …
             onHeroProgress: (p) => sceneCtl && sceneCtl.setScroll(p),
-            // … then it re-gathers + glows as the final CTA arrives.
-            onContactProgress: (p) => sceneCtl && sceneCtl.setScroll(1 - p * 0.9),
+            // … then it re-gathers, shifts gold→green, and glows as the product
+            // forms at the final CTA.
+            onContactProgress: (p) => {
+              if (!sceneCtl) return
+              sceneCtl.setScroll(1 - p * 0.9)
+              sceneCtl.setReaction(p)
+            },
           })
         })
         .catch((err) => console.warn('[Brand-Alchemy] scroll failed to load:', err))

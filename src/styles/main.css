@@ -64,13 +64,33 @@ html.lenis body { height: auto; }
   display: block;
   pointer-events: none; /* never blocks CTAs/forms */
   background:
-    radial-gradient(60% 60% at 75% 30%, rgba(255, 153, 51, 0.10), transparent 60%),
-    radial-gradient(70% 70% at 20% 80%, rgba(0, 210, 106, 0.06), transparent 60%),
+    radial-gradient(60% 60% at 75% 28%, rgba(255, 153, 51, 0.10), transparent 60%),
+    radial-gradient(70% 70% at 18% 82%, rgba(31, 224, 138, 0.07), transparent 60%),
+    radial-gradient(55% 55% at 50% 55%, rgba(56, 225, 255, 0.045), transparent 65%),
     var(--bg);
 }
 
 /* Content scrolls OVER the canvas */
 .ba-main { position: relative; z-index: 1; }
+
+/* Reaction-progress bar — fills gold→cyan→green as the page scrolls (added by
+   src/scroll.js on the desktop tier only). */
+.ba-rxn-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 55;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+.ba-rxn-progress__fill {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--gold), var(--cyan) 55%, var(--green));
+  box-shadow: 0 0 10px rgba(56, 225, 255, 0.5);
+  will-change: transform;
+}
 
 /* ---------------------------------------------------------------------------
    Top navigation (fixed, clearly visible — no hidden hamburger on desktop)
@@ -237,9 +257,21 @@ html.lenis body { height: auto; }
    Section heads (shared)
    --------------------------------------------------------------------------- */
 .ba-sec-head {
+  position: relative;
+  z-index: 0;
   text-align: center;
   margin-inline: auto;
   margin-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+/* Feathered scrim so section titles/intros stay AA-legible over the molecular bg. */
+.ba-sec-head::before {
+  content: '';
+  position: absolute;
+  inset: -20% -8%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(72% 86% at 50% 50%, var(--scrim) 0%, rgba(8, 9, 14, 0.5) 56%, transparent 86%);
+  filter: blur(10px);
 }
 .ba-sec-title {
   margin: 0.4rem 0 0;
@@ -280,8 +312,9 @@ html.lenis body { height: auto; }
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: clamp(1.4rem, 2.5vw, 2rem);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.42);
   transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
 }
 .ba-card:hover {
@@ -305,6 +338,8 @@ html.lenis body { height: auto; }
    §2 Problem
    --------------------------------------------------------------------------- */
 .ba-problem { padding-top: 2.6rem; }
+/* Keep the card title clear of the big corner-number watermark (no text overlap). */
+.ba-problem .ba-card__title { padding-right: 2.8rem; }
 .ba-problem__no {
   position: absolute;
   top: 0.9rem; right: 1.1rem;
@@ -448,11 +483,22 @@ html.lenis body { height: auto; }
 .ba-ic--yes { background: rgba(0, 210, 106, 0.16); color: var(--green); }
 .ba-ic--out { background: rgba(255, 153, 51, 0.16); color: var(--gold); }
 .ba-boundary__note {
+  position: relative;
+  z-index: 0;
   margin: 1.6rem auto 0;
   max-width: 64ch;
   text-align: center;
   color: var(--text-muted);
   font-size: 1.02rem;
+}
+.ba-boundary__note::before {
+  content: '';
+  position: absolute;
+  inset: -30% -6%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(80% 90% at 50% 50%, var(--scrim) 0%, rgba(8, 9, 14, 0.45) 60%, transparent 88%);
+  filter: blur(10px);
 }
 
 /* ---------------------------------------------------------------------------
@@ -502,7 +548,7 @@ html.lenis body { height: auto; }
   font-size: clamp(2.2rem, 5vw, 3.2rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--gold), var(--green));
+  background: linear-gradient(135deg, var(--gold), var(--cyan) 52%, var(--green));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -512,7 +558,16 @@ html.lenis body { height: auto; }
 /* ---------------------------------------------------------------------------
    §8 About
    --------------------------------------------------------------------------- */
-.ba-section--about { text-align: center; }
+.ba-section--about { position: relative; z-index: 0; text-align: center; }
+.ba-section--about::before {
+  content: '';
+  position: absolute;
+  inset: 2% -6%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(68% 80% at 50% 50%, var(--scrim) 0%, rgba(8, 9, 14, 0.5) 58%, transparent 88%);
+  filter: blur(12px);
+}
 .ba-about__lead {
   margin: 1.2rem auto 0;
   max-width: 60ch;

@@ -1,15 +1,22 @@
-/* Design tokens — mirror of theme.json palette, plus layout/motion vars used by CSS & JS. */
+/* Design tokens — mirror of theme.json palette, plus layout/motion vars used by CSS & JS.
+   Chemistry-lab branch: hybrid palette (gold catalyst + brighter reagent-green + cyan glassware/bonds)
+   and FROSTED-BUT-OPAQUE surfaces — readability is prioritised over the old translucent glass. */
 :root {
   --bg: #0a0a0f;
   --bg-soft: #101018;
   --text: #f0f0f5;
-  --text-muted: #a0a0b0;
-  --gold: #ff9933;
-  --green: #00d26a;
+  --text-muted: #a7adba;        /* nudged lighter for contrast over busier panels */
+  --gold: #ff9933;              /* catalyst / primary CTA accent */
+  --green: #1fe08a;             /* reagent green (brightened from #00d26a) */
+  --cyan: #38e1ff;              /* glassware / molecular bonds — used sparingly */
 
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --scrim: rgba(10, 10, 15, 0.75);
+  /* Surfaces: near-opaque "lab panel" instead of see-through glass.
+     A small blur is kept only as a frosted hint at the edges. */
+  --glass-bg: rgba(18, 20, 28, 0.88);
+  --glass-border: rgba(96, 196, 222, 0.20);   /* faint cyan rim, like lab glass */
+  --glass-blur: 6px;
+  --scrim: rgba(8, 9, 14, 0.85);               /* behind text sitting directly over the canvas */
+  --panel-scrim: rgba(8, 9, 14, 0.66);         /* quiets the animated bg behind the content column */
 
   --nav-h: 72px;
   --maxw: 1200px;
