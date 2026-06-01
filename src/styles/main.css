@@ -230,6 +230,367 @@ a.ba-btn-link.ba-btn--ghost {
 .ba-whatsapp-fab svg { width: 30px; height: 30px; fill: currentColor; }
 
 /* ---------------------------------------------------------------------------
+   Section heads (shared)
+   --------------------------------------------------------------------------- */
+.ba-sec-head {
+  text-align: center;
+  margin-inline: auto;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+.ba-sec-title {
+  margin: 0.4rem 0 0;
+  font-size: clamp(1.8rem, 4vw, 2.9rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.ba-sec-intro {
+  margin: 1rem auto 0;
+  max-width: 52ch;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+}
+
+/* ---------------------------------------------------------------------------
+   Grids + base card (glassmorphism)
+   --------------------------------------------------------------------------- */
+.ba-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.ba-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.ba-grid--4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) {
+  .ba-grid--3, .ba-grid--4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .ba-grid--3, .ba-grid--4 { grid-template-columns: 1fr; }
+}
+
+.ba-card {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.ba-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 153, 51, 0.35);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+.ba-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.ba-card__text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.97rem;
+}
+
+/* ---------------------------------------------------------------------------
+   §2 Problem
+   --------------------------------------------------------------------------- */
+.ba-problem { padding-top: 2.6rem; }
+.ba-problem__no {
+  position: absolute;
+  top: 0.9rem; right: 1.1rem;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: rgba(255, 153, 51, 0.22);
+  letter-spacing: -0.04em;
+}
+
+/* ---------------------------------------------------------------------------
+   §3 Process
+   --------------------------------------------------------------------------- */
+.ba-steps { counter-reset: none; }
+.ba-step__no {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), #ffb866);
+  color: #0a0a0f;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* ---------------------------------------------------------------------------
+   §4 Services / tiers
+   --------------------------------------------------------------------------- */
+.ba-tier { display: flex; flex-direction: column; }
+.ba-tier__name {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.ba-tier__price {
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.ba-tier__amount { font-size: 1.5rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.ba-tier__note { font-size: 0.82rem; color: var(--text-muted); }
+.ba-tier__features {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  flex: 1;
+}
+.ba-tier__features li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+.ba-tier__features li::before {
+  content: "✓";
+  position: absolute; left: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+.ba-tier__cta { align-self: flex-start; }
+
+.ba-tier--active {
+  border-color: rgba(255, 153, 51, 0.4);
+  box-shadow: 0 0 0 1px rgba(255, 153, 51, 0.15), 0 20px 60px rgba(255, 153, 51, 0.08);
+}
+
+/* Coming-soon tiers: visible + readable, but clearly locked (no CTA) */
+.ba-tier--soon { opacity: 0.96; }
+.ba-tier--soon .ba-tier__name,
+.ba-tier--soon .ba-tier__amount,
+.ba-tier--soon .ba-tier__features li { opacity: 0.62; }
+.ba-tier--soon:hover { transform: none; border-color: var(--glass-border); box-shadow: none; }
+.ba-badge {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  margin-right: 0.4rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ba-badge--popular { background: rgba(255, 153, 51, 0.16); color: var(--gold); border: 1px solid rgba(255, 153, 51, 0.4); }
+.ba-badge--soon { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--glass-border); }
+.ba-tier__lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  border: 1px dashed var(--glass-border);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.ba-tier__lock svg { opacity: 0.8; }
+
+/* ---------------------------------------------------------------------------
+   §5 What you get vs don't
+   --------------------------------------------------------------------------- */
+.ba-boundary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+@media (max-width: 720px) { .ba-boundary { grid-template-columns: 1fr; } }
+.ba-bcol__head {
+  margin: 0 0 1.1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.ba-bcol--do { border-color: rgba(0, 210, 106, 0.3); }
+.ba-bcol--dont { border-color: rgba(255, 153, 51, 0.28); }
+.ba-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+.ba-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text);
+  font-size: 0.98rem;
+}
+.ba-checklist em { color: var(--text-muted); font-style: normal; font-size: 0.85em; }
+.ba-ic {
+  flex: none;
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-top: 1px;
+}
+.ba-ic--yes { background: rgba(0, 210, 106, 0.16); color: var(--green); }
+.ba-ic--out { background: rgba(255, 153, 51, 0.16); color: var(--gold); }
+.ba-boundary__note {
+  margin: 1.6rem auto 0;
+  max-width: 64ch;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.02rem;
+}
+
+/* ---------------------------------------------------------------------------
+   §6 Portfolio / concept work
+   --------------------------------------------------------------------------- */
+.ba-work { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.ba-work__thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+.ba-work__thumb--mfg { background: linear-gradient(135deg, #1a1208, #3a2710 60%, #0c0c12); }
+.ba-work__thumb--health { background: linear-gradient(135deg, #04150c, #0a2c1c 60%, #0c0c12); }
+.ba-work__thumb--realty { background: linear-gradient(135deg, #161018, #2a1d2e 60%, #0c0c12); }
+.ba-work__concept {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: rgba(10, 10, 15, 0.55);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.ba-work .ba-card__title { margin: 1.2rem clamp(1.4rem, 2.5vw, 2rem) 0.5rem; }
+.ba-work .ba-card__text { margin: 0 clamp(1.4rem, 2.5vw, 2rem); }
+.ba-work__link {
+  margin: 1.1rem clamp(1.4rem, 2.5vw, 2rem) clamp(1.4rem, 2.5vw, 2rem);
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-flex;
+  gap: 0.4rem;
+  transition: gap 0.2s var(--ease);
+}
+.ba-work__link:hover { gap: 0.7rem; }
+
+/* ---------------------------------------------------------------------------
+   §7 Proof metrics
+   --------------------------------------------------------------------------- */
+.ba-metric { text-align: center; }
+.ba-metric__num {
+  display: block;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--gold), var(--green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ba-metric__label { display: block; margin-top: 0.5rem; color: var(--text-muted); font-size: 0.97rem; }
+
+/* ---------------------------------------------------------------------------
+   §8 About
+   --------------------------------------------------------------------------- */
+.ba-section--about { text-align: center; }
+.ba-about__lead {
+  margin: 1.2rem auto 0;
+  max-width: 60ch;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--text);
+  line-height: 1.6;
+}
+.ba-about__body { margin: 1.2rem auto 0; max-width: 60ch; color: var(--text-muted); }
+
+/* ---------------------------------------------------------------------------
+   §9 FAQ accordion (native <details> — accessible + crawlable, no JS needed)
+   --------------------------------------------------------------------------- */
+.ba-faq { display: grid; gap: 0.8rem; }
+.ba-faq__item {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ba-faq__item[open] { border-color: rgba(255, 153, 51, 0.3); }
+.ba-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  list-style: none;
+}
+.ba-faq__q::-webkit-details-marker { display: none; }
+.ba-faq__icon {
+  flex: none;
+  position: relative;
+  width: 18px; height: 18px;
+}
+.ba-faq__icon::before,
+.ba-faq__icon::after {
+  content: "";
+  position: absolute;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.ba-faq__icon::before { top: 8px; left: 0; width: 18px; height: 2px; }
+.ba-faq__icon::after { top: 0; left: 8px; width: 2px; height: 18px; }
+.ba-faq__item[open] .ba-faq__icon::after { transform: rotate(90deg); opacity: 0; }
+.ba-faq__a {
+  padding: 0 1.4rem 1.25rem;
+  color: var(--text-muted);
+}
+.ba-faq__a p { margin: 0; }
+
+/* ---------------------------------------------------------------------------
+   §10 Final CTA
+   --------------------------------------------------------------------------- */
+.ba-section--final { text-align: center; }
+.ba-final__inner {
+  position: relative;
+  padding: clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid rgba(255, 153, 51, 0.25);
+  border-radius: calc(var(--radius) * 1.5);
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgba(255, 153, 51, 0.12), transparent 60%),
+    var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+.ba-final__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+.ba-final__sub {
+  margin: 1.1rem auto 2rem;
+  max-width: 54ch;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+}
+.ba-final__cta { justify-content: center; }
+
+/* ---------------------------------------------------------------------------
    Footer
    --------------------------------------------------------------------------- */
 .ba-footer {

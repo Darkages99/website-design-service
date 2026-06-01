@@ -1,6 +1,6 @@
 {
   "src/main.js": {
-    "file": "assets/main-B9g6oHfC.js",
+    "file": "assets/main-GYmun5v3.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
@@ -9,7 +9,7 @@
       "src/scroll.js"
     ],
     "css": [
-      "assets/main-BOCqLtoJ.css"
+      "assets/main-DXrmiaTS.css"
     ]
   },
   "src/scroll.js": {

@@ -3,9 +3,50 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 2 ✅ → starting Phase 3 (build sections §§2–10)
+**Current phase:** Phase 3 ✅ → starting Phase 4 (scroll choreography & 3D reactions)
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
 **Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+
+---
+
+## 2026-06-01 — Phase 3: Sections §§2–10 (content + layout) ✅
+
+**Done** — all in `templates/front-page.html` (block markup) + `src/styles/main.css` (styling):
+- **§2 Problem** — 3 glass cards (01/02/03 watermark): brochure-not-salesperson / months-&-lakhs / no-idea-if-it-makes-money.
+- **§3 Process** — 4-step grid w/ numbered gold badges: Discovery Call → AI Build → Lead Tracking → Launch + Report.
+- **§4 Services** — 3 tiers. **Essential Web Presence (₹35k–₹75k) ACTIVE** w/ gold border + "Book a Call"→#contact.
+  **Lead Generation** ("Most Popular" + "Coming Soon" badges) and **Digital Growth Partner** ("Coming Soon") are
+  **locked, dimmed, no CTA** — lock pill instead. (User scope change applied.)
+- **§5 Boundary** — split: green "We build this in" (Technical/On-page SEO, AEO, GEO, Speed/CWV, Tracking) vs
+  orange "We partner this out" (Off-page SEO, backlinks, guest posts, blogs, digital PR) + radical-honesty note.
+- **§6 Concept Work** — **gallery of 3 placeholder cards** (Mfg/Logistics, Healthcare Diagnostics, Real Estate),
+  each labelled "Concept Work — Your Brand Here"; "View Interactive Case Study" → **`#` placeholder**. (Scope change applied.)
+- **§7 Proof** — 3 metric cards (gradient numbers, `data-count-to` for Phase-4 count-up): <2s / Day 1 / 90-day.
+- **§8 About** — founder narrative (closer + AI). Copy is placeholder pending founder input (plan §12).
+- **§9 FAQ** — native `<details>` accordion (accessible + crawlable; CSS +→× icon). Anchor Q "Do you guarantee
+  Google rankings?" answered honestly. Good for FAQPage schema in Phase 5.
+- **§10 Final CTA** — glowing panel "Stop Losing Leads to a Slow Website" + Book My Free Audit (#calendly-placeholder)
+  + WhatsApp (`wa.me` placeholder). Section id="contact"; nav "Book a Call" + hero/audit CTAs point here.
+- Header nav "Book a Call" repointed `#book`→`#contact`. Hero CTAs → #contact / wa.me placeholder.
+- **Block validity:** ran `validate_blocks` — added `anchor` to each section group + removed stray HTML divider
+  comments → all structural blocks valid (no Site-Editor "block recovery" risk).
+- **Verified via screenshots:** desktop + mobile render all sections; cards/grids stack cleanly at ≤900/≤560px;
+  AA contrast holds (glass cards + scrims over the dark canvas). Orb confirmed to coexist with sections (forced-tier
+  check) — parks small/dim after the hero, lower sections stay clean.
+
+**Notes / refine later**
+- **Phase 7 (editability) TODO:** §§2–7 card/list/tier bodies are currently `core/html` blocks (Studio's
+  `validate_blocks` flags these — it prefers editable core blocks). They render perfectly and are parser-valid,
+  but the founder can't rich-text-edit them yet. Phase 7 will convert Problem/Process/Tiers/Boundary/Work/Metrics
+  to `core/group + heading/paragraph/list/buttons` (keeping `html` only for the FAQ `<details>` accordion + lock SVG).
+  Deferred deliberately: editability is Phase 7's job, and refactoring mid-content-phase risks layout drift.
+- Scroll length is a touch generous (large section padding). Tighten in Phase 6 if it exceeds the ≤10vh budget.
+- Metric count-up, FAQ-icon scroll-rotate, card stagger/tilt, per-section sphere morph → all Phase 4.
+
+**Next**
+- Phase 4: ScrollTrigger choreography off the existing Lenis plumbing — section reveals (fade/rise + stagger),
+  card tilt ≤5° toward cursor (desktop), process-connector draw, metric count-ups, per-section sphere morph, and
+  the sphere "stabilises + glows" at the Final CTA. All scrubbed/reversible; reduced-motion path stays static.
 
 ---
 
