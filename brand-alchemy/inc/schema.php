@@ -29,12 +29,12 @@ add_action(
 
 		// Mirrors the on-page FAQ accordion.
 		$faqs = array(
-			array( 'Do you guarantee Google rankings?', 'No — and be wary of anyone who does. We guarantee a technically perfect, search-ready site. Rankings depend on ongoing off-page work, which we refer to trusted specialist partners.' ),
+			array( 'Do you guarantee Google rankings?', 'No — and be wary of anyone who does. We guarantee a technically perfect, search-ready site. Rankings depend on ongoing off-page work, which you will need to arrange yourself for now — we would rather be upfront than point you to someone we do not yet trust.' ),
 			array( 'How fast can my site go live?', 'The Essential Web Presence build typically goes live in 3–5 days once we have your content and a short discovery call.' ),
-			array( 'What does it cost?', 'The Essential Web Presence is a one-time ₹35,000–₹75,000 depending on scope. We quote a fixed price on the discovery call — no surprises.' ),
+			array( 'What does it cost?', 'The Essential Web Presence starts at a one-time ₹4,999. We quote a fixed price on the discovery call — no surprises.' ),
 			array( 'Do I need to know anything technical?', 'Not a thing. You bring the business knowledge; we handle every technical detail and explain the rest in plain English.' ),
 			array( 'Can I edit the site myself later?', 'Yes. Your site is built on WordPress, so you can update text, images, and prices yourself — and we will show you how.' ),
-			array( 'Do you handle ongoing SEO and backlinks?', 'We build the on-page and technical SEO foundation. Off-page work — backlinks, guest posts, digital PR — we refer to vetted specialists rather than do it half-heartedly.' ),
+			array( 'Do you handle ongoing SEO and backlinks?', 'We build the on-page and technical SEO foundation. Off-page work — backlinks, guest posts, digital PR — you will need to arrange yourself for now; we will not refer you to someone we do not yet trust.' ),
 		);
 		$faq_entities = array();
 		foreach ( $faqs as $faq ) {
@@ -77,7 +77,7 @@ add_action(
 				'name'               => 'Brand-Alchemy',
 				'url'                => $home,
 				'image'              => $og_image,
-				'priceRange'         => '₹₹',
+				'priceRange'         => '₹',
 				'parentOrganization' => array( '@id' => $org_id ),
 				'areaServed'         => $area,
 				'address'            => array(
@@ -104,16 +104,16 @@ add_action(
 				'serviceType' => 'Web design and development',
 				'provider'    => array( '@id' => $org_id ),
 				'areaServed'  => $area,
-				'description' => '5-page responsive website with a technical SEO foundation, Google Business Profile setup, WhatsApp click-to-chat, and a basic contact form with lead tracking. Live in 3–5 days.',
+				'description' => '5-page responsive website with free domain, hosting and SSL for one year, Google Business Profile and on-page SEO setup, WhatsApp chat and click-to-call, an enquiry form with lead tracking, and 5 business email IDs. Live in 3–5 days.',
 				'offers'      => array(
 					'@type'              => 'Offer',
 					'priceCurrency'      => 'INR',
 					'availability'       => 'https://schema.org/InStock',
+					'price'              => 4999,
 					'priceSpecification' => array(
 						'@type'         => 'PriceSpecification',
 						'priceCurrency' => 'INR',
-						'minPrice'      => 35000,
-						'maxPrice'      => 75000,
+						'price'         => 4999,
 					),
 				),
 			),
