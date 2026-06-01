@@ -73,23 +73,37 @@ html.lenis body { height: auto; }
 /* Content scrolls OVER the canvas */
 .ba-main { position: relative; z-index: 1; }
 
-/* Reaction-progress bar — fills gold→cyan→green as the page scrolls (added by
-   src/scroll.js on the desktop tier only). */
-.ba-rxn-progress {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  z-index: 55;
-  background: rgba(255, 255, 255, 0.05);
+/* The Through-Line — an SVG thread (src/through-line.js) that draws down the page
+   and stitches the sections together. It sits BEHIND the content (z-0), so solid
+   cards occlude it and it stays text-safe; it shows in the gutter + section gaps. */
+.ba-thread {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
   pointer-events: none;
+  overflow: visible;
 }
-.ba-rxn-progress__fill {
-  height: 100%;
-  transform: scaleX(0);
-  transform-origin: left center;
-  background: linear-gradient(90deg, var(--gold), var(--cyan) 55%, var(--green));
-  box-shadow: 0 0 10px rgba(56, 225, 255, 0.5);
-  will-change: transform;
+.ba-thread__spine {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(56, 225, 255, 0.55));
+  transition: stroke-dashoffset 0.08s linear;
+}
+.ba-thread__head {
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(255, 209, 160, 0.9));
+  transition: opacity 0.25s ease;
+}
+.ba-thread__node {
+  opacity: 0;
+  transition: opacity 0.55s var(--ease);
+}
+.ba-thread__node.is-on { opacity: 1; }
+.ba-thread__node circle { filter: drop-shadow(0 0 5px rgba(56, 225, 255, 0.45)); }
+.ba-thread__halo { opacity: 0.5; }
+@media (prefers-reduced-motion: reduce) {
+  .ba-thread__node { opacity: 1; }
 }
 
 /* ---------------------------------------------------------------------------

@@ -3,15 +3,17 @@ import './styles/main.css'
 /**
  * Brand-Alchemy front-end entry.
  *
- * The Three.js "Alchemy Sphere" and the Lenis smooth-scroll layer are loaded
- * dynamically AFTER first paint (via requestIdleCallback) so they never block
- * the LCP — the hero headline paints from the critical CSS bundle alone, and
- * the heavy 3D/scroll chunk arrives a beat later.
+ * The Through-Line background and the Lenis smooth-scroll layer load dynamically
+ * AFTER first paint (via requestIdleCallback) so they never block the LCP — the
+ * hero headline paints from the critical CSS bundle alone.
  *
- * Capability gate decides how much we run:
- *   'none' — reduced-motion, no WebGL, or a weak phone → keep the CSS gradient
- *   'lite' — capable phone/tablet → lightweight sphere, no bloom, native scroll
- *   'full' — desktop with a fine pointer → full sphere + bloom + smooth scroll
+ * - The Through-Line (src/through-line.js, pure SVG) loads on every device; it
+ *   self-gates motion (reduced-motion → drawn static).
+ * - Smooth scroll + section reveals + count-ups + tilt (src/scroll.js) load only
+ *   on the desktop "full" tier; phones/reduced-motion keep native scroll.
+ *
+ * (Three.js backgrounds — Liquid Gold, Catalytic Surface, Molecular — are kept in
+ *  src/three/scene-*.js; to use one, import its mountScene here instead.)
  */
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -40,41 +42,21 @@ function decideTier() {
 }
 
 function init() {
-  const canvas = document.getElementById('alchemy-bg')
-  if (!canvas) return
-
   const tier = decideTier()
   console.info('[Brand-Alchemy] bundle loaded · tier:', tier, '· reduced-motion:', prefersReducedMotion)
 
-  if (tier === 'none') return // static CSS gradient is the whole experience
-
   const start = () => {
-    let sceneCtl = null
+    // The Through-Line background — drawn on every device (it self-gates motion:
+    // reduced-motion renders it fully + statically). Pure SVG, no WebGL.
+    import('./through-line.js')
+      .then(({ initThroughLine }) => initThroughLine())
+      .catch((err) => console.warn('[Brand-Alchemy] through-line failed to load:', err))
 
-    import('./three/scene.js')
-      .then(({ mountScene }) => {
-        sceneCtl = mountScene(canvas, { tier })
-      })
-      .catch((err) => console.warn('[Brand-Alchemy] scene failed to load:', err))
-
-    // Smooth scroll + ScrollTrigger only on the full (desktop) tier; phones
-    // keep native momentum scrolling. The hero-progress callback drifts the
-    // sphere away as the hero leaves the viewport.
+    // Smooth scroll + section reveals + metric count-ups + card tilt — desktop
+    // "full" tier only; phones/reduced-motion keep native scroll and render fully.
     if (tier === 'full') {
       import('./scroll.js')
-        .then(({ initSmoothScroll }) => {
-          initSmoothScroll({
-            // Hero scroll disperses + fades the molecule (the reaction begins) …
-            onHeroProgress: (p) => sceneCtl && sceneCtl.setScroll(p),
-            // … then it re-gathers, shifts gold→green, and glows as the product
-            // forms at the final CTA.
-            onContactProgress: (p) => {
-              if (!sceneCtl) return
-              sceneCtl.setScroll(1 - p * 0.9)
-              sceneCtl.setReaction(p)
-            },
-          })
-        })
+        .then(({ initSmoothScroll }) => initSmoothScroll())
         .catch((err) => console.warn('[Brand-Alchemy] scroll failed to load:', err))
     }
   }

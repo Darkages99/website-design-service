@@ -4,7 +4,43 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 8 ✅ — **de-glassed** all surfaces (solid panels); background concept TBD (user choosing).
+**Current phase:** Phase 9 ✅ — background is now **The Through-Line** (SVG); Three.js dropped from the bundle.
+
+## 2026-06-01 — Phase 9: background → The Through-Line ✅
+
+User picked "The Through-Line" from 3 content-integrated concepts I proposed (they wanted wow + tight
+integration with the content structure; disliked the prior backgrounds' detached/over-reactive feel).
+
+**Done — `src/through-line.js` (new, pure SVG, no Three/GSAP):**
+- A single luminous thread (gold→cyan→green gradient) drawn down the page just left of the content column,
+  **behind** the content (z-0) so solid cards occlude it — text-safe by z-order; it shows in the gutter +
+  section gaps. Drawn progressively on scroll (`stroke-dashoffset` = scroll progress) with a glowing head at
+  the tip; a node lights up at each section as the line reaches it. Section Y from `offsetTop/offsetHeight`
+  (immune to the reveal transforms). Multi-card sections get node clusters (Problem×3, Process×4, Services×3,
+  Proof×3), Services' active node is gold, Boundary forks green/dim, the final CTA is a bright green
+  "customer" node + halo. Native rAF-throttled scroll + ResizeObserver rebuild. **Reduced-motion → drawn
+  full + static** (so it shows in Studio's screenshot, which it does).
+- **Rewired `main.js`:** loads `through-line.js` on every device (self-gates motion); loads `scroll.js`
+  (Lenis smooth scroll + reveals + count-ups + tilt) only on the desktop "full" tier. **No longer mounts a
+  Three.js scene** → `three.module` (≈128 kB gz) is gone from the shipped bundle. Removed the top
+  reaction-progress bar from `scroll.js` (the spine is the progress indicator now).
+- **Preserved backgrounds (swap by importing one's `mountScene` in main.js):** Liquid Gold →
+  `src/three/scene-liquid-gold.js`; Catalytic Surface → `src/three/scene-catalytic-surface.js`;
+  Molecular Bond Network → git `9fd341c`. (`src/three/scene.js` still holds Liquid Gold but is unused/unbundled.)
+
+**Verified**
+- Desktop screenshot (reduced-motion → static thread): glowing gold→cyan→green spine down the left gutter
+  with lit node clusters per section, solid cards, no glass. HTTP 200, no PHP errors. Build dropped the
+  Three chunk (lighter bundle). The scroll-draw animation + traveling head only show in a real desktop
+  browser (Studio = reduced-motion = static).
+
+**Notes / tuning knobs**
+- Thread presence: spine width 2.5 + cyan drop-shadow glow; node radii 3.8 / services 5.4 / CTA 8; baseX sits
+  ~26 px left of the 1200-px content column (deeper gutter on wide screens, edge band on narrow). Easy to
+  thicken/brighten or weave more. The "wow" is the draw-on-scroll + comet head + sequential node lighting —
+  confirm live.
+
+
 
 ## 2026-06-01 — Phase 8: remove glassmorphism (solid surfaces) ✅
 

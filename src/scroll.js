@@ -77,9 +77,6 @@ export function initSmoothScroll({ onHeroProgress, onContactProgress } = {}) {
   // --- Card tilt toward cursor (≤5°, desktop fine pointers) -----------------
   const teardownTilt = initTilt()
 
-  // --- Reaction-progress bar (gold→green fill tracks page scroll) -----------
-  const teardownProgress = initReactionProgress(triggers)
-
   // Recompute positions once everything is laid out / after load.
   ScrollTrigger.refresh()
   window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
@@ -89,7 +86,6 @@ export function initSmoothScroll({ onHeroProgress, onContactProgress } = {}) {
     destroy() {
       triggers.forEach((t) => t && t.kill())
       teardownTilt && teardownTilt()
-      teardownProgress && teardownProgress()
       gsap.ticker.remove(tick)
       lenis.destroy()
     },
@@ -146,24 +142,6 @@ function initCountUps(triggers) {
         }),
     }))
   })
-}
-
-/* A thin top progress bar that fills gold→cyan→green as the page scrolls — the
-   "reaction progress" of the page. Desktop-only (this module is full-tier-only). */
-function initReactionProgress(triggers) {
-  const bar = document.createElement('div')
-  bar.className = 'ba-rxn-progress'
-  const fill = document.createElement('div')
-  fill.className = 'ba-rxn-progress__fill'
-  bar.appendChild(fill)
-  document.body.appendChild(bar)
-  const st = ScrollTrigger.create({
-    start: 0,
-    end: 'max',
-    onUpdate: (self) => { fill.style.transform = `scaleX(${self.progress.toFixed(4)})` },
-  })
-  triggers.push(st)
-  return () => bar.remove()
 }
 
 /* Subtle 3D tilt toward the cursor; locked "Coming Soon" tiers stay flat. */

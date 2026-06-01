@@ -1,47 +1,27 @@
 {
-  "_three.module-BLkX8U5V.js": {
-    "file": "assets/three.module-BLkX8U5V.js",
-    "name": "three.module"
-  },
-  "node_modules/postprocessing/build/index.js": {
-    "file": "assets/build-60nMb4wU.js",
-    "name": "build",
-    "src": "node_modules/postprocessing/build/index.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_three.module-BLkX8U5V.js"
-    ]
-  },
   "src/main.js": {
-    "file": "assets/main-DdZugAOx.js",
+    "file": "assets/main-B4PprRVS.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
     "dynamicImports": [
-      "src/three/scene.js",
+      "src/through-line.js",
       "src/scroll.js"
     ],
     "css": [
-      "assets/main-BuInYwLN.css"
+      "assets/main-Y3m_UzkY.css"
     ]
   },
   "src/scroll.js": {
-    "file": "assets/scroll-FRIo7bsz.js",
+    "file": "assets/scroll-BF47DXGu.js",
     "name": "scroll",
     "src": "src/scroll.js",
     "isDynamicEntry": true
   },
-  "src/three/scene.js": {
-    "file": "assets/scene-DMIv3qNA.js",
-    "name": "scene",
-    "src": "src/three/scene.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "src/main.js",
-      "_three.module-BLkX8U5V.js"
-    ],
-    "dynamicImports": [
-      "node_modules/postprocessing/build/index.js"
-    ]
+  "src/through-line.js": {
+    "file": "assets/through-line-BTP4V5b6.js",
+    "name": "through-line",
+    "src": "src/through-line.js",
+    "isDynamicEntry": true
   }
 }
