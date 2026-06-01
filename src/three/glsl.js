@@ -1,11 +1,7 @@
 /**
- * GLSL building blocks for the Alchemy Sphere, inlined as JS template strings
- * (no vite-plugin-glsl dependency). These are injected into the stock
- * MeshStandardMaterial shader via onBeforeCompile so we keep real PBR
- * metalness + env-map reflections and just add a noise-driven displacement.
- *
- * All code is GLSL ES 1.00 compatible (three rewrites stock chunks; our
- * injected code must stay GLSL1-safe: constant-bound loops, no texture()).
+ * GLSL building blocks for the Alchemy particle nebula, inlined as JS template
+ * strings (no vite-plugin-glsl dependency). Exports simplex-3D noise + a
+ * curl-noise field used to flow the points. GLSL-ES-1.00 safe.
  */
 
 /* Ashima / Stefan Gustavson simplex 3D noise — public domain.
@@ -60,80 +56,31 @@ float ba_snoise(vec3 v){
 }
 `
 
-/* Uniform + varying declarations and the displacement field. Injected into
-   the VERTEX shader's <common> chunk. `dir` is a unit direction on the sphere
-   (== normalized position, since radius is 1), so displacement is purely
-   radial and we can recompute normals from neighbouring directions. */
-export const VERTEX_COMMON = /* glsl */ `
-uniform float uTime;
-uniform float uAmp;
-uniform float uFreq;
-uniform float uSpeed;
-uniform float uScroll;
-uniform float uHover;
-varying float vDisp;
+/* Curl noise — a divergence-free vector field, perfect for swirling particle
+   flow that never collapses or explodes. Built from the curl of a snoise-based
+   vector potential. */
+export const NOISE_GLSL = /* glsl */ `
 ${SIMPLEX_3D}
 
-float ba_fbm(vec3 p){
-  float v = 0.0;
-  float a = 0.5;
-  for(int i = 0; i < 4; i++){
-    v += a * ba_snoise(p);
-    p *= 2.02;
-    a *= 0.5;
-  }
-  return v;
+vec3 ba_snoiseVec3(vec3 p){
+  return vec3(
+    ba_snoise(p),
+    ba_snoise(vec3(p.y - 19.1, p.z + 33.4, p.x + 47.2)),
+    ba_snoise(vec3(p.z + 74.2, p.x - 124.5, p.y + 99.4))
+  );
 }
 
-float ba_field(vec3 dir){
-  float t = uTime * uSpeed;
-  return ba_fbm(dir * uFreq + vec3(0.0, 0.0, t));
+vec3 ba_curl(vec3 p){
+  const float e = 0.1;
+  vec3 dx = vec3(e, 0.0, 0.0);
+  vec3 dy = vec3(0.0, e, 0.0);
+  vec3 dz = vec3(0.0, 0.0, e);
+  vec3 px0 = ba_snoiseVec3(p - dx); vec3 px1 = ba_snoiseVec3(p + dx);
+  vec3 py0 = ba_snoiseVec3(p - dy); vec3 py1 = ba_snoiseVec3(p + dy);
+  vec3 pz0 = ba_snoiseVec3(p - dz); vec3 pz1 = ba_snoiseVec3(p + dz);
+  float x = (py1.z - py0.z) - (pz1.y - pz0.y);
+  float y = (pz1.x - pz0.x) - (px1.z - px0.z);
+  float z = (px1.y - px0.y) - (py1.x - py0.x);
+  return normalize(vec3(x, y, z) / (2.0 * e));
 }
-
-vec3 ba_displace(vec3 dir){
-  float n = ba_field(dir);
-  float amp = uAmp * (1.0 + uHover * 0.55) * (1.0 - uScroll * 0.65);
-  return dir * (1.0 + n * amp);
-}
-`
-
-/* Recompute the surface normal from the displaced field using two tangent
-   neighbours. Replaces <beginnormal_vertex>. */
-export const BEGINNORMAL = /* glsl */ `
-vec3 baDir = normalize(normal);
-vec3 baRef = abs(baDir.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
-vec3 baTan = normalize(cross(baRef, baDir));
-vec3 baBit = cross(baDir, baTan);
-float baEps = 0.0028;
-vec3 baP0 = ba_displace(baDir);
-vec3 baP1 = ba_displace(normalize(baDir + baTan * baEps));
-vec3 baP2 = ba_displace(normalize(baDir + baBit * baEps));
-vec3 objectNormal = normalize(cross(baP1 - baP0, baP2 - baP0));
-if (dot(objectNormal, baDir) < 0.0) objectNormal = -objectNormal;
-#ifdef USE_TANGENT
-  vec3 objectTangent = vec3( tangent.xyz );
-#endif
-`
-
-/* Apply the displacement to the vertex position + pass the field value to the
-   fragment shader for the gold/green emissive shimmer. Replaces <begin_vertex>. */
-export const BEGINVERTEX = /* glsl */ `
-vDisp = ba_field(normalize(normal));
-vec3 transformed = ba_displace(normalize(normal));
-`
-
-/* Fragment declarations. Injected into the FRAGMENT shader's <common> chunk. */
-export const FRAGMENT_COMMON = /* glsl */ `
-uniform vec3 uColorA;
-uniform vec3 uColorB;
-uniform float uEmissive;
-varying float vDisp;
-`
-
-/* Drive a subtle two-tone emissive from the displacement: peaks glow gold (and
-   feed the bloom), valleys read cooler green. Appended after <emissivemap_fragment>. */
-export const FRAGMENT_EMISSIVE = /* glsl */ `
-float baEd = smoothstep(-0.25, 0.65, vDisp);
-vec3 baAlch = mix(uColorB, uColorA, baEd);
-totalEmissiveRadiance += baAlch * uEmissive * (0.18 + baEd * baEd);
 `

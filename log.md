@@ -9,6 +9,26 @@
 
 ---
 
+## 2026-06-01 — Design revision: hero 3D reworked per user feedback ✅
+
+User feedback: *"remove that glob in the background and replace it with something
+more visually appealing."* The Phase-2 noise-displaced metallic sphere read as a
+lumpy blob.
+
+**Done** — replaced it with the **Alchemy Nebula** (same controller interface, layout,
+and scroll/cursor hooks, so nothing downstream changed):
+- `src/three/glsl.js` — swapped the orb displacement chunks for **curl-noise** (divergence-free
+  flow) built on the existing simplex-3D noise. Exports `NOISE_GLSL`.
+- `src/three/scene.js` — rewrote as a `THREE.Points` cloud: ~5000 points (full) / ~1000 (lite)
+  on a Fibonacci-sphere shell, flowed along the curl field (swirls like a slow galaxy), **additive
+  blending + bloom** so dense regions glow, gold(top)→green(bottom) gradient = the transmutation.
+  Scroll disperses + fades it; cursor parallax; dark gold/green backdrop baked into the scene so
+  additive+bloom composite cleanly. Dropped the env map / PMREM / 3-point lights (not needed for points).
+- **Verified (forced tier):** a luminous gold→green energy cloud, clearly more premium than the blob;
+  hero copy stays legible over scrim + dark backdrop. Reduced-motion/mobile still fall back to the gradient.
+
+---
+
 ## 2026-06-01 — Phase 3: Sections §§2–10 (content + layout) ✅
 
 **Done** — all in `templates/front-page.html` (block markup) + `src/styles/main.css` (styling):

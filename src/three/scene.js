@@ -1,26 +1,20 @@
 import * as THREE from 'three'
 import { EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize } from 'postprocessing'
-import {
-  VERTEX_COMMON,
-  BEGINNORMAL,
-  BEGINVERTEX,
-  FRAGMENT_COMMON,
-  FRAGMENT_EMISSIVE,
-} from './glsl.js'
+import { NOISE_GLSL } from './glsl.js'
 
 /**
- * The Alchemy Sphere.
+ * The Alchemy Nebula.
  *
- * A high-detail icosahedron whose surface is morphed by a 4-octave simplex
- * noise field (GLSL, injected into a real MeshStandardMaterial so we keep PBR
- * metalness + env-map reflections). Lit with a 3-point rig + a procedural
- * gold→green environment map, with a subtle bloom on the gold peaks.
+ * A luminous cloud of points distributed on a sphere shell and flowed along a
+ * curl-noise field, so it swirls like a slow galaxy of golden energy being
+ * transmuted into green. Additive-blended with a subtle bloom so dense regions
+ * glow. Gold (top) → green (bottom) gradient = the brand's transmutation.
  *
  * Returns a controller: { setScroll(0..1), setHover(0..1), destroy() }.
  *
- * Tiers (decided by the caller from device capability):
- *   'full' — desktop: detail 64, bloom, DPR ≤ 2
- *   'lite' — capable mobile: detail 32, no bloom, DPR 1
+ * Tiers (chosen by the caller from device capability):
+ *   'full' — desktop: ~5000 points, bloom, DPR ≤ 2
+ *   'lite' — capable mobile: ~1000 points, no bloom, DPR 1
  */
 export function mountScene(canvas, { tier = 'full' } = {}) {
   const isFull = tier === 'full'
@@ -35,102 +29,123 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
       failIfMajorPerformanceCaveat: false,
     })
   } catch (err) {
-    // WebGL unavailable — leave the CSS gradient fallback in place.
     console.warn('[Brand-Alchemy] WebGL init failed; keeping static background.', err)
     return null
   }
 
   const DPR_CAP = isFull ? 2 : 1
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_CAP))
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, DPR_CAP)
+  renderer.setPixelRatio(pixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearAlpha(0) // composite over the CSS radial-gradient atmosphere
+  renderer.setClearAlpha(0)
   renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.05
+  renderer.toneMappingExposure = 1.0
 
   const scene = new THREE.Scene()
+  // Dark gold/green atmosphere baked into the scene so additive points + bloom
+  // composite over a stable backdrop (matches the CSS gradient fallback).
+  scene.background = buildBackdrop()
 
-  const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 100)
+  const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100)
   camera.position.set(0, 0, 3.6)
 
-  const BASE_SCALE = 0.78 // refined orb, not a viewport-filling blob
-
-  // --- Procedural environment map (gold → dark → green) ---------------------
-  // Drawn to a canvas, treated as an equirect reflection map, PMREM-processed
-  // so MeshStandardMaterial gets correct roughness-aware reflections. No HDR
-  // download, and the reflections stay on-brand.
-  const envTexture = buildGradientEnv()
-  const pmrem = new THREE.PMREMGenerator(renderer)
-  const envRT = pmrem.fromEquirectangular(envTexture)
-  scene.environment = envRT.texture
-  envTexture.dispose()
-  pmrem.dispose()
-
-  // --- The sphere -----------------------------------------------------------
-  const detail = isFull ? 64 : 32
-  const geometry = new THREE.IcosahedronGeometry(1, detail)
+  // --- Build the point cloud (Fibonacci sphere shell) -----------------------
+  const COUNT = isFull ? 5000 : 1000
+  const positions = new Float32Array(COUNT * 3)
+  const rands = new Float32Array(COUNT)
+  const golden = Math.PI * (3 - Math.sqrt(5))
+  for (let i = 0; i < COUNT; i++) {
+    const y = 1 - (i / (COUNT - 1)) * 2 // 1 → -1
+    const r = Math.sqrt(1 - y * y)
+    const theta = golden * i
+    const jitter = 0.82 + pseudoRandom(i) * 0.34 // shell thickness
+    positions[i * 3 + 0] = Math.cos(theta) * r * jitter
+    positions[i * 3 + 1] = y * jitter
+    positions[i * 3 + 2] = Math.sin(theta) * r * jitter
+    rands[i] = pseudoRandom(i * 7.13 + 2.0)
+  }
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+  geometry.setAttribute('aRand', new THREE.BufferAttribute(rands, 1))
 
   const uniforms = {
     uTime: { value: 0 },
-    uAmp: { value: 0.18 },
-    uFreq: { value: 1.3 },
-    uSpeed: { value: 0.2 },
     uScroll: { value: 0 },
     uHover: { value: 0 },
-    uColorA: { value: new THREE.Color(0xff9933) }, // gold (brand)
-    uColorB: { value: new THREE.Color(0x00d26a) }, // green (brand)
-    uEmissive: { value: 0.3 },
+    uFlow: { value: 0.2 },
+    uFreq: { value: 0.85 },
+    uSize: { value: isFull ? 26 : 30 },
+    uPixelRatio: { value: pixelRatio },
+    uColorA: { value: new THREE.Color(0xffb15c) }, // warm gold
+    uColorB: { value: new THREE.Color(0x18e08a) }, // emerald
   }
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x9a6322,
-    metalness: 1.0,
-    roughness: 0.3,
-    envMapIntensity: 1.1,
-    emissive: 0x000000,
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */ `
+      uniform float uTime, uScroll, uHover, uFlow, uFreq, uSize, uPixelRatio;
+      attribute float aRand;
+      varying float vMix;
+      varying float vAlpha;
+      ${NOISE_GLSL}
+      void main(){
+        vec3 base = position;
+        // swirl along the curl-noise field; speed varies per point
+        vec3 flow = ba_curl(base * uFreq + uTime * 0.045);
+        float amp = uFlow * (1.0 + uHover * 0.6);
+        vec3 pos = base + flow * amp;
+        // gentle breathing
+        pos *= 1.0 + 0.05 * sin(uTime * 0.5 + aRand * 6.2831);
+        // scroll: disperse outward + fade as the hero leaves
+        pos += normalize(base) * uScroll * 1.5;
+
+        vMix = clamp(pos.y * 0.5 + 0.55, 0.0, 1.0);
+        vAlpha = 1.0 - uScroll * 0.92;
+
+        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mv;
+        float size = uSize * (0.45 + aRand) * uPixelRatio;
+        gl_PointSize = size * (1.0 / -mv.z);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColorA, uColorB;
+      varying float vMix;
+      varying float vAlpha;
+      void main(){
+        vec2 c = gl_PointCoord - 0.5;
+        float d = length(c);
+        if (d > 0.5) discard;
+        float soft = smoothstep(0.5, 0.0, d);
+        vec3 col = mix(uColorB, uColorA, vMix);
+        col += pow(max(1.0 - d * 2.0, 0.0), 3.0) * 0.7; // bright core → feeds bloom
+        gl_FragColor = vec4(col * soft * vAlpha, 1.0);
+      }
+    `,
   })
 
-  material.onBeforeCompile = (shader) => {
-    for (const key in uniforms) shader.uniforms[key] = uniforms[key]
+  const points = new THREE.Points(geometry, material)
+  scene.add(points)
 
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\n' + VERTEX_COMMON)
-      .replace('#include <beginnormal_vertex>', BEGINNORMAL)
-      .replace('#include <begin_vertex>', BEGINVERTEX)
-
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\n' + FRAGMENT_COMMON)
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n' + FRAGMENT_EMISSIVE)
-  }
-
-  const sphere = new THREE.Mesh(geometry, material)
-  scene.add(sphere)
-
-  // --- 3-point lighting rig (env map does most of the reflective work) ------
-  const key = new THREE.DirectionalLight(0xfff0dd, 2.2)
-  key.position.set(3, 2.5, 4)
-  const fill = new THREE.DirectionalLight(0x88ccff, 0.7)
-  fill.position.set(-4, -1, 2)
-  const rim = new THREE.DirectionalLight(0x00d26a, 1.1)
-  rim.position.set(-2, 3, -4)
-  scene.add(key, fill, rim)
-  scene.add(new THREE.AmbientLight(0x202028, 0.6))
-
-  // --- Postprocessing (bloom only on the full tier) -------------------------
+  // --- Postprocessing (bloom on the full tier only) -------------------------
   let composer = null
   if (isFull) {
     composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(scene, camera))
     const bloom = new BloomEffect({
-      intensity: 0.32,
-      luminanceThreshold: 0.85,
-      luminanceSmoothing: 0.32,
+      intensity: 0.7,
+      luminanceThreshold: 0.5,
+      luminanceSmoothing: 0.4,
       mipmapBlur: true,
-      kernelSize: KernelSize.MEDIUM,
+      kernelSize: KernelSize.LARGE,
     })
     composer.addPass(new EffectPass(camera, bloom))
   }
 
-  // --- Layout: shift the sphere toward center-right on wide screens ---------
+  // --- Layout: bias the nebula toward center-right on wide screens ----------
   function layout() {
     const w = window.innerWidth
     const h = window.innerHeight
@@ -139,18 +154,15 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     camera.updateProjectionMatrix()
     renderer.setSize(w, h)
     if (composer) composer.setSize(w, h)
-
-    // Wide screens: push the sphere right so hero copy breathes on the left.
-    const offsetX = aspect > 1 ? THREE.MathUtils.clamp((aspect - 1) * 1.15, 0, 1.7) : 0
-    sphere.position.x = offsetX
-    // Smaller / portrait viewports: pull the camera back so the orb always fits.
-    camera.position.z = aspect < 0.85 ? 4.7 : 3.6
+    const offsetX = aspect > 1 ? THREE.MathUtils.clamp((aspect - 1) * 1.2, 0, 1.7) : 0
+    points.position.x = offsetX
+    camera.position.z = aspect < 0.85 ? 4.6 : 3.6
   }
   layout()
 
-  // --- Interaction state ----------------------------------------------------
-  const pointer = { x: 0, y: 0 }       // target, normalized -1..1
-  const pointerSmooth = { x: 0, y: 0 } // eased
+  // --- Interaction ----------------------------------------------------------
+  const pointer = { x: 0, y: 0 }
+  const pointerSmooth = { x: 0, y: 0 }
   let hoverTarget = 0
   let scrollTarget = 0
 
@@ -159,7 +171,6 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     pointer.y = (e.clientY / window.innerHeight) * 2 - 1
     hoverTarget = 1
   }
-  // Only wire pointer reactivity on fine pointers (desktop).
   const finePointer = window.matchMedia('(pointer: fine)').matches
   if (finePointer) window.addEventListener('pointermove', onPointerMove, { passive: true })
 
@@ -167,7 +178,6 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   const clock = new THREE.Clock()
   let raf = 0
   let running = true
-  const baseRotY = 0
 
   function frame() {
     if (!running) return
@@ -175,21 +185,14 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     const dt = Math.min(clock.getDelta(), 0.05)
     uniforms.uTime.value += dt
 
-    // ease interaction values
     pointerSmooth.x += (pointer.x - pointerSmooth.x) * 0.045
     pointerSmooth.y += (pointer.y - pointerSmooth.y) * 0.045
     uniforms.uHover.value += (hoverTarget - uniforms.uHover.value) * 0.05
     uniforms.uScroll.value += (scrollTarget - uniforms.uScroll.value) * 0.08
-    hoverTarget *= 0.96 // hover energy decays when the cursor stops
+    hoverTarget *= 0.96
 
-    // idle drift + cursor parallax + drift up & shrink as the hero scrolls away
-    const s = uniforms.uScroll.value
-    sphere.rotation.y = baseRotY + uniforms.uTime.value * 0.06 + pointerSmooth.x * 0.35
-    sphere.rotation.x = -pointerSmooth.y * 0.28 + s * 0.2
-    sphere.scale.setScalar(BASE_SCALE * (1 - s * 0.28))
-    sphere.position.y = s * 0.9
-    material.opacity = 1
-    material.envMapIntensity = 1.15 * (1 - s * 0.5)
+    points.rotation.y = uniforms.uTime.value * 0.05 + pointerSmooth.x * 0.4
+    points.rotation.x = -pointerSmooth.y * 0.3
 
     if (composer) composer.render()
     else renderer.render(scene, camera)
@@ -206,7 +209,7 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
       cancelAnimationFrame(raf)
     } else if (!running) {
       running = true
-      clock.getDelta() // discard the long gap
+      clock.getDelta()
       frame()
     }
   }
@@ -223,35 +226,39 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
       document.removeEventListener('visibilitychange', onVisibility)
       geometry.dispose()
       material.dispose()
-      envRT.dispose()
+      if (scene.background && scene.background.dispose) scene.background.dispose()
       if (composer) composer.dispose()
       renderer.dispose()
     },
   }
 }
 
-/* Gold → dark → green vertical gradient as an equirectangular reflection map. */
-function buildGradientEnv() {
+/* Deterministic per-index pseudo-random (no Math.random at module scope). */
+function pseudoRandom(n) {
+  const s = Math.sin(n * 127.1 + 311.7) * 43758.5453
+  return s - Math.floor(s)
+}
+
+/* Dark backdrop with a soft gold (top-right) + green (bottom-left) glow,
+   matching the CSS atmosphere so the canvas reads consistently. */
+function buildBackdrop() {
   const c = document.createElement('canvas')
   c.width = 512
-  c.height = 256
+  c.height = 512
   const ctx = c.getContext('2d')
-  const g = ctx.createLinearGradient(0, 0, 0, 256)
-  g.addColorStop(0.0, '#ffd9a0') // warm sky highlight
-  g.addColorStop(0.32, '#ff9933') // gold band
-  g.addColorStop(0.55, '#0a0a0f') // dark horizon
-  g.addColorStop(0.8, '#06241a') // deep green floor
-  g.addColorStop(1.0, '#00d26a') // green rim
+  ctx.fillStyle = '#0a0a0f'
+  ctx.fillRect(0, 0, 512, 512)
+  let g = ctx.createRadialGradient(370, 150, 0, 370, 150, 360)
+  g.addColorStop(0, 'rgba(255,153,51,0.22)')
+  g.addColorStop(1, 'rgba(255,153,51,0)')
   ctx.fillStyle = g
-  ctx.fillRect(0, 0, 512, 256)
-  // a couple of soft "studio" highlights for livelier metal reflections
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'
-  ctx.beginPath(); ctx.ellipse(150, 70, 60, 26, 0, 0, Math.PI * 2); ctx.fill()
-  ctx.fillStyle = 'rgba(255,210,150,0.7)'
-  ctx.beginPath(); ctx.ellipse(380, 95, 44, 20, 0, 0, Math.PI * 2); ctx.fill()
-
+  ctx.fillRect(0, 0, 512, 512)
+  g = ctx.createRadialGradient(120, 410, 0, 120, 410, 340)
+  g.addColorStop(0, 'rgba(0,210,106,0.14)')
+  g.addColorStop(1, 'rgba(0,210,106,0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, 512, 512)
   const tex = new THREE.CanvasTexture(c)
-  tex.mapping = THREE.EquirectangularReflectionMapping
   tex.colorSpace = THREE.SRGBColorSpace
   return tex
 }
