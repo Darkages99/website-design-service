@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__mcp-registry__list_connectors"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "wordpress-studio"
+  ],
+  "enableAllProjectMcpServers": true
+}
