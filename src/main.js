@@ -8,8 +8,9 @@ import './styles/main.css'
  * hero headline paints from the critical CSS bundle alone.
  *
  * - The Alchemy Nebula (src/three/scene.js, WebGL) mounts on 'lite'/'full' tiers;
- *   reduced-motion / no-WebGL ('none') keeps the static CSS gradient. It listens to
- *   scroll itself, so the particles burst continuously down the whole page.
+ *   reduced-motion / no-WebGL ('none') keeps the static CSS gradient. It blooms in
+ *   from a defined sphere, drifts with the cursor, and disperses as the hero scrolls
+ *   away (driven by the onHeroProgress callback below on the desktop "full" tier).
  * - Smooth scroll + section reveals + count-ups + tilt (src/scroll.js) load only
  *   on the desktop "full" tier; phones/reduced-motion keep native scroll.
  *
@@ -30,9 +31,8 @@ function hasWebGL() {
 
 function decideTier() {
   if (prefersReducedMotion || !hasWebGL()) return 'none'
-  const coarse = window.matchMedia('(pointer: coarse)').matches
   const small = window.matchMedia('(max-width: 720px)').matches
-  if (small || coarse) {
+  if (small) {
     // Only run 3D on a phone if it looks like it can take it, to protect the
     // mobile LCP/TBT budget. Otherwise the static gradient is the experience.
     const mem = navigator.deviceMemory || 4
@@ -52,17 +52,31 @@ function init() {
   if (tier === 'none') return // reduced-motion / no-WebGL → static CSS gradient
 
   const start = () => {
-    // The Alchemy Nebula — luminous particles that swirl, drift with the cursor,
-    // and burst continuously with scroll energy (the scene listens to scroll itself).
-    import('./three/scene.js')
-      .then(({ mountScene }) => mountScene(canvas, { tier }))
+    let sceneCtl = null
+
+    // Easy swap configuration. Options: 'reactor' | 'quantum-lattice' | 'nebula'
+    const ACTIVE_BG = 'nebula'
+
+    const sceneImport = ACTIVE_BG === 'reactor'
+      ? import('./three/scene-alchemical-reactor.js')
+      : ACTIVE_BG === 'quantum-lattice'
+        ? import('./three/scene-quantum-lattice.js')
+        : import('./three/scene.js')
+
+    sceneImport
+      .then(({ mountScene }) => {
+        sceneCtl = mountScene(canvas, { tier })
+      })
       .catch((err) => console.warn('[Brand-Alchemy] scene failed to load:', err))
 
-    // Smooth scroll + section reveals + metric count-ups + card tilt — desktop
-    // "full" tier only; phones keep native scroll and render fully.
+    // Smooth scroll + ScrollTrigger only on the full (desktop) tier; phones
+    // keep native momentum scrolling. The hero-progress callback drifts the
+    // sphere away as the hero leaves the viewport.
     if (tier === 'full') {
       import('./scroll.js')
-        .then(({ initSmoothScroll }) => initSmoothScroll())
+        .then(({ initSmoothScroll }) => {
+          initSmoothScroll({ onHeroProgress: (p) => sceneCtl && sceneCtl.setScroll(p) })
+        })
         .catch((err) => console.warn('[Brand-Alchemy] scroll failed to load:', err))
     }
   }

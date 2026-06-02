@@ -3,10 +3,145 @@
 > Running status. Newest entry on top. Pairs with `plan.md` (the map). Any agent: update this at
 > every phase boundary and whenever something breaks or a decision changes.
 
-**Current phase:** Phase 7 ✅ — **all 7 phases complete.** Build is feature-complete pending the
-founder placeholders in `HANDOFF.md` Part 2 + a post-deploy Lighthouse run.
+**Current phase:** Phase 16 ✅ — Consolidated onto `main`: original Alchemy Nebula (now with a defined-sphere bloom entrance), grammar/clarity pass, and the Brand-Alchemy identity restored.
 **Live site:** `http://localhost:8881` (Studio site `Brand-alchemy.info`)
-**Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` (synced from `E:` via `sync.ps1`)
+**Theme runs from:** `C:\Users\SARANG RAJGOPAUL\Studio\brand-alchemyinfo\wp-content\themes\brand-alchemy\` & `...\brand-alchemy-chem\` (synced from `E:` via `sync.ps1` and direct robocopy)
+
+---
+
+## 2026-06-02 — Phase 16: Consolidation onto main — nebula entrance, grammar pass, identity restore ✅
+
+User: *"Settled on the original nebula as the proper background. Content changes need to be merged with main. Fix the grammatical issues — clarity is king but within the rules of good English. Make the initial nebula more of a defined sphere, and slightly smaller in radius so it expands for a bit longer."*
+
+**Done**
+- **Original Alchemy Nebula kept as the default** (`ACTIVE_BG = 'nebula'`, `src/main.js`) — the `da2ef7d` point cloud with the `{ setScroll, setHover, destroy }` interface and hero-scroll dispersal via `onHeroProgress`. The chemistry-lab experiments (Liquid Gold, Catalytic Surface, Through-Line, Self-Building Blueprint, Quantum Lattice, Alchemical Reactor) stay in-tree as **dormant, swappable alternatives** (per user).
+- **Nebula entrance bloom** (`src/three/scene.js`): on mount the cloud now reads as a crisp, slightly smaller **defined sphere** and blooms outward into the full nebula over ~6.5s. `position` now stores the unit sphere direction; the shell-thickness jitter moved to a new `aJitter` attribute; a `uIntro` uniform (0→1, smootherstep on the JS side) fades in the radius (`uIntroStart` 0.6 → 1.0), shell thickness, curl swirl (gated by `uIntro²` so it stays defined at first), and breathing. Tuning knobs: `uIntroStart`, `INTRO_DURATION`.
+- **Grammar / clarity pass** (`templates/front-page.html`, mirrored in `inc/schema.php`): fixed the "make your site … built to convert" verb mismatch (→ "We deliver a site that's search-ready and built to convert"); replaced the repeated awkward "you'll need to arrange yourself" with "is yours to arrange" / "handle yourself" (boundary intro + note + two FAQ answers); fixed a colon splice in the boundary note (→ period); "5 business email IDs" → "5 business email accounts"; tightened the 90-day metric label. JSON-LD FAQ + Service description kept in sync.
+- **Brand identity restored** (dropped the "Chemistry Lab" rebrand): `style.css` theme name/description back to the original "Brand-Alchemy"; `theme.json` palette names back to Saffron Gold / Emerald (kept the chemistry-era hexes `#1fe08a` + the added Aqua Cyan — part of the approved readable look).
+- **Consolidated onto `main`** via fast-forward: content/copy + de-glassed solid surfaces (Phase 8) + readability + palette + the original nebula. `main` and `chemistry-lab` now converge.
+
+**Verified**
+- `npm run build` clean (main/scroll/scene chunks emitted, new hashes). Mirrored into **both** Studio theme folders (`brand-alchemy` + `brand-alchemy-chem`) via robocopy so the change shows regardless of the active theme.
+- Live verification of the entrance bloom + cursor drift is pending in a real desktop browser — Studio screenshots run reduced-motion (tier `none` → static gradient), so the 3D path doesn't render there.
+
+---
+
+## 2026-06-02 — Phase 15: Alchemy Nebula Re-Activated & Touchscreen / Low-Power Gate Solved ✅
+
+**Done**
+- **Alchemy Nebula Activated**: Re-activated the gold-to-green additive point cloud ('nebula') as the final default background in `src/main.js` via the `ACTIVE_BG = 'nebula'` configuration.
+- **Universal Desktop Tiering for Touchscreens**: Solved the issue where Windows touch screen devices with `(pointer: coarse)` (like Microsoft Surface, Dell XPS, Lenovo ThinkPad) were wrongly classified in the mobile safety check and downgraded to `lite` or `none` (leading to a static fallback or no animation). Rewrote `decideTier()` in `src/main.js` to run the mobile safety checks solely on screen width (`max-width: 720px`).
+- **Touch-Friendly Pointer Tracking**: Removed the restrictive `(pointer: fine)` matchMedia gate in `src/three/scene.js`, binding `pointermove` universally to track both fingers and traditional cursors smoothly.
+- **Gym Website Hosted**: Located the "Ancient Combat Evolution" gym portfolio project at `portfolio/ancient-combat-evolution/` and successfully booted up its React + Vite local development server on `http://localhost:5173/`.
+
+**Verified**
+- Rebuilt production assets via `npm run build` and mirrored outputs into BOTH active local WordPress theme folders (`wp-content/themes/brand-alchemy/` and `wp-content/themes/brand-alchemy-chem/`) using robocopy to guarantee compatibility regardless of which theme the user has active in the dashboard.
+- Verified that the Vite server for the gym site is successfully running and active on `http://localhost:5173/`.
+
+---
+
+## 2026-06-01 — Phase 14: Volumetric Contrast Optimization & Universal Pointer Interactions ✅
+
+**Done**
+- **WebGL Transparency**: Replaced the solid `#08080c` Three.js backdrop canvas texture in `src/three/scene-alchemical-reactor.js` with `null` so the canvas is transparent, allowing the custom radial CSS gradients on `#alchemy-bg` to display and blend seamlessly with WebGL overlays.
+- **Shader Color & Alpha Boost**: Fine-tuned the FBM fragment shader to increase contrast, visibility, and color luminosity. Scaled gold smoke colors to `0.85`, green to `0.95`, and cyan to `1.0`. Raised baseline smoke alpha bounds from `0.24` to `0.35` to give a rich, gaseous atmosphere while maintaining flawless text legibility.
+- **Enhanced Interactive Glows**: Amplified the pointer-reactive conversion cascade from `smoothstep(0.48, 0.04)` to `smoothstep(0.55, 0.02)` and boosted cursor core glow intensity to `0.35` for a high-fidelity "wow" factor under client interaction.
+- **Frustum Culling Safety**: Bypassed frustum culling on the screen-space quad (`bgMesh.frustumCulled = false`) to ensure the gaseous smoke shader is never clipped regardless of aspect ratio adjustments.
+- **Universal Pointer Listener**: Removed the `pointer: fine` media query check, universally binding `pointermove` to support touch dragging and pointer speed trail spark emission on all mobile, tablet, and emulated touch devices.
+
+**Verified**
+- Rebuilt Vite production bundle (`npm run build`) and successfully synced assets via `powershell -ExecutionPolicy Bypass -File .\sync.ps1`.
+- Performed high-fidelity visual and programmatic verification via a browser subagent on `http://localhost:8881`. Confirmed that the volumetric FBM fluid atmosphere paints immediately over beautiful CSS background gradients with zero JavaScript runtime errors.
+- Verified smooth responsiveness of hover/scroll animations, cursor speed trails, and reactive card hovers.
+
+---
+
+## 2026-06-01 — Phase 13: Alchemical Reactor Activated + ReferenceError Bug Fix ✅
+
+**Done**
+- **Alchemical Reactor Background**: Activated `'reactor'` (Concept C) as the default background inside `src/main.js`. 
+- **ReferenceError bug fix**: Fixed a critical `ReferenceError: bgGeometry is not defined` inside `src/three/scene-alchemical-reactor.js` by explicitly defining `bgGeometry` during full-screen quad creation so it can be successfully disposed when `destroy()` is called.
+- **Easy swap toggle**: Configured the easy-swap toggle `ACTIVE_BG` in `src/main.js` to cleanly support all three background modules: `'reactor'` (Alchemical Reactor), `'quantum-lattice'` (Quantum Gravity Lattice), and `'nebula'` (the first Alchemy Nebula), making it extremely simple to transition between them.
+
+**Verified**
+- Rebuilt Vite bundle via `npm run build` and ran `./sync.ps1` successfully.
+- Conducted interactive browser verification via browser subagent on `http://localhost:8881/` checking volumetric 3D gaseous smoke fluid interactions, confirming smooth performance and **zero JavaScript console errors**.
+
+---
+
+## 2026-06-01 — Phase 12: Quantum Gravity Lattice + Easy Swap Toggle + About Section Edit ✅
+
+**Done**
+- **Quantum Gravity Lattice background**: Created `src/three/scene-quantum-lattice.js` (3D constellation grid of glowing chemical nodes and connection lines driven by a simplex curl field, cursor-reactive gravity well, and scroll-responsive dispersion).
+- **First ever nebula restored**: Replaced `src/three/scene.js` with the first ever version of the Alchemy Nebula (`da2ef7d`) from git history as requested by the user.
+- **Easy swap toggle**: Added an `ACTIVE_BG` variable at the top of the `start` loader in `src/main.js` allowing seamless swapping between `'quantum-lattice'` and `'nebula'`.
+- **About section content edit**: Removed "me and a friend" from the About paragraph in `brand-alchemy/templates/front-page.html`, making it read cleanly as "We're two Chennai-based students...".
+
+**Verified**
+- Rebuilt Vite bundle via `npm run build` and ran `./sync.ps1` successfully.
+- Verified that both scenes adhere to the same `{setScroll, setHover, destroy}` controller interface, enabling 100% hot-swappable background loading.
+
+---
+
+## 2026-06-01 — Phase 11: back to the Alchemy Nebula (continuous scroll bursts) ✅
+
+User: "switch back to the original light particles that explode on scroll and move with mouse… enhance it to be more continuously scroll interactive, it stopped after first scroll."
+
+**Root cause of the stop:** the original drove a one-shot `setScroll` "disperse + fade" from a HERO-only ScrollTrigger (`start top top / end bottom top`) → it maxed out + faded once the hero left, then went inert.
+
+**Done — rewrote `src/three/scene.js` as the Alchemy Nebula, self-driven by scroll:**
+- Same curl-noise point cloud (~5000 full / 1000 lite, additive + bloom, `glsl.js` reused), cursor parallax (rotation), gold→green by height. **No more hero-only fade.**
+- The scene now **listens to `window` scroll itself** and keeps a decaying `uEnergy`: each scroll event adds impulse ∝ scroll distance; the frame loop decays it (×0.90/frame). So scrolling ANYWHERE bursts the points outward (`pos += normalize(base)*uEnergy`) + brightens + grows them, and they ease back when you stop — continuous reactivity down the whole page. `uProgress` (scrollY/maxScroll) tinges the cloud cyan→green as you descend. Stays bright throughout (`vAlpha = 0.82 + uEnergy*0.5`) instead of fading to nothing.
+- `main.js` mounts the nebula again (canvas + tier; 'none' = static gradient) and no longer needs to feed it scroll callbacks — `initSmoothScroll()` runs purely for smooth-scroll/reveals/count-ups/tilt on full tier. Restored the `#alchemy-bg` nebula atmosphere gradient (gold TR / green BL / faint cyan). Three.js is back in the bundle (the nebula needs it).
+- De-glassed solid surfaces (Phase 8) kept. The Blueprint/Through-Line/Liquid Gold/Catalytic modules remain preserved as alternatives.
+
+**Verified**
+- Forced-tier desktop screenshot: gold→green luminous particle cloud in the hero, hero text legible, count-up running ("82 days" mid-count). Reverted the forced-tier hack + rebuilt/synced. HTTP 200, no PHP errors. The continuous scroll-burst + cursor drift only run in a real desktop browser (Studio = reduced-motion = static gradient) — confirm the "keeps reacting on every scroll" behaviour live.
+
+**Tuning knobs:** impulse scale (`/38`, cap 0.7), energy decay (0.90), burst distance (`uEnergy*(0.55+rand*0.9)`), brightness floor (0.82). Raise decay→longer-lasting bursts; raise burst distance→bigger explosions.
+
+---
+
+## 2026-06-01 — Phase 10: background → The Self-Building Blueprint ✅
+
+User found the Through-Line "too simple, no wow"; chose concept #3 **Self-Building Blueprint** instead.
+
+**Done — `src/blueprint.js` (new, pure SVG + IntersectionObserver, no Three/GSAP):**
+- A faint **drafting grid** behind everything (CSS on `#alchemy-bg`: fine 16 px + major 80 px cyan lines + a vignette so edges fade and text stays clean). Then per real element a **construction frame** that draws itself in as the element scrolls into view: an outline rect (`stroke-dashoffset` draw-on), 4 corner **registration brackets** (snap/scale in), and corner **node dots**. Framed targets: `.ba-hero__inner`, every `.ba-card`, `.ba-faq__item`, `.ba-final__inner`. The **active Services tier frames gold** (`.ba-tier--active`), the **final CTA frames green** ("build complete"); everything else cyan.
+- Frames sit just OUTSIDE each element and BEHIND content (z-0) → they live in the gutters/gaps and never cover text. Geometry via the **offsetParent chain** (layout coords) so the scroll-reveal transforms don't offset them. `IntersectionObserver` (threshold 0.15, `-8%` bottom margin) toggles `.is-built` once per element → CSS animates the draw-on. Rebuild on resize/load via `ResizeObserver` (debounced). **Reduced-motion → every frame shown already built** (so it renders in Studio's screenshot — confirmed).
+- `main.js` now imports `./blueprint.js` (was `./through-line.js`); scroll.js still desktop-only; still no Three.js in the bundle. The Through-Line (`src/through-line.js` + its `.ba-thread` CSS) is preserved as an alternative; Liquid Gold / Catalytic Surface / Molecular also still available (see Phase 9 notes).
+
+**Verified**
+- Desktop screenshot (reduced-motion → all frames built): blueprint grid + bracketed/outlined frames around the hero and every card, corner nodes, **gold frame on the ₹4,999 Essential tier**, over the drafting grid. HTTP 200, no PHP errors. The section-by-section draw-on (the real "engineering itself" effect) only runs in a real desktop browser (Studio = reduced-motion = all-built static).
+
+**Notes / tuning knobs**
+- Frame inset (PAD 6), bracket length (ARM 14), draw-on timing (0.9 s rect + 0.3 s bracket delay), grid spacing/opacity, glow — all easy to tune. Could add dimension lines / spec labels / a sweeping "scan" line for more drafting flavour if wanted.
+
+---
+
+## 2026-06-01 — Phase 9: background → The Through-Line ✅
+
+User picked "The Through-Line" from 3 content-integrated concepts I proposed (they wanted wow + tight integration with the content structure; disliked the prior backgrounds' detached/over-reactive feel).
+
+**Done — `src/through-line.js` (new, pure SVG, no Three/GSAP):**
+- A single luminous thread (gold→cyan→green gradient) drawn down the page just left of the content column, **behind** the content (z-0) so solid cards occlude it — text-safe by z-order; it shows in the gutter + section gaps. Drawn progressively on scroll (`stroke-dashoffset` = scroll progress) with a glowing head at the tip; a node lights up at each section as the line reaches it. Section Y from `offsetTop/offsetHeight` (immune to the reveal transforms). Multi-card sections get node clusters (Problem×3, Process×4, Services×3, Proof×3), Services' active node is gold, Boundary forks green/dim, the final CTA is a bright green "customer" node + halo. Native rAF-throttled scroll + ResizeObserver rebuild. **Reduced-motion → drawn full + static** (so it shows in Studio's screenshot, which it does).
+- **Rewired `main.js`:** loads `through-line.js` on every device (self-gates motion); loads `scroll.js` (Lenis smooth scroll + reveals + count-ups + tilt) only on the desktop "full" tier. **No longer mounts a Three.js scene** → `three.module` (≈128 kB gz) is gone from the shipped bundle. Removed the top reaction-progress bar from `scroll.js` (the spine is the progress indicator now).
+- **Preserved backgrounds (swap by importing one's `mountScene` in main.js):** Liquid Gold → `src/three/scene-liquid-gold.js`; Catalytic Surface → `src/three/scene-catalytic-surface.js`; Molecular Bond Network → git `9fd341c`. (`src/three/scene.js` still holds Liquid Gold but is unused/unbundled.)
+
+**Verified**
+- Desktop screenshot (reduced-motion → static thread): glowing gold→cyan→green spine down the left gutter with lit node clusters per section, solid cards, no glass. HTTP 200, no PHP errors. Build dropped the Three chunk (lighter bundle). The scroll-draw animation + traveling head only show in a real desktop browser (Studio = reduced-motion = static).
+
+**Notes / tuning knobs**
+- Thread presence: spine width 2.5 + cyan drop-shadow glow; node radii 3.8 / services 5.4 / CTA 8; baseX sits ~26 px left of the 1200-px content column (deeper gutter on wide screens, edge band on narrow). Easy to thicken/brighten or weave more. The "wow" is the draw-on-scroll + comet head + sequential node lighting — confirm live.
+
+---
+
+## 2026-06-01 — Phase 8: remove glassmorphism (solid surfaces) ✅
+
+User: "I really don't like the glass thing so remove that." Removed ALL frosted/translucent glass:
+- `--glass-bg` → solid `#14161d`; dropped `--glass-blur`; `--glass-border` → plain hairline `rgba(255,255,255,0.08)`.
+- Removed every `backdrop-filter: blur()` — `.ba-card`, `.ba-nav` (now solid `#0b0c12`), `.ba-final__inner`.
+- Form fields → solid fills (`#181b24` / focus `#1d212c`). Verified: **no `backdrop-filter` in output**, no PHP errors, cards render as solid opaque panels (screenshot). Background still Liquid Gold for now (user is picking a new one).
 
 ---
 

@@ -1,24 +1,23 @@
 import * as THREE from 'three'
+import { EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize } from 'postprocessing'
 import { NOISE_GLSL } from './glsl.js'
-// `postprocessing` (bloom) is imported dynamically below, ONLY on the full tier,
-// so mobile/lite never downloads or parses it.
 
 /**
- * The Alchemy Nebula — continuously scroll-reactive.
+ * The Alchemy Nebula.
  *
- * A luminous cloud of points on a sphere shell, flowed along a curl-noise field so
- * it swirls like a slow galaxy, additive-blended with bloom so dense regions glow.
- * It drifts with the cursor (parallax) and BURSTS with scroll energy.
+ * A luminous cloud of points distributed on a sphere shell and flowed along a
+ * curl-noise field, so it swirls like a slow galaxy of golden energy being
+ * transmuted into green. Additive-blended with a subtle bloom so dense regions
+ * glow. Gold (top) → green (bottom) gradient = the brand's transmutation.
  *
- * The fix vs. the original: the old build drove a one-shot "disperse + fade" from a
- * hero-only scroll trigger, so it went inert after the first viewport. This version
- * listens to the page scroll itself and keeps a decaying ENERGY value — every scroll
- * gesture, anywhere on the page, pushes the points outward (proportional to scroll
- * speed) and brightens them; they ease back when you stop. Overall scroll PROGRESS
- * also tints the cloud gold → green as you move down the page. So it never stops.
+ * On mount it plays a one-shot entrance: a crisp, slightly smaller sphere that
+ * blooms outward over ~6.5s into the full swirling nebula (uIntro in the shader).
  *
- * Returns { setHover(v), destroy() }. Tiers: 'full' = ~5000 pts + bloom, DPR ≤ 2;
- * 'lite' = ~1000 pts, no bloom, DPR 1.
+ * Returns a controller: { setScroll(0..1), setHover(0..1), destroy() }.
+ *
+ * Tiers (chosen by the caller from device capability):
+ *   'full' — desktop: ~5000 points, bloom, DPR ≤ 2
+ *   'lite' — capable mobile: ~1000 points, no bloom, DPR 1
  */
 export function mountScene(canvas, { tier = 'full' } = {}) {
   const isFull = tier === 'full'
@@ -46,42 +45,49 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   renderer.toneMappingExposure = 1.0
 
   const scene = new THREE.Scene()
+  // Dark gold/green atmosphere baked into the scene so additive points + bloom
+  // composite over a stable backdrop (matches the CSS gradient fallback).
   scene.background = buildBackdrop()
 
   const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100)
   camera.position.set(0, 0, 3.6)
 
-  // --- Point cloud (Fibonacci sphere shell) ---------------------------------
+  // --- Build the point cloud (Fibonacci sphere shell) -----------------------
+  // `position` stores the UNIT direction on the sphere; the shell thickness
+  // (jitter) rides in a separate attribute so the entrance can begin as a crisp
+  // unit sphere and thicken into a cloud as it blooms (see uIntro in the shader).
   const COUNT = isFull ? 5000 : 1000
   const positions = new Float32Array(COUNT * 3)
   const rands = new Float32Array(COUNT)
+  const jitters = new Float32Array(COUNT)
   const golden = Math.PI * (3 - Math.sqrt(5))
   for (let i = 0; i < COUNT; i++) {
-    const y = 1 - (i / (COUNT - 1)) * 2
+    const y = 1 - (i / (COUNT - 1)) * 2 // 1 → -1
     const r = Math.sqrt(1 - y * y)
     const theta = golden * i
-    const jitter = 0.82 + pseudoRandom(i) * 0.34
-    positions[i * 3 + 0] = Math.cos(theta) * r * jitter
-    positions[i * 3 + 1] = y * jitter
-    positions[i * 3 + 2] = Math.sin(theta) * r * jitter
+    positions[i * 3 + 0] = Math.cos(theta) * r
+    positions[i * 3 + 1] = y
+    positions[i * 3 + 2] = Math.sin(theta) * r
+    jitters[i] = 0.82 + pseudoRandom(i) * 0.34 // shell thickness (faded in during the intro)
     rands[i] = pseudoRandom(i * 7.13 + 2.0)
   }
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
   geometry.setAttribute('aRand', new THREE.BufferAttribute(rands, 1))
+  geometry.setAttribute('aJitter', new THREE.BufferAttribute(jitters, 1))
 
   const uniforms = {
     uTime: { value: 0 },
-    uEnergy: { value: 0 },     // scroll-burst energy (decays); keeps it alive on every scroll
-    uProgress: { value: 0 },   // overall page scroll progress → colour shift
+    uScroll: { value: 0 },
     uHover: { value: 0 },
+    uIntro: { value: 0 },        // entrance: 0 = crisp small sphere → 1 = full nebula
+    uIntroStart: { value: 0.6 }, // initial radius scale (smaller → it expands for longer)
     uFlow: { value: 0.2 },
     uFreq: { value: 0.85 },
     uSize: { value: isFull ? 26 : 30 },
     uPixelRatio: { value: pixelRatio },
-    uColorA: { value: new THREE.Color(0xffb15c) }, // gold
-    uColorB: { value: new THREE.Color(0x1fe08a) }, // reagent green
-    uColorC: { value: new THREE.Color(0x38e1ff) }, // aqua cyan (sparkle)
+    uColorA: { value: new THREE.Color(0xffb15c) }, // warm gold
+    uColorB: { value: new THREE.Color(0x18e08a) }, // emerald
   }
 
   const material = new THREE.ShaderMaterial({
@@ -90,46 +96,51 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */ `
-      uniform float uTime, uEnergy, uProgress, uHover, uFlow, uFreq, uSize, uPixelRatio;
+      uniform float uTime, uScroll, uHover, uIntro, uIntroStart, uFlow, uFreq, uSize, uPixelRatio;
       attribute float aRand;
+      attribute float aJitter;
       varying float vMix;
       varying float vAlpha;
-      varying float vProg;
       ${NOISE_GLSL}
       void main(){
-        vec3 base = position;
-        // swirl along the curl-noise field; energy + hover widen the swirl
-        vec3 flow = ba_curl(base * uFreq + uTime * 0.05);
-        float amp = uFlow * (1.0 + uHover * 0.6 + uEnergy * 1.3);
+        vec3 dir = position; // unit direction on the sphere shell
+
+        // Entrance: start as a crisp, slightly smaller sphere, then bloom outward.
+        // Shell thickness and overall radius fade in with uIntro, so the first
+        // frames read as a defined sphere before it opens into the nebula.
+        float shell = mix(1.0, aJitter, uIntro);
+        float radius = mix(uIntroStart, 1.0, uIntro);
+        vec3 base = dir * shell * radius;
+
+        // swirl along the curl-noise field; gated by uIntro² so the sphere stays
+        // defined at first and only swirls as it expands. Speed varies per point.
+        vec3 flow = ba_curl(dir * uFreq + uTime * 0.045);
+        float amp = uFlow * (1.0 + uHover * 0.6) * (uIntro * uIntro);
         vec3 pos = base + flow * amp;
-        // gentle breathing
-        pos *= 1.0 + 0.05 * sin(uTime * 0.5 + aRand * 6.2831);
-        // CONTINUOUS scroll burst: every scroll pushes points outward, returns on ease-out
-        pos += normalize(base) * uEnergy * (0.55 + aRand * 0.9);
+        // gentle breathing (eases in with the bloom)
+        pos *= 1.0 + 0.05 * sin(uTime * 0.5 + aRand * 6.2831) * uIntro;
+        // scroll: disperse outward + fade as the hero leaves
+        pos += dir * uScroll * 1.5;
 
         vMix = clamp(pos.y * 0.5 + 0.55, 0.0, 1.0);
-        vProg = uProgress;
-        // stays bright the whole page; brightens on scroll bursts
-        vAlpha = clamp(0.82 + uEnergy * 0.5, 0.0, 1.4);
+        vAlpha = 1.0 - uScroll * 0.92;
 
         vec4 mv = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mv;
-        float size = uSize * (0.45 + aRand) * uPixelRatio * (1.0 + uEnergy * 0.6);
+        float size = uSize * (0.45 + aRand) * uPixelRatio;
         gl_PointSize = size * (1.0 / -mv.z);
       }
     `,
     fragmentShader: /* glsl */ `
-      uniform vec3 uColorA, uColorB, uColorC;
+      uniform vec3 uColorA, uColorB;
       varying float vMix;
       varying float vAlpha;
-      varying float vProg;
       void main(){
         vec2 c = gl_PointCoord - 0.5;
         float d = length(c);
         if (d > 0.5) discard;
         float soft = smoothstep(0.5, 0.0, d);
-        vec3 col = mix(uColorB, uColorA, vMix);   // green(low) → gold(high)
-        col = mix(col, uColorC, vProg * 0.28);     // tinge cyan as you scroll down
+        vec3 col = mix(uColorB, uColorA, vMix);
         col += pow(max(1.0 - d * 2.0, 0.0), 3.0) * 0.7; // bright core → feeds bloom
         gl_FragColor = vec4(col * soft * vAlpha, 1.0);
       }
@@ -139,27 +150,22 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   const points = new THREE.Points(geometry, material)
   scene.add(points)
 
-  // --- Bloom (full tier only, loaded on demand) -----------------------------
+  // --- Postprocessing (bloom on the full tier only) -------------------------
   let composer = null
   if (isFull) {
-    import('postprocessing')
-      .then(({ EffectComposer, EffectPass, RenderPass, BloomEffect, KernelSize }) => {
-        const c = new EffectComposer(renderer)
-        c.addPass(new RenderPass(scene, camera))
-        c.addPass(new EffectPass(camera, new BloomEffect({
-          intensity: 0.7,
-          luminanceThreshold: 0.5,
-          luminanceSmoothing: 0.4,
-          mipmapBlur: true,
-          kernelSize: KernelSize.LARGE,
-        })))
-        c.setSize(window.innerWidth, window.innerHeight)
-        composer = c
-      })
-      .catch((err) => console.warn('[Brand-Alchemy] bloom unavailable:', err))
+    composer = new EffectComposer(renderer)
+    composer.addPass(new RenderPass(scene, camera))
+    const bloom = new BloomEffect({
+      intensity: 0.7,
+      luminanceThreshold: 0.5,
+      luminanceSmoothing: 0.4,
+      mipmapBlur: true,
+      kernelSize: KernelSize.LARGE,
+    })
+    composer.addPass(new EffectPass(camera, bloom))
   }
 
-  // --- Layout: bias the nebula center-right on wide screens -----------------
+  // --- Layout: bias the nebula toward center-right on wide screens ----------
   function layout() {
     const w = window.innerWidth
     const h = window.innerHeight
@@ -174,38 +180,23 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   }
   layout()
 
-  // --- Interaction: cursor parallax + continuous scroll energy --------------
+  // --- Interaction ----------------------------------------------------------
   const pointer = { x: 0, y: 0 }
   const pointerSmooth = { x: 0, y: 0 }
   let hoverTarget = 0
+  let scrollTarget = 0
 
   function onPointerMove(e) {
     pointer.x = (e.clientX / window.innerWidth) * 2 - 1
     pointer.y = (e.clientY / window.innerHeight) * 2 - 1
     hoverTarget = 1
   }
-  const finePointer = window.matchMedia('(pointer: fine)').matches
-  if (finePointer) window.addEventListener('pointermove', onPointerMove, { passive: true })
-
-  // Scroll → energy. Accumulate per-event impulse from scroll distance; the frame
-  // loop decays it, so holding a scroll keeps energy up and stopping eases it down.
-  let lastY = window.scrollY || 0
-  let impulse = 0
-  let energy = 0
-  let progressTarget = 0
-  function maxScroll() {
-    return Math.max(1, (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight)
-  }
-  function onScroll() {
-    const y = window.scrollY || window.pageYOffset || 0
-    impulse += Math.min(Math.abs(y - lastY) / 38, 0.7)
-    lastY = y
-    progressTarget = THREE.MathUtils.clamp(y / maxScroll(), 0, 1)
-  }
-  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('pointermove', onPointerMove, { passive: true })
 
   // --- Render loop ----------------------------------------------------------
   const clock = new THREE.Clock()
+  const INTRO_DURATION = 6.5 // seconds — slow, graceful bloom from sphere to nebula
+  let introElapsed = 0
   let raf = 0
   let running = true
 
@@ -215,17 +206,18 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     const dt = Math.min(clock.getDelta(), 0.05)
     uniforms.uTime.value += dt
 
-    // energy: add impulse, then decay → continuous reactivity that settles when idle
-    energy += impulse
-    impulse = 0
-    energy *= 0.90
-    energy = Math.min(energy, 1.5)
-    uniforms.uEnergy.value += (energy - uniforms.uEnergy.value) * 0.25
-    uniforms.uProgress.value += (progressTarget - uniforms.uProgress.value) * 0.06
+    // Entrance bloom: ease uIntro 0 → 1 on a smootherstep curve so the sphere
+    // expands slowly and settles, rather than snapping open to full size.
+    if (introElapsed < INTRO_DURATION) {
+      introElapsed = Math.min(INTRO_DURATION, introElapsed + dt)
+      const t = introElapsed / INTRO_DURATION
+      uniforms.uIntro.value = t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
+    }
 
     pointerSmooth.x += (pointer.x - pointerSmooth.x) * 0.045
     pointerSmooth.y += (pointer.y - pointerSmooth.y) * 0.045
     uniforms.uHover.value += (hoverTarget - uniforms.uHover.value) * 0.05
+    uniforms.uScroll.value += (scrollTarget - uniforms.uScroll.value) * 0.08
     hoverTarget *= 0.96
 
     points.rotation.y = uniforms.uTime.value * 0.05 + pointerSmooth.x * 0.4
@@ -253,13 +245,13 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
   document.addEventListener('visibilitychange', onVisibility)
 
   return {
+    setScroll(p) { scrollTarget = THREE.MathUtils.clamp(p, 0, 1) },
     setHover(v) { hoverTarget = Math.max(hoverTarget, v) },
     destroy() {
       running = false
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('scroll', onScroll)
       document.removeEventListener('visibilitychange', onVisibility)
       geometry.dispose()
       material.dispose()
@@ -276,8 +268,8 @@ function pseudoRandom(n) {
   return s - Math.floor(s)
 }
 
-/* Dark backdrop with a soft gold (top-right) + green (bottom-left) glow + a faint
-   cyan center, matching the CSS atmosphere so the canvas reads consistently. */
+/* Dark backdrop with a soft gold (top-right) + green (bottom-left) glow,
+   matching the CSS atmosphere so the canvas reads consistently. */
 function buildBackdrop() {
   const c = document.createElement('canvas')
   c.width = 512
@@ -285,19 +277,14 @@ function buildBackdrop() {
   const ctx = c.getContext('2d')
   ctx.fillStyle = '#0a0a0f'
   ctx.fillRect(0, 0, 512, 512)
-  let g = ctx.createRadialGradient(370, 140, 0, 370, 140, 360)
+  let g = ctx.createRadialGradient(370, 150, 0, 370, 150, 360)
   g.addColorStop(0, 'rgba(255,153,51,0.22)')
   g.addColorStop(1, 'rgba(255,153,51,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
   g = ctx.createRadialGradient(120, 410, 0, 120, 410, 340)
-  g.addColorStop(0, 'rgba(31,224,138,0.15)')
-  g.addColorStop(1, 'rgba(31,224,138,0)')
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, 512, 512)
-  g = ctx.createRadialGradient(256, 270, 0, 256, 270, 300)
-  g.addColorStop(0, 'rgba(56,225,255,0.06)')
-  g.addColorStop(1, 'rgba(56,225,255,0)')
+  g.addColorStop(0, 'rgba(0,210,106,0.14)')
+  g.addColorStop(1, 'rgba(0,210,106,0)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 512, 512)
   const tex = new THREE.CanvasTexture(c)

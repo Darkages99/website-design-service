@@ -19,8 +19,8 @@
         { "slug": "base-soft", "color": "#101018", "name": "Charcoal Soft" },
         { "slug": "contrast", "color": "#f0f0f5", "name": "Off White" },
         { "slug": "muted", "color": "#a0a0b0", "name": "Muted Gray" },
-        { "slug": "accent-gold", "color": "#ff9933", "name": "Catalyst Gold" },
-        { "slug": "accent-green", "color": "#1fe08a", "name": "Reagent Green" },
+        { "slug": "accent-gold", "color": "#ff9933", "name": "Saffron Gold" },
+        { "slug": "accent-green", "color": "#1fe08a", "name": "Emerald" },
         { "slug": "accent-cyan", "color": "#38e1ff", "name": "Aqua Cyan" }
       ]
     },

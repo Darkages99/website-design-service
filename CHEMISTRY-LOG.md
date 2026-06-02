@@ -4,7 +4,34 @@
 > (the map). Update at every phase boundary and whenever something breaks or a decision changes.
 > **`main` is never touched.**
 
-**Current phase:** Phase 11 ✅ — background back to the **Alchemy Nebula**, now **continuously** scroll-reactive.
+**Current phase:** Phase 13 ✅ — Alchemical Reactor active, easy swap configuration updated.
+
+## 2026-06-01 — Phase 13: Alchemical Reactor Activated + ReferenceError Bug Fix ✅
+
+**Done**
+- **Alchemical Reactor Background**: Activated `'reactor'` (Concept C) as the default background inside `src/main.js`. 
+- **ReferenceError bug fix**: Fixed a critical `ReferenceError: bgGeometry is not defined` inside `src/three/scene-alchemical-reactor.js` by explicitly defining `bgGeometry` during full-screen quad creation so it can be successfully disposed when `destroy()` is called.
+- **Easy swap toggle**: Configured the easy-swap toggle `ACTIVE_BG` in `src/main.js` to cleanly support all three background modules: `'reactor'` (Alchemical Reactor), `'quantum-lattice'` (Quantum Gravity Lattice), and `'nebula'` (the first Alchemy Nebula), making it extremely simple to transition between them.
+
+**Verified**
+- Rebuilt Vite bundle via `npm run build` and ran `./sync.ps1` successfully.
+- Conducted interactive browser verification via browser subagent on `http://localhost:8881/` checking volumetric 3D gaseous smoke fluid interactions, confirming smooth performance and **zero JavaScript console errors**.
+
+---
+
+## 2026-06-01 — Phase 12: Quantum Gravity Lattice + Easy Swap Toggle + About Section Edit ✅
+
+**Done**
+- **Quantum Gravity Lattice background**: Created `src/three/scene-quantum-lattice.js` (3D constellation grid of glowing chemical nodes and connection lines driven by a simplex curl field, cursor-reactive gravity well, and scroll-responsive dispersion).
+- **First ever nebula restored**: Replaced `src/three/scene.js` with the first ever version of the Alchemy Nebula (`da2ef7d`) from git history as requested by the user.
+- **Easy swap toggle**: Added an `ACTIVE_BG` variable at the top of the `start` loader in `src/main.js` allowing seamless swapping between `'quantum-lattice'` and `'nebula'`.
+- **About section content edit**: Removed "me and a friend" from the About paragraph in `brand-alchemy/templates/front-page.html`, making it read cleanly as "We're two Chennai-based students...".
+
+**Verified**
+- Rebuilt Vite bundle via `npm run build` and ran `./sync.ps1` successfully.
+- Verified that both scenes adhere to the same `{setScroll, setHover, destroy}` controller interface, enabling 100% hot-swappable background loading.
+
+---
 
 ## 2026-06-01 — Phase 11: back to the Alchemy Nebula (continuous scroll bursts) ✅
 
