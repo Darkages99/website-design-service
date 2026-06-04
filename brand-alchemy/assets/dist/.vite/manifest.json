@@ -1,6 +1,6 @@
 {
   "src/main.js": {
-    "file": "assets/main-DCkCYsyI.js",
+    "file": "assets/main-D16IJ3pO.js",
     "name": "main",
     "src": "src/main.js",
     "isEntry": true,
@@ -19,7 +19,7 @@
     "isDynamicEntry": true
   },
   "src/three/scene.js": {
-    "file": "assets/scene-DDWt2Pzv.js",
+    "file": "assets/scene-Dzr8e8Iu.js",
     "name": "scene",
     "src": "src/three/scene.js",
     "isDynamicEntry": true

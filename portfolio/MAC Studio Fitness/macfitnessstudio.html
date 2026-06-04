@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mac Fitness Studio – Train Hard. Live Strong.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card-bg: #161616;
+    --orange: #f05a1a;
+    --orange-dark: #c0440d;
+    --orange-glow: rgba(240,90,26,0.15);
+    --white: #f5f3ef;
+    --gray: #999;
+    --light-gray: #2a2a2a;
+    --border: rgba(255,255,255,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: rgba(0,0,0,0.9);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .topbar a { color: var(--gray); text-decoration: none; }
+  .topbar a:hover { color: var(--orange); }
+  .topbar-left { display: flex; gap: 24px; align-items: center; }
+  .topbar-right { display: flex; gap: 16px; align-items: center; }
+  .topbar-right a {
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: 4px; transition: all .2s;
+  }
+  .topbar-right a:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .logo span { color: var(--orange); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--orange);
+    color: var(--white) !important;
+    padding: 10px 24px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .nav-cta:hover { background: var(--orange-dark) !important; color: var(--white) !important; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 40px 80px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,1) 100%),
+      linear-gradient(135deg, #1a0a00 0%, #0a0a0a 50%, #001a0a 100%);
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 60% at 80% 40%, rgba(240,90,26,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 60%, rgba(240,90,26,0.08) 0%, transparent 70%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: 
+      linear-gradient(rgba(240,90,26,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(240,90,26,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 800px; }
+  .hero-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-label::before {
+    content: '';
+    display: block; width: 40px; height: 2px;
+    background: var(--orange);
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 130px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--orange);
+    display: block;
+  }
+  .hero-sub {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(245,243,239,0.7);
+    max-width: 500px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--orange);
+    color: var(--white);
+    padding: 16px 36px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); }
+  .btn-outline {
+    border: 2px solid rgba(245,243,239,0.3);
+    color: var(--white);
+    padding: 16px 36px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+  .hero-stats {
+    position: absolute; bottom: 80px; right: 40px;
+    display: flex; gap: 40px; z-index: 2;
+  }
+  .stat { text-align: right; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--orange);
+    overflow: hidden;
+    padding: 14px 0;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee-track span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    padding: 0 40px;
+    color: rgba(0,0,0,0.8);
+  }
+  .marquee-track span::after {
+    content: '✦';
+    margin-left: 40px;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTION BASE */
+  section { padding: 100px 40px; }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .section-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(245,243,239,0.6);
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  /* WHY CHOOSE */
+  .why-section { background: var(--dark); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+    align-items: center;
+  }
+  .why-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .why-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px 24px;
+    transition: border-color .2s, transform .2s;
+  }
+  .why-card:hover { border-color: var(--orange); transform: translateY(-4px); }
+  .why-icon {
+    width: 44px; height: 44px;
+    background: var(--orange-glow);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+    color: var(--orange);
+  }
+  .why-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: var(--white);
+  }
+  .why-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+  .why-visual {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 40px;
+    min-height: 380px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: hidden;
+  }
+  .why-visual-bg {
+    position: absolute; inset: 0;
+    background: 
+      linear-gradient(to bottom, transparent 40%, rgba(10,10,10,0.9) 100%),
+      radial-gradient(ellipse 80% 80% at 50% 30%, rgba(240,90,26,0.2) 0%, transparent 70%);
+  }
+  .why-visual-text { position: relative; z-index: 2; }
+  .why-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .why-quote span { color: var(--orange); }
+  .why-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange);
+    padding: 8px 16px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* WHAT WE FOCUS ON */
+  .focus-section { background: var(--black); }
+  .focus-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+    gap: 40px;
+  }
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+  }
+  .focus-item {
+    background: var(--card-bg);
+    padding: 36px 24px;
+    border: 1px solid var(--border);
+    transition: all .2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .focus-item::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transition: transform .2s;
+    transform-origin: left;
+  }
+  .focus-item:hover::before { transform: scaleX(1); }
+  .focus-item:hover { background: #1c1c1c; }
+  .focus-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: rgba(240,90,26,0.2);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .focus-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .focus-desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+
+  /* PROGRAMS */
+  .programs-section { background: var(--dark); }
+  .programs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 60px;
+  }
+  .program-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+  }
+  .program-card:hover { transform: translateY(-6px); border-color: var(--orange); }
+  .program-banner {
+    height: 200px;
+    display: flex; align-items: flex-end;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .program-banner-1 { background: linear-gradient(135deg, #1a0800 0%, #2d1200 100%); }
+  .program-banner-2 { background: linear-gradient(135deg, #001a08 0%, #002d12 100%); }
+  .program-banner-3 { background: linear-gradient(135deg, #001020 0%, #002040 100%); }
+  .program-banner::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 70% 30%, rgba(240,90,26,0.25) 0%, transparent 70%);
+  }
+  .program-icon {
+    font-size: 56px;
+    position: absolute;
+    right: 24px; top: 20px;
+    opacity: 0.3;
+  }
+  .program-tag {
+    position: relative; z-index: 2;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    border: 1px solid var(--orange);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .program-body { padding: 28px 24px 32px; }
+  .program-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .program-body p { font-size: 14px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+  .program-features { list-style: none; margin-bottom: 24px; }
+  .program-features li {
+    font-size: 13px;
+    color: rgba(245,243,239,0.7);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: center;
+  }
+  .program-features li::before { content: '→'; color: var(--orange); font-size: 12px; }
+  .btn-card {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    padding: 12px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+  }
+  .btn-card:hover { background: var(--orange); color: var(--white); }
+
+  /* STATS BAND */
+  .stats-band {
+    background: var(--orange);
+    padding: 60px 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 20px;
+    border-right: 1px solid rgba(0,0,0,0.15);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--black);
+  }
+  .stat-plus { color: rgba(0,0,0,0.4); }
+  .stat-desc {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.65);
+    margin-top: 4px;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-section { background: var(--black); }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 60px;
+  }
+  .testimonial-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px 28px;
+    transition: border-color .2s;
+  }
+  .testimonial-card:hover { border-color: rgba(240,90,26,0.4); }
+  .stars { color: var(--orange); font-size: 14px; letter-spacing: 2px; margin-bottom: 16px; }
+  .testimonial-text {
+    font-size: 15px;
+    font-style: italic;
+    color: rgba(245,243,239,0.8);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 14px; }
+  .author-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--black);
+  }
+  .author-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .author-role { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+  /* SCHEDULE */
+  .schedule-section { background: var(--dark); }
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 60px;
+  }
+  .schedule-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    text-align: left;
+  }
+  .schedule-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .schedule-table tr:hover td { background: var(--card-bg); }
+  .class-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-orange { background: var(--orange-glow); color: var(--orange); border: 1px solid rgba(240,90,26,0.3); }
+  .badge-green { background: rgba(40,170,80,0.12); color: #45c76d; border: 1px solid rgba(40,170,80,0.3); }
+  .badge-blue { background: rgba(60,120,230,0.12); color: #6b9ef8; border: 1px solid rgba(60,120,230,0.3); }
+
+  /* CONTACT */
+  .contact-section { background: var(--black); }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    margin-top: 60px;
+  }
+  .contact-info h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .contact-item {
+    display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;
+  }
+  .contact-icon {
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: var(--orange-glow);
+    border: 1px solid rgba(240,90,26,0.3);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--orange); font-size: 16px;
+  }
+  .contact-item-text .label {
+    font-size: 11px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 2px;
+  }
+  .contact-item-text .value { font-size: 15px; color: var(--white); }
+  .contact-form { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 40px; }
+  .form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .form-sub { font-size: 14px; color: var(--gray); margin-bottom: 28px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 13px 16px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--orange);
+  }
+  .form-group textarea { min-height: 100px; resize: vertical; }
+  .form-group select { cursor: pointer; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .btn-submit {
+    width: 100%;
+    background: var(--orange);
+    border: none;
+    color: var(--white);
+    padding: 16px;
+    border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .2s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { background: var(--orange-dark); }
+
+  /* FOOTER */
+  footer {
+    background: #050505;
+    border-top: 1px solid var(--border);
+    padding: 60px 40px 30px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+  .footer-brand .logo { display: inline-block; margin-bottom: 16px; font-size: 30px; }
+  .footer-brand p { font-size: 14px; color: var(--gray); line-height: 1.8; margin-bottom: 20px; }
+  .footer-social { display: flex; gap: 12px; }
+  .footer-social a {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all .2s;
+  }
+  .footer-social a:hover { border-color: var(--orange); color: var(--orange); }
+  .footer-col h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a {
+    color: var(--gray); text-decoration: none; font-size: 14px;
+    transition: color .2s;
+  }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-timing { font-size: 13px; color: var(--gray); line-height: 2; }
+  .footer-timing strong { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .footer-bottom a { color: var(--orange); text-decoration: none; }
+
+  /* FLOATING CTA */
+  .floating-cta {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--orange);
+    color: var(--white);
+    padding: 14px 24px;
+    border-radius: 50px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(240,90,26,0.4);
+    transition: all .2s;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  .floating-cta:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(240,90,26,0.6); }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(240,90,26,0.4); }
+    50% { box-shadow: 0 4px 30px rgba(240,90,26,0.7); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 20px 60px; }
+    .hero-stats { right: 20px; bottom: 60px; gap: 20px; }
+    .stat-num { font-size: 36px; }
+    section { padding: 60px 20px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .focus-grid { grid-template-columns: repeat(2, 1fr); }
+    .programs-grid { grid-template-columns: 1fr; }
+    .stats-band { grid-template-columns: repeat(2, 1fr); padding: 40px 20px; }
+    .stat-item { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.15); }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .topbar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span>📍 No. 12, Anna Nagar, Chennai – 600 040</span>
+    <a href="tel:+919876543210">📞 +91 98765 43210</a>
+    <span>⏰ Mon–Sat: 5:30 AM – 10:00 PM</span>
+  </div>
+  <div class="topbar-right">
+    <a href="#" title="Facebook">f</a>
+    <a href="#" title="Instagram">ig</a>
+    <a href="#" title="YouTube">yt</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">MAC<span>.</span>FIT</a>
+  <ul class="nav-links">
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#focus">Training</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#testimonials">Results</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Free Trial →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">Mac Fitness Studio · Chennai</div>
+    <h1>
+      Train Hard.<br/>
+      <em>Live Strong.</em>
+    </h1>
+    <p class="hero-sub">
+      Chennai's most results-driven gym. Expert coaches, proven programs, and a community that pushes you beyond your limits — every single session.
+    </p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Start Free Trial</a>
+      <a href="#programs" class="btn-outline">Explore Programs</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">500<span style="font-size:32px">+</span></div>
+      <div class="stat-label">Happy Members</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">8<span style="font-size:32px">+</span></div>
+      <div class="stat-label">Years Strong</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Expert Coaches</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Strength Training</span>
+    <span>Functional Fitness</span>
+    <span>Personal Training</span>
+    <span>Weight Loss</span>
+    <span>Muscle Building</span>
+    <span>Boxing</span>
+    <span>CrossFit</span>
+    <span>Yoga</span>
+    <span>Cardio</span>
+    <span>Zumba</span>
+    <!-- repeat for seamless -->
+    <span>Strength Training</span>
+    <span>Functional Fitness</span>
+    <span>Personal Training</span>
+    <span>Weight Loss</span>
+    <span>Muscle Building</span>
+    <span>Boxing</span>
+    <span>CrossFit</span>
+    <span>Yoga</span>
+    <span>Cardio</span>
+    <span>Zumba</span>
+  </div>
+</div>
+
+<!-- WHY CHOOSE -->
+<section class="why-section" id="why">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="why-grid">
+      <div>
+        <div class="section-label">Why Mac Fitness Studio</div>
+        <h2 class="section-title">Because Your Goals<br/>Deserve Results.</h2>
+        <p class="section-sub" style="margin-bottom:40px;">
+          Every session is coached, tracked, and tailored. We don't just hand you equipment — we build you a program, a coach, and a community.
+        </p>
+        <div class="why-cards">
+          <div class="why-card">
+            <div class="why-icon">🎯</div>
+            <h3>Expert Coaches</h3>
+            <p>Certified professionals who guide every rep of your journey.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon">📋</div>
+            <h3>Custom Plans</h3>
+            <p>Programs built around your body, goals, and schedule.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon">👥</div>
+            <h3>Small Batches</h3>
+            <p>Focused groups mean personal attention and faster progress.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-icon">📈</div>
+            <h3>Real Tracking</h3>
+            <p>Weekly check-ins for visible, measurable transformation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="why-visual">
+        <div class="why-visual-bg"></div>
+        <div class="why-visual-text">
+          <div class="why-quote">Train <span>Smarter.</span><br/>Not Just Harder.</div>
+          <div class="why-badge">⚡ 90-Day Transformation Guaranteed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE FOCUS ON -->
+<section class="focus-section" id="focus">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="focus-intro">
+      <div>
+        <div class="section-label">Our Training Philosophy</div>
+        <h2 class="section-title">10 Pillars of Fitness</h2>
+      </div>
+      <p class="section-sub">
+        True fitness is more than lifting weights. Our programs are built around the complete athletic spectrum — so you don't just look fit, you are fit.
+      </p>
+    </div>
+    <div class="focus-grid">
+      <div class="focus-item">
+        <div class="focus-num">01</div>
+        <div class="focus-name">Endurance</div>
+        <div class="focus-desc">Build lasting stamina and cardiovascular strength.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">02</div>
+        <div class="focus-name">Strength</div>
+        <div class="focus-desc">Raw power through structured resistance training.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">03</div>
+        <div class="focus-name">Stamina</div>
+        <div class="focus-desc">Perform longer and stronger with sustained focus.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">04</div>
+        <div class="focus-name">Speed</div>
+        <div class="focus-desc">Enhance quickness through explosive movement drills.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">05</div>
+        <div class="focus-name">Power</div>
+        <div class="focus-desc">Combine strength and speed for peak performance.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">06</div>
+        <div class="focus-name">Agility</div>
+        <div class="focus-desc">Control, coordination, and rapid directional change.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">07</div>
+        <div class="focus-name">Coordination</div>
+        <div class="focus-desc">Sharpen body-mind connection and balance.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">08</div>
+        <div class="focus-name">Balance</div>
+        <div class="focus-desc">Core stability for posture and injury prevention.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">09</div>
+        <div class="focus-name">Accuracy</div>
+        <div class="focus-desc">Train for precision in form, timing, and execution.</div>
+      </div>
+      <div class="focus-item">
+        <div class="focus-num">10</div>
+        <div class="focus-name">Flexibility</div>
+        <div class="focus-desc">Expand range of motion for recovery and performance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS -->
+<section class="programs-section" id="programs">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Our Programs</h2>
+    <p class="section-sub">From first-timers to athletes — there's a program built for exactly where you are and where you want to go.</p>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-banner program-banner-1">
+          <div class="program-icon">🏋️</div>
+          <div class="program-tag">Personal Training</div>
+        </div>
+        <div class="program-body">
+          <h3>90-Day Transformation</h3>
+          <p>A complete body and mind overhaul. Structured workouts, nutrition guidance, and weekly check-ins to get you the results you've been chasing.</p>
+          <ul class="program-features">
+            <li>Daily custom workout plan</li>
+            <li>Macro-based nutrition guide</li>
+            <li>Weekly coach check-ins</li>
+            <li>Progress photo tracking</li>
+          </ul>
+          <a href="#contact" class="btn-card">Enquire Now</a>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-banner program-banner-2">
+          <div class="program-icon">⚡</div>
+          <div class="program-tag">Group Classes</div>
+        </div>
+        <div class="program-body">
+          <h3>Functional Fitness</h3>
+          <p>High-energy group sessions coached by certified trainers. A new Game of the Day every session — never boring, always challenging.</p>
+          <ul class="program-features">
+            <li>Daily unique workouts (GOD)</li>
+            <li>Coached group sessions</li>
+            <li>Scalable for all levels</li>
+            <li>Community leaderboard</li>
+          </ul>
+          <a href="#contact" class="btn-card">Enquire Now</a>
+        </div>
+      </div>
+      <div class="program-card">
+        <div class="program-banner program-banner-3">
+          <div class="program-icon">🥊</div>
+          <div class="program-tag">Combat Sports</div>
+        </div>
+        <div class="program-body">
+          <h3>Boxing & Kickboxing</h3>
+          <p>Learn real technique from pro coaches. Build explosive power, reflexes, and mental toughness while burning serious calories.</p>
+          <ul class="program-features">
+            <li>Beginner to advanced levels</li>
+            <li>Padwork & sparring sessions</li>
+            <li>Fitness + technique focus</li>
+            <li>Competition preparation</li>
+          </ul>
+          <a href="#contact" class="btn-card">Enquire Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band">
+  <div class="stat-item">
+    <div class="stat-big">500<span class="stat-plus">+</span></div>
+    <div class="stat-desc">Active Members</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">300<span class="stat-plus">+</span></div>
+    <div class="stat-desc">Transformations</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">8<span class="stat-plus">+</span></div>
+    <div class="stat-desc">Years of Excellence</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-big">12</div>
+    <div class="stat-desc">Certified Coaches</div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="testimonials">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">Member Stories</div>
+    <h2 class="section-title">Real People. Real Results.</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Joined Mac Fitness for the 90-day program and lost 12 kg. The coaches are incredible — always attentive to form and incredibly motivating. Best investment I've ever made."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RK</div>
+          <div>
+            <div class="author-name">Ravi Kumar</div>
+            <div class="author-role">Lost 12 kg · 90-Day Transformation</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The functional fitness classes are unlike anything I've tried. Every session is different — the Game of the Day keeps you on your toes. My stamina has doubled in three months."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">PS</div>
+          <div>
+            <div class="author-name">Priya Shankar</div>
+            <div class="author-role">Functional Fitness · 3 Months</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The boxing classes are brilliant. Coach Arjun is patient and technical — within two months I could see real improvement in my footwork and reflexes. Great community here."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AM</div>
+          <div>
+            <div class="author-name">Arun Mehta</div>
+            <div class="author-role">Boxing · 2 Months</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="schedule-section" id="schedule">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">Weekly Timetable</div>
+    <h2 class="section-title">Class Schedule</h2>
+    <p class="section-sub">Every class is coached and capped at small group sizes. Book your spot to guarantee your session.</p>
+    <table class="schedule-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Monday – Wednesday</th>
+          <th>Thursday – Saturday</th>
+          <th>Type</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">5:30 AM</td>
+          <td>Functional Fitness (GOD)</td>
+          <td>Functional Fitness (GOD)</td>
+          <td><span class="class-badge badge-orange">Group</span></td>
+          <td>60 min</td>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">7:00 AM</td>
+          <td>Strength & Conditioning</td>
+          <td>Boxing / Kickboxing</td>
+          <td><span class="class-badge badge-blue">Mixed</span></td>
+          <td>75 min</td>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">9:00 AM</td>
+          <td>Personal Training</td>
+          <td>Personal Training</td>
+          <td><span class="class-badge badge-green">1-on-1</span></td>
+          <td>60 min</td>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">6:00 PM</td>
+          <td>Functional Fitness (GOD)</td>
+          <td>Functional Fitness (GOD)</td>
+          <td><span class="class-badge badge-orange">Group</span></td>
+          <td>60 min</td>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">7:30 PM</td>
+          <td>Boxing / Kickboxing</td>
+          <td>Strength & Conditioning</td>
+          <td><span class="class-badge badge-blue">Mixed</span></td>
+          <td>75 min</td>
+        </tr>
+        <tr>
+          <td style="color:var(--orange);font-weight:600;">9:00 PM</td>
+          <td>Open Gym / PT</td>
+          <td>Open Gym / PT</td>
+          <td><span class="class-badge badge-green">Flexible</span></td>
+          <td>60 min</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">Start Your Free Trial</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Visit Mac Fitness Studio</h3>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-item-text">
+            <div class="label">Address</div>
+            <div class="value">No. 12, 2nd Avenue, Anna Nagar<br/>Chennai – 600 040, Tamil Nadu</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div class="contact-item-text">
+            <div class="label">Phone</div>
+            <div class="value">+91 98765 43210</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-item-text">
+            <div class="label">Email</div>
+            <div class="value">hello@macfitnessstudio.in</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">⏰</div>
+          <div class="contact-item-text">
+            <div class="label">Hours</div>
+            <div class="value">Mon–Sat: 5:30 AM – 10:00 PM<br/>Sunday: 7:00 AM – 12:00 PM</div>
+          </div>
+        </div>
+        <div style="margin-top:32px;padding:24px;background:var(--card-bg);border:1px solid var(--border);border-radius:6px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:8px;">
+            Free 5-Day Trial
+          </div>
+          <p style="font-size:14px;color:var(--gray);line-height:1.6;">
+            New members get a complimentary 5-day trial pass. Experience any class, meet your coach, and feel the Mac Fitness difference — zero commitment required.
+          </p>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-title">Book Your Trial</div>
+        <div class="form-sub">Fill in your details and we'll get back to you within 24 hours.</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="Arjun"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Sharma"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" placeholder="+91 XXXXX XXXXX"/>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="you@email.com"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Program of Interest</label>
+          <select>
+            <option value="">Select a program</option>
+            <option>90-Day Transformation</option>
+            <option>Functional Fitness (Group)</option>
+            <option>Boxing / Kickboxing</option>
+            <option>Personal Training</option>
+            <option>Strength & Conditioning</option>
+            <option>Just Exploring</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Your Goal (Optional)</label>
+          <textarea placeholder="Tell us your fitness goal — lose weight, build muscle, improve stamina..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="this.textContent='✓ Message Sent! We\'ll contact you soon.';this.style.background='#1a7a3a';">
+          Book Free 5-Day Trial →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid" style="max-width:1200px;margin:0 auto 50px;">
+    <div class="footer-brand">
+      <a href="#" class="logo">MAC<span>.</span>FIT</a>
+      <p>Chennai's most dedicated fitness studio. We believe in training with purpose, coaching with passion, and building a community that lifts each other up.</p>
+      <div class="footer-social">
+        <a href="#" title="Facebook">f</a>
+        <a href="#" title="Instagram">ig</a>
+        <a href="#" title="YouTube">▶</a>
+        <a href="#" title="WhatsApp">w</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Programs</h4>
+      <ul>
+        <li><a href="#">90-Day Transformation</a></li>
+        <li><a href="#">Functional Fitness</a></li>
+        <li><a href="#">Boxing & Kickboxing</a></li>
+        <li><a href="#">Personal Training</a></li>
+        <li><a href="#">Strength & Conditioning</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Coaches</a></li>
+        <li><a href="#">Gallery</a></li>
+        <li><a href="#">Membership Plans</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Opening Hours</h4>
+      <div class="footer-timing">
+        <strong>Monday – Friday</strong><br/>
+        5:30 AM – 10:00 PM<br/><br/>
+        <strong>Saturday</strong><br/>
+        6:00 AM – 9:00 PM<br/><br/>
+        <strong>Sunday</strong><br/>
+        7:00 AM – 12:00 PM
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom" style="max-width:1200px;margin:0 auto;">
+    <span>© 2025 Mac Fitness Studio. All rights reserved.</span>
+    <span>Built with 💪 in Chennai · <a href="#">Privacy Policy</a></span>
+  </div>
+</footer>
+
+<!-- FLOATING CTA -->
+<a href="#contact" class="floating-cta">📞 Free Trial</a>
+
+<script>
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Scroll animation for focus items
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.focus-item, .why-card, .program-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.dataset.delay = (i % 5) * 80;
+    observer.observe(el);
+  });
+
+  // Counter animation for stats band
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.stat-big').forEach(el => {
+          const target = parseInt(el.textContent);
+          let count = 0;
+          const step = Math.ceil(target / 40);
+          const timer = setInterval(() => {
+            count = Math.min(count + step, target);
+            el.firstChild.textContent = count;
+            if (count >= target) clearInterval(timer);
+          }, 30);
+        });
+        statsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const statsBand = document.querySelector('.stats-band');
+  if (statsBand) statsObserver.observe(statsBand);
+</script>
+</body>
+</html>

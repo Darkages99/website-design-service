@@ -1,0 +1,599 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bebas:'Bebas Neue',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'DM Mono',monospace;
+    --orange:#E8500A;
+    --orange-light:#FFF0E8;
+    --orange-dark:#B03A06;
+    --ink:#1A1A1A;
+    --ink2:#444;
+    --ink3:#888;
+    --surface:#FAFAF8;
+    --card:#FFFFFF;
+    --border:rgba(0,0,0,0.08);
+    --border2:rgba(0,0,0,0.14);
+    --green:#1D9E75;
+    --green-bg:#E1F5EE;
+    --blue:#185FA5;
+    --blue-bg:#E6F1FB;
+    --red:#A32D2D;
+    --red-bg:#FCEBEB;
+    --amber:#854F0B;
+    --amber-bg:#FAEEDA;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --ink:#F0EDE8;--ink2:#C8C4BE;--ink3:#888;
+      --surface:#141412;--card:#1E1E1A;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+      --orange-light:#2A1A0E;--orange:#FF6B2B;
+    }
+  }
+
+  body{font-family:var(--dm);background:var(--surface);color:var(--ink);min-height:100vh;}
+
+  .hero{padding:2.5rem 1.5rem 1.5rem;border-bottom:1px solid var(--border);}
+  .hero-label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--orange);text-transform:uppercase;margin-bottom:.4rem;}
+  .hero h1{font-family:var(--bebas);font-size:clamp(2.8rem,7vw,4.5rem);line-height:.95;color:var(--ink);letter-spacing:.02em;}
+  .hero h1 span{color:var(--orange);}
+  .hero-sub{font-size:14px;color:var(--ink2);margin-top:.6rem;max-width:520px;line-height:1.6;}
+
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 1.5rem;overflow-x:auto;}
+  .tab{font-family:var(--dm);font-size:13px;font-weight:500;color:var(--ink3);padding:.75rem 1rem;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+  .tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+  .tab:hover:not(.active){color:var(--ink2);}
+
+  .panel{display:none;padding:1.5rem;animation:fadeIn .2s ease;}
+  .panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .section-title{font-family:var(--bebas);font-size:1.6rem;letter-spacing:.04em;color:var(--ink);margin-bottom:1rem;}
+  .section-title span{color:var(--orange);}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;}
+  .card-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--orange);text-transform:uppercase;margin-bottom:.4rem;}
+  .card h3{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:.5rem;}
+  .card p{font-size:13.5px;color:var(--ink2);line-height:1.7;}
+
+  .script-box{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin:.75rem 0;font-size:14px;line-height:1.8;color:var(--ink);}
+  .script-box .em{font-weight:500;color:var(--ink);}
+  .script-box .slow{font-style:italic;color:var(--ink2);}
+  .script-box .tag{display:inline-block;background:var(--orange);color:#fff;font-family:var(--mono);font-size:10px;border-radius:4px;padding:1px 6px;margin:0 2px;vertical-align:middle;}
+  .script-box .tag.pause{background:#5F5E5A;}
+  .script-box .tag.smile{background:var(--green);}
+  .script-box .tag.lower{background:#185FA5;}
+  .script-box .tag.fast{background:#854F0B;}
+  .script-box .tag.conf{background:#533AB7;}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;border-radius:100px;padding:3px 10px;margin:2px;}
+  .pill.g{background:var(--green-bg);color:var(--green);}
+  .pill.b{background:var(--blue-bg);color:var(--blue);}
+  .pill.r{background:var(--red-bg);color:var(--red);}
+  .pill.a{background:var(--amber-bg);color:var(--amber);}
+  .pill.o{background:var(--orange-light);color:var(--orange-dark);}
+
+  .objection-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;}
+  .obj-header{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;cursor:pointer;background:var(--card);}
+  .obj-header:hover{background:var(--surface);}
+  .obj-q{font-size:14px;font-weight:500;color:var(--ink);}
+  .obj-tag{font-family:var(--mono);font-size:10px;color:var(--orange);background:var(--orange-light);border-radius:100px;padding:2px 8px;}
+  .obj-body{display:none;padding:1rem;background:var(--surface);border-top:1px solid var(--border);}
+  .obj-body.open{display:block;}
+  .obj-psych{font-size:12.5px;color:var(--ink3);margin-bottom:.6rem;font-style:italic;}
+  .obj-short{background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:.7rem 1rem;font-size:13.5px;color:var(--ink);line-height:1.7;margin-bottom:.6rem;}
+  .obj-long{background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:.7rem 1rem;font-size:13.5px;color:var(--ink);line-height:1.7;}
+  .resp-label{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-bottom:.3rem;}
+
+  .mindset-stat{text-align:center;padding:1rem;}
+  .mindset-stat .num{font-family:var(--bebas);font-size:2.8rem;color:var(--orange);}
+  .mindset-stat .lbl{font-size:12px;color:var(--ink2);}
+
+  .step-flow{position:relative;padding-left:2rem;}
+  .step-flow::before{content:'';position:absolute;left:.55rem;top:.5rem;bottom:.5rem;width:1.5px;background:var(--border2);}
+  .step{position:relative;margin-bottom:1.25rem;}
+  .step-dot{position:absolute;left:-2rem;top:.15rem;width:1.1rem;height:1.1rem;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;}
+  .step-dot span{font-family:var(--mono);font-size:9px;color:#fff;font-weight:500;}
+  .step-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:.25rem;}
+  .step-body{font-size:13.5px;color:var(--ink2);line-height:1.7;}
+
+  .close-btn{display:inline-block;background:var(--orange);color:#fff;font-family:var(--dm);font-size:13px;font-weight:500;border:none;border-radius:8px;padding:.5rem 1.1rem;cursor:pointer;transition:opacity .15s;}
+  .close-btn:hover{opacity:.85;}
+
+  .coaching-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;}
+  .coaching-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;}
+  .coaching-card .icon{font-size:1.4rem;margin-bottom:.5rem;}
+  .coaching-card h4{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:.4rem;}
+  .coaching-card p{font-size:12.5px;color:var(--ink2);line-height:1.6;}
+
+  .hr{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
+
+  .toggle-row{display:flex;gap:.5rem;margin-bottom:1rem;}
+  .toggle-btn{border:1px solid var(--border2);border-radius:8px;background:var(--card);color:var(--ink2);font-size:13px;font-weight:500;padding:.45rem 1rem;cursor:pointer;transition:all .15s;}
+  .toggle-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+  .full-script{font-family:var(--dm);font-size:14px;line-height:1.9;color:var(--ink);}
+  .full-script .line{margin:.3rem 0;}
+  .full-script .stage{font-family:var(--bebas);font-size:1rem;letter-spacing:.08em;color:var(--orange);margin:1.2rem 0 .4rem;}
+  .full-script .note{font-size:12px;color:var(--ink3);font-style:italic;margin:.2rem 0 .5rem;}
+  .full-script .speaker{font-weight:500;color:var(--ink);margin-right:.3rem;}
+  .badge{display:inline-flex;align-items:center;gap:4px;background:var(--orange-light);color:var(--orange-dark);font-family:var(--mono);font-size:10px;border-radius:4px;padding:1px 7px;margin:0 2px;}
+</style>
+
+<h2 class="sr-only">Alex Hormozi Cold Calling Framework — Complete Sales Playbook for Indian Web Design Agency</h2>
+
+<div class="hero">
+  <div class="hero-label">Hormozi-Method · Chennai Agency · 2025</div>
+  <h1>COLD CALL<br><span>PLAYBOOK</span></h1>
+  <div class="hero-sub">A complete framework for booking discovery meetings — built on the $100M Offers philosophy. Two scripts. Nine objection handlers. Zero fake testimonials.</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('mindset',this)">Mindset</button>
+  <button class="tab" onclick="showPanel('openers',this)">Openers</button>
+  <button class="tab" onclick="showPanel('discovery',this)">Discovery</button>
+  <button class="tab" onclick="showPanel('pitch',this)">Pitch</button>
+  <button class="tab" onclick="showPanel('objections',this)">Objections</button>
+  <button class="tab" onclick="showPanel('close',this)">Close</button>
+  <button class="tab" onclick="showPanel('script1',this)">Script A</button>
+  <button class="tab" onclick="showPanel('script2',this)">Script B</button>
+  <button class="tab" onclick="showPanel('coaching',this)">Coaching</button>
+</div>
+
+<div id="mindset" class="panel active">
+  <div class="section-title">The <span>Hormozi</span> Mindset</div>
+  <div class="two-col" style="margin-bottom:1rem;">
+    <div class="mindset-stat"><div class="num">100</div><div class="lbl">Calls = 1 meeting.<br>That's a good ratio. Embrace it.</div></div>
+    <div class="mindset-stat"><div class="num">1</div><div class="lbl">Meeting = potential<br>₹50K–₹2L project.</div></div>
+    <div class="mindset-stat"><div class="num">0</div><div class="lbl">Closing expected<br>on call one.</div></div>
+    <div class="mindset-stat"><div class="num">∞</div><div class="lbl">Value of learning<br>from each no.</div></div>
+  </div>
+  <div class="hr"></div>
+  <div class="section-title" style="font-size:1.2rem;">Before You Dial</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Think this</div>
+      <h3>You are a doctor making rounds</h3>
+      <p>You are not selling. You are diagnosing. Most businesses in India are bleeding money through a broken digital presence — you are calling to find out if they're one of them. That is a service, not a pitch.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Rejection reframe</div>
+      <h3>"No" is data, not failure</h3>
+      <p>Hormozi's rule: volume cures all. A "no" removes an unqualified prospect. It brings you closer to the "yes." Never argue. Never beg. Thank them and dial the next number.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Track these</div>
+      <h3>Metrics that matter</h3>
+      <p>Dials per day. Pickups per 100 dials. Conversations per 100 pickups. Meetings booked per 100 conversations. Nothing else matters on day one.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Ignore these</div>
+      <h3>What NOT to focus on</h3>
+      <p>Your accent. Your lack of case studies. The prospect's tone in the first 5 seconds. Whether they sound busy. These are distractions. Focus on the next word out of your mouth.</p>
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--orange);border-radius:0 12px 12px 0;">
+    <div class="card-label">Hormozi's core belief</div>
+    <p style="font-size:15px;line-height:1.8;">No case studies? Fine. Lead with a free audit. Hormozi calls this the <strong style="color:var(--ink)">"diagnosis before prescription"</strong> model. You are not asking them to trust your past work. You are asking them to let you show them a problem they already have — for free. That is an almost frictionless yes.</p>
+  </div>
+</div>
+
+<div id="openers" class="panel">
+  <div class="section-title">Opening <span>Hooks</span></div>
+
+  <div class="card" style="border-top:3px solid var(--orange);">
+    <div class="card-label">Opener 1 · Best performing</div>
+    <h3>The Problem-First Opener</h3>
+    <div class="script-box">
+      <span class="tag smile">Smile</span> "Hi, am I speaking with <span class="em">[Name / Owner]?</span>"<br>
+      <span class="tag pause">Pause</span><br>
+      <span class="tag conf">Confident</span> "I'm <span class="em">Arjun</span> calling from <span class="em">Chennai</span>. Quick question — <span class="em">when someone Googles your business right now,</span> <span class="slow">are they actually finding you?</span>"
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);margin-top:.5rem;"><strong style="color:var(--ink);">Why it works:</strong> Opens with a question about their reality, not your product. Forces them to think about a gap they may have never articulated. The word "actually" carries implicit doubt — a pattern interrupt.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Opener 2 · Alternative</div>
+    <h3>The Observation Opener</h3>
+    <div class="script-box">
+      <span class="tag smile">Smile</span> "Hi, is this <span class="em">[Business Name]?</span>"<br>
+      <span class="tag pause">Pause</span><br>
+      "I was looking at your business online and I noticed a few things that could be costing you customers. I'm not selling anything right now — I just wanted to ask you <span class="em">one question</span>."
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);margin-top:.5rem;"><strong style="color:var(--ink);">Why it works:</strong> "I was looking at your business" signals research and specificity. "Not selling anything" is a permission reset — it lowers their guard before you ask.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Opener 3 · Permission-based</div>
+    <h3>The 30-Second Ask</h3>
+    <div class="script-box">
+      <span class="tag smile">Smile</span> "Hi, this is <span class="em">Arjun</span>. I know you didn't expect my call. Can I take <span class="em">30 seconds</span> to tell you why I'm calling, and if it's not relevant you can just tell me and I'll hang up?"
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);margin-top:.5rem;"><strong style="color:var(--ink);">Why it works:</strong> Gives them control. The brain hates losing control — giving it back immediately disarms hostility. Works brilliantly with assertive Indian business owners who feel their time is being taken.</p>
+  </div>
+
+  <div class="card" style="border-top:3px solid var(--amber-bg);border-color:var(--amber-bg);">
+    <div class="card-label">Opener 4 · Pattern interrupt</div>
+    <h3>The Blunt Opener (Use sparingly)</h3>
+    <div class="script-box">
+      <span class="tag lower">Lower voice</span> "Hi, honest question — <span class="em">is your website actually bringing you any customers right now,</span> or is it just sitting there?"
+    </div>
+    <p style="font-size:12.5px;color:var(--ink3);margin-top:.5rem;"><strong style="color:var(--ink);">Why it works:</strong> "Honest question" triggers a micro-commitment to honesty. "Just sitting there" is conversational and often hits a nerve — because for most SMEs, that's the truth. Use after warming up with Opener 1 for a few weeks.</p>
+  </div>
+</div>
+
+<div id="discovery" class="panel">
+  <div class="section-title">Discovery <span>Questions</span></div>
+  <p style="font-size:13.5px;color:var(--ink2);margin-bottom:1.2rem;line-height:1.7;">Don't fire these as a list. Pick 2–3 based on what they say. Listen more than you talk. Let silence do work.</p>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-dot"><span>1</span></div>
+      <div class="step-title">Website Awareness</div>
+      <div class="step-body">
+        <div class="script-box">"How long have you had your current website — and when did you last update it?"</div>
+        <span class="pill o">Intent: uncovers staleness</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>2</span></div>
+      <div class="step-title">Traffic / Visibility Check</div>
+      <div class="step-body">
+        <div class="script-box">"When a potential customer searches for someone like you in [City], do you know if you're appearing on the first page of Google?"</div>
+        <span class="pill b">Intent: creates awareness gap</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>3</span></div>
+      <div class="step-title">Lead Source Reality Check</div>
+      <div class="step-body">
+        <div class="script-box">"Right now, where does most of your business come from — referrals, walk-ins, calls, or online?"</div>
+        <span class="pill g">Intent: reveals dependency on offline only</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>4</span></div>
+      <div class="step-title">Pain Surfacing</div>
+      <div class="step-body">
+        <div class="script-box">"Has it ever happened that a customer told you they tried to find your contact online and had trouble?"</div>
+        <span class="pill r">Intent: makes invisible pain visible</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>5</span></div>
+      <div class="step-title">Revenue Aspiration</div>
+      <div class="step-body">
+        <div class="script-box">"If you could get even 5–10 more qualified customers per month just from online — what would that mean for your business?"</div>
+        <span class="pill o">Intent: anchors the value of your solution</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>6</span></div>
+      <div class="step-title">Competition Frame</div>
+      <div class="step-body">
+        <div class="script-box">"Are you seeing more of your competitors showing up online? Has that affected anything for you?"</div>
+        <span class="pill a">Intent: triggers loss aversion — most powerful motivator</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot"><span>7</span></div>
+      <div class="step-title">No Website — Direct</div>
+      <div class="step-body">
+        <div class="script-box">"If someone wanted to check your business out before calling you — where would they go right now?"</div>
+        <span class="pill r">Intent: makes the absence embarrassingly obvious</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pitch" class="panel">
+  <div class="section-title">The <span>Pitch</span></div>
+  <div class="card" style="border-left:3px solid var(--orange);">
+    <div class="card-label">Hormozi Rule</div>
+    <p style="font-size:14px;line-height:1.8;">Never sell a website. Sell what the website <strong style="color:var(--ink);">does</strong>. A website is a box. The outcome is customers finding them, trusting them, and calling them at 11pm without them lifting a finger.</p>
+  </div>
+
+  <div class="hr"></div>
+  <div class="section-title" style="font-size:1.1rem;">Pitch: Free Audit (Businesses WITH website)</div>
+  <div class="script-box">
+    <span class="tag conf">Confident</span> "Here's what I'd like to do. We run a <span class="em">free website and SEO audit</span> — takes us about 24 hours.<br><br>
+    We look at <span class="em">three things:</span><br>
+    One — whether Google can actually read and rank your site.<br>
+    Two — how your site looks to a new customer who's never heard of you.<br>
+    Three — what your top competitors are doing that you might not be.<br><br>
+    <span class="slow">There's no charge. No obligation. If we find nothing worth fixing, I'll tell you that and we're done.</span><br><br>
+    <span class="tag smile">Smile</span> <span class="em">If we do find something — and we almost always do — I'll walk you through it on a 20-minute call and show you exactly what it would take to fix it.</span><br><br>
+    <span class="tag pause">Pause</span> Fair enough?"
+  </div>
+
+  <div class="hr"></div>
+  <div class="section-title" style="font-size:1.1rem;">Pitch: New Website (NO website)</div>
+  <div class="script-box">
+    <span class="tag conf">Confident</span> "Here's the reality — <span class="em">80% of customers in India look up a business online before they call or visit.</span><br><br>
+    Right now, when someone searches your business name, <span class="slow">they find nothing.</span><br><br>
+    That's not just a missed opportunity — it's actively making people choose the competitor who does show up.<br><br>
+    <span class="tag smile">Smile</span> What I'd like to do is <span class="em">get on a 20-minute call with you</span> to show you exactly what a professional online presence would look like for your type of business — and what it would cost.<br><br>
+    <span class="tag pause">Pause</span> No pressure. If the numbers don't make sense, we part as friends. But at least you'll know what you're working with.<br><br>
+    <span class="em">Can we find 20 minutes this week?</span>"
+  </div>
+
+  <div class="hr"></div>
+  <div class="card">
+    <div class="card-label">No testimonials? Use this frame</div>
+    <h3>The Transparency Frame</h3>
+    <p>"We're a newer agency — which actually works in your favor. We're not juggling 50 clients. You'll get our full attention and our best work because we're building our reputation, not coasting on it."</p>
+  </div>
+</div>
+
+<div id="objections" class="panel">
+  <div class="section-title">Objection <span>Arsenal</span></div>
+  <p style="font-size:13.5px;color:var(--ink2);margin-bottom:1.2rem;">Click any objection to expand the full response.</p>
+
+  <div id="obj-list"></div>
+</div>
+
+<div id="close" class="panel">
+  <div class="section-title">Closing <span>The Call</span></div>
+  <p style="font-size:13.5px;color:var(--ink2);margin-bottom:1.2rem;">Remember: the only goal is a booked meeting. Don't close on price. Don't close on services. Close on <strong style="color:var(--ink);">time.</strong></p>
+
+  <div class="two-col">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div class="card-label">Soft close</div>
+      <div class="script-box" style="font-size:13px;">"Would it be okay if we blocked just 20 minutes sometime this week? I'll come prepared with some data on your current online presence."</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div class="card-label">Direct close</div>
+      <div class="script-box" style="font-size:13px;">"Are you free Wednesday or Thursday — morning or afternoon?"<br><span class="tag pause">Pause</span> <span style="font-size:12px;color:var(--ink3);">Give two options. Never ask open-ended.</span></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div class="card-label">Calendar booking close</div>
+      <div class="script-box" style="font-size:13px;">"Perfect. If you give me your WhatsApp number I'll send a calendar invite with the meeting link. Takes 30 seconds and you'll have it in writing."</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div class="card-label">WhatsApp follow-up close</div>
+      <div class="script-box" style="font-size:13px;">"No worries. Let me send you something on WhatsApp so you have our details — and I'll also include a quick snapshot of what your site's current Google ranking looks like. Fair?"</div>
+    </div>
+  </div>
+</div>
+
+<div id="script1" class="panel">
+  <div class="section-title">Script <span>A</span> — No Website</div>
+  <div class="pill o" style="margin-bottom:1rem;">Target: Businesses with no online presence</div>
+  <div class="full-script">
+    <div class="stage">— Greeting —</div>
+    <div class="note">Smile before you dial. It changes your vocal energy.</div>
+    <div class="line"><span class="tag smile">Smile</span> <span class="speaker">You:</span> "Hi, am I speaking with <span class="badge">Owner Name</span>?"</div>
+    <div class="line"><span class="tag pause">Pause</span> Wait for confirmation.</div>
+    <div class="line"><span class="speaker">You:</span> <span class="em">"Great. My name is Arjun — I'm calling from Chennai. I promise I won't take more than a minute."</span></div>
+
+    <div class="stage">— Pattern Interrupt / Hook —</div>
+    <div class="line"><span class="tag lower">Lower voice</span> "Quick honest question — if someone wanted to check out your business online before calling you... where would they find you right now?"</div>
+    <div class="line"><span class="tag pause">Pause</span> Let them answer. Don't fill the silence.</div>
+
+    <div class="stage">— Discovery (2–3 questions max) —</div>
+    <div class="line"><span class="speaker">If they say "just WhatsApp/referrals":</span></div>
+    <div class="line"><span class="tag conf">Confident</span> "That's actually really common for businesses like yours. Most of your customers come from people who already know you. But here's what I've been noticing — the customers who don't know you yet can't find you. And they're going to whoever shows up on Google."</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line">"Quick question — do you know how many of your competitors have websites showing up when someone searches <span class="badge">your service + city</span> in your area?"</div>
+
+    <div class="stage">— Bridge to Pitch —</div>
+    <div class="line"><span class="tag conf">Confident</span> "This is exactly why I called. We specialize in building professional websites for businesses like yours — the kind that show up on Google and actually convert visitors into calls."</div>
+
+    <div class="stage">— Pitch —</div>
+    <div class="line"><span class="tag lower">Lower voice</span> "Here's what I'd like to do — <span class="em">no cost, no commitment.</span> I want to get on a 20-minute call with you, show you what a proper website would look like for your type of business, and give you the exact numbers."</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line">"If it makes sense, great. If not, no hard feelings — at least you'll have the full picture."</div>
+
+    <div class="stage">— Close —</div>
+    <div class="line"><span class="tag conf">Confident</span> "Are you free for 20 minutes — <span class="em">Wednesday or Thursday?</span>"</div>
+    <div class="line"><span class="tag pause">Pause</span> Give them two options. Never open-ended.</div>
+
+    <div class="stage">— WhatsApp Confirm —</div>
+    <div class="line">"Perfect. Let me take your WhatsApp number and I'll send you a calendar invite. You'll have it in writing."</div>
+    <div class="line"><span class="tag smile">Smile</span> "Looking forward to it, <span class="badge">Name</span>. Have a great day."</div>
+  </div>
+</div>
+
+<div id="script2" class="panel">
+  <div class="section-title">Script <span>B</span> — Free Audit</div>
+  <div class="pill b" style="margin-bottom:1rem;">Target: Businesses WITH a website (weak/outdated)</div>
+  <div class="full-script">
+    <div class="stage">— Greeting —</div>
+    <div class="note">Research their site for 2 minutes before calling. Know one specific thing to mention.</div>
+    <div class="line"><span class="tag smile">Smile</span> <span class="speaker">You:</span> "Hi, is this <span class="badge">Business Name</span>?"</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line"><span class="speaker">You:</span> "My name is Arjun, I'm calling from Chennai. I was looking at your website earlier today — can I ask you something quickly?"</div>
+
+    <div class="stage">— Permission Opener —</div>
+    <div class="line"><span class="tag lower">Lower voice</span> "When someone Googles <span class="badge">your service</span> in <span class="badge">your city</span> right now — do you know where your website is appearing?"</div>
+    <div class="line"><span class="tag pause">Pause</span> Let the question land. Silence is powerful here.</div>
+
+    <div class="stage">— Discovery —</div>
+    <div class="line"><span class="speaker">If they say "not sure" / "not on first page":</span></div>
+    <div class="line"><span class="tag conf">Confident</span> "That's what I suspected. I had a quick look and there are a few things on the technical side that are likely pushing your site down in Google rankings. Your competitors — <span class="em">at least two or three of them</span> — are showing up above you for searches your customers are doing right now."</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line">"Can I ask — how do most of your new customers find you currently?"</div>
+
+    <div class="stage">— Bridge —</div>
+    <div class="line"><span class="tag conf">Confident</span> "This is exactly what we work on. We do a free website and SEO audit — takes us 24 hours. We look at why your site isn't ranking, what's broken, and what your competitors are doing differently."</div>
+
+    <div class="stage">— Pitch —</div>
+    <div class="line"><span class="tag lower">Lower voice</span> "Here's the deal — <span class="em">it costs you nothing.</span> If we look at your site and everything is fine, I'll tell you that honestly and we're done."</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line">"If we find issues — and we typically find at least 5–7 in most SME websites — I'll walk you through them on a 20-minute call and tell you exactly what it would take to fix it."</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+    <div class="line"><span class="tag smile">Smile</span> "<span class="em">No obligation to hire us. Fair enough?</span>"</div>
+
+    <div class="stage">— Handling "What do you check?" —</div>
+    <div class="line">"Three main things — whether Google can properly read and index your pages, how fast your site loads on a phone, and whether your content matches what customers are actually searching for. Basic stuff that most agencies overlook."</div>
+
+    <div class="stage">— Close —</div>
+    <div class="line"><span class="tag conf">Confident</span> "It only takes 20 minutes on a call. Are you free <span class="em">Tuesday or Wednesday — morning or afternoon?</span>"</div>
+    <div class="line"><span class="tag pause">Pause</span></div>
+
+    <div class="stage">— WhatsApp Confirm —</div>
+    <div class="line">"Let me get your WhatsApp number and I'll send the invite. I'll also drop a few screenshots of what I found so you can have a look before we speak."</div>
+    <div class="line"><span class="tag smile">Smile</span> "Thanks <span class="badge">Name</span>. Speak soon."</div>
+  </div>
+</div>
+
+<div id="coaching" class="panel">
+  <div class="section-title">Coaching <span>Notes</span></div>
+  <div class="coaching-grid">
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-phone-off" aria-hidden="true"></i></div>
+      <h4>Beginner mistake #1</h4>
+      <p>Talking too much. Hormozi says: the person asking questions is in control. Pitch after you discover — never before.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-mood-sad" aria-hidden="true"></i></div>
+      <h4>Beginner mistake #2</h4>
+      <p>Getting emotional after rejection. 97% of calls end in no. That is normal. That is the business. Act like a doctor — detached, professional, curious.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-shield-off" aria-hidden="true"></i></div>
+      <h4>Beginner mistake #3</h4>
+      <p>Leading with "we are a web design company." Nobody cares what you do. They care what you can do FOR THEM. Lead with their problem.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-writing" aria-hidden="true"></i></div>
+      <h4>Beginner mistake #4</h4>
+      <p>Reading the script robotically. Use it as guardrails, not a prison. Know it so well that it sounds like a real conversation.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-target" aria-hidden="true"></i></div>
+      <h4>Daily call target</h4>
+      <p>Aim for 60–80 dials per day. 30–40 minimum. At 60 dials/day for 5 days: 300 calls → 3–5 meetings. That's a pipeline.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-refresh" aria-hidden="true"></i></div>
+      <h4>After every 100 calls</h4>
+      <p>Review: What was the most common objection? Which opener had the highest pickup rate? What sentence ended most conversations? Adjust one thing. Repeat.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></div>
+      <h4>India-specific tip</h4>
+      <p>WhatsApp is your CRM. Send a voice note follow-up within 2 hours of a positive call. It stands out completely. Almost no one does it.</p>
+    </div>
+    <div class="coaching-card">
+      <div class="icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
+      <h4>What Hormozi would critique</h4>
+      <p>Weak calls make excuses for the prospect. "They seemed busy." "Their business is small." Hormozi's response: irrelevant. Dial the next number. Volume is the answer.</p>
+    </div>
+  </div>
+  <div class="hr"></div>
+  <div class="card" style="border-left:3px solid var(--orange);">
+    <div class="card-label">Final word</div>
+    <p style="font-size:14px;line-height:1.9;">"The only way to get good at sales is to do sales. The script is a starting point. Your first 100 calls will be awkward. Your next 100 will be better. By call 500, you'll be dangerous. Most people quit at call 20. Don't be most people."</p>
+    <p style="font-size:12px;color:var(--ink3);margin-top:.5rem;">— What Alex Hormozi would tell you.</p>
+  </div>
+</div>
+
+<script>
+const objections = [
+  {
+    q: "We already have a website",
+    tag: "Most common",
+    psych: "Defensive — they interpret your call as an attack on a decision they made.",
+    short: "Perfect — that actually makes this easier. I'm not here to sell you a new one. I just want to check if your current site is doing its job. Can I ask — when did you last update it?",
+    long: "Totally understand, and honestly that's great. I'm not here to convince you to rebuild something if it's working. What I do is a free audit — I look at whether your current site is ranking on Google, loading fast on mobile, and converting visitors into calls. Takes me 24 hours. If everything checks out, I'll tell you. If there are gaps, I'll walk you through them. No charge either way. Fair enough?"
+  },
+  {
+    q: "We already have someone for SEO",
+    tag: "Defensive",
+    psych: "Loyalty to existing vendor + fear of admitting it might not be working.",
+    short: "That's good to hear. Quick question — are you seeing results from it? Like, are you ranking on the first page for your main services?",
+    long: "That's great. I'm not asking you to switch. What I'd like to do is just run a quick audit independently — no cost, no agenda — and if your current person is doing a fantastic job, you'll have a second opinion confirming that. If I find something they've missed, at least you'll know. Most business owners actually find it useful. Would that be okay?"
+  },
+  {
+    q: "Send me information on WhatsApp",
+    tag: "Delay tactic",
+    psych: "Polite way of ending the call without saying no. They have no intention of reading it.",
+    short: "Absolutely, I'll send it. But before I do — just to make sure I send you the right information, can I ask: is your main concern right now getting more customers, or more about your site design?",
+    long: "Happy to send. But here's what I've found — a PDF doesn't really capture the value the way a quick conversation does. What if I send you one thing — a screenshot of where your site currently stands on Google — and then we schedule 15 minutes this week so I can actually show you what it means? That way the WhatsApp message has context. Would that work?"
+  },
+  {
+    q: "We are not interested",
+    tag: "Reflex no",
+    psych: "Said within the first 10 seconds — this is a trained reflex, not a considered decision.",
+    short: "Totally fair. Can I ask — is that because you don't need more customers right now, or because you've had bad experiences with agencies before?",
+    long: "I hear you. Most people say that — and sometimes it's the right call. But before I let you go, can I ask one honest question: if I could show you that your top competitors are outranking you on Google and it's costing you 5–10 enquiries a month — would that still be something you'd want to know about? Because that's literally all I'm offering today. A look. No cost."
+  },
+  {
+    q: "Too expensive / What are your prices?",
+    tag: "Price anchor",
+    psych: "Asked before seeing value — means they're comparing to zero (their current spend on digital).",
+    short: "Completely fair question. Before I give you a number that might mean nothing without context — can we do the audit first? That way the price is attached to an actual problem, not a guess.",
+    long: "Great question. Here's why I'd rather not give you a number right now — our pricing depends entirely on what needs to be done. We've worked on projects that cost ₹15,000 and projects that cost ₹1.5 lakh. The range is huge. What I'd rather do is run the free audit, identify specifically what's costing you customers, and then give you a price that's tied to a real outcome. That way you're evaluating value, not just a number. Can we do that?"
+  },
+  {
+    q: "Call me later / I'm busy",
+    tag: "Delay",
+    psych: "Not always dishonest — sometimes genuinely busy. But if not nailed down, the follow-up call goes nowhere.",
+    short: "Of course. What's a better time — tomorrow morning or afternoon?",
+    long: "Absolutely, I respect that. Before I let you go — rather than calling back blindly, let me do one thing: I'll run a quick look at your website's Google ranking right now and send you a screenshot on WhatsApp. That way when we speak next time, you already have something to look at. Can I get your WhatsApp number? Takes 10 seconds."
+  },
+  {
+    q: "We don't need more customers",
+    tag: "Capacity objection",
+    psych: "Rare but real — or a polite brush-off. Treat it as genuine first.",
+    short: "That's actually rare to hear — sounds like business is strong. In that case, are you at a point where you could be selective about which customers you take on? Because that's actually where a strong online presence helps — it filters quality.",
+    long: "That's a great position to be in. But let me ask you this — right now, your referrals choose you because someone vouched for you. What happens when a customer Googles you after getting that referral? Do they see a professional presence that confirms the recommendation, or does it create doubt? A strong website isn't just for getting new customers — it's for keeping the ones you almost had. Happy to show you what that looks like."
+  },
+  {
+    q: "We get enough referrals",
+    tag: "Referral dependency",
+    psych: "Comfortable present state bias — not seeing the risk of single-channel dependency.",
+    short: "Referrals are gold. But here's a risk — what happens if your top referrer slows down, or a competitor starts poaching them? Online is your backup engine.",
+    long: "Referrals are the best source of business — 100% agree. But here's something worth thinking about: every referral you get Googles you before they call. If your online presence doesn't match the recommendation they received, you lose them silently. You never even know. We've seen businesses lose 20–30% of warm referrals at the online lookup stage. I'd love to just show you what your digital presence looks like from a new customer's eyes — 20 minutes, no cost. Worth it?"
+  },
+  {
+    q: "We have no budget",
+    tag: "Budget objection",
+    psych: "Sometimes true, but often means: 'I don't see enough value to justify spending.'",
+    short: "Understood. The audit is completely free — no spend required. Let's start there and see what we're actually dealing with.",
+    long: "That's honest and I respect it. Here's why it doesn't stop us: the audit costs you nothing. It's our way of proving value before asking for anything. If after the audit you decide the budget doesn't work, no hard feelings — but at least you'll know exactly what's costing you online and what it would take to fix it. Information is always useful. Can I at least send you the audit?"
+  }
+];
+
+function buildObjList() {
+  const container = document.getElementById('obj-list');
+  objections.forEach((obj, i) => {
+    const div = document.createElement('div');
+    div.className = 'objection-item';
+    div.innerHTML = `
+      <div class="obj-header" onclick="toggleObj(${i})">
+        <span class="obj-q">"${obj.q}"</span>
+        <span class="obj-tag">${obj.tag}</span>
+      </div>
+      <div class="obj-body" id="obj-body-${i}">
+        <p class="obj-psych">Psychology: ${obj.psych}</p>
+        <div class="resp-label">Short response (15 sec)</div>
+        <div class="obj-short">${obj.short}</div>
+        <div class="resp-label" style="margin-top:.5rem;">Full response (45 sec)</div>
+        <div class="obj-long">${obj.long}</div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleObj(i) {
+  const body = document.getElementById('obj-body-'+i);
+  body.classList.toggle('open');
+}
+
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+buildObjList();
+</script>

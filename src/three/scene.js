@@ -10,8 +10,10 @@ import { NOISE_GLSL } from './glsl.js'
  * transmuted into green. Additive-blended with a subtle bloom so dense regions
  * glow. Gold (top) → green (bottom) gradient = the brand's transmutation.
  *
- * On mount it plays a one-shot entrance: a crisp, slightly smaller sphere that
- * blooms outward over ~6.5s into the full swirling nebula (uIntro in the shader).
+ * It begins as a crisp, slightly smaller sphere and expands outward into the full
+ * swirling nebula as the hero scrolls — the expansion (uIntro in the shader) is
+ * scrubbed by setScroll on the desktop "full" tier. On the "lite" tier (no scroll
+ * layer) it auto-blooms once over time so it still animates.
  *
  * Returns a controller: { setScroll(0..1), setHover(0..1), destroy() }.
  *
@@ -206,12 +208,16 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     const dt = Math.min(clock.getDelta(), 0.05)
     uniforms.uTime.value += dt
 
-    // Entrance bloom: ease uIntro 0 → 1 on a smootherstep curve so the sphere
-    // expands slowly and settles, rather than snapping open to full size.
-    if (introElapsed < INTRO_DURATION) {
-      introElapsed = Math.min(INTRO_DURATION, introElapsed + dt)
-      const t = introElapsed / INTRO_DURATION
-      uniforms.uIntro.value = t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
+    // Expansion: on desktop 'full' tier, we scrub uIntro by scroll progress.
+    // On mobile 'lite' tier, it auto-blooms once on mount over time.
+    if (isFull) {
+      uniforms.uIntro.value += (scrollTarget - uniforms.uIntro.value) * 0.08
+    } else {
+      if (introElapsed < INTRO_DURATION) {
+        introElapsed = Math.min(INTRO_DURATION, introElapsed + dt)
+        const t = introElapsed / INTRO_DURATION
+        uniforms.uIntro.value = t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
+      }
     }
 
     pointerSmooth.x += (pointer.x - pointerSmooth.x) * 0.045
