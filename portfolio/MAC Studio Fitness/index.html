@@ -415,6 +415,8 @@
   .pt-feature .big .cur { font-size: 26px; vertical-align: top; color: var(--muted); }
   .pt-feature p { font-size: 14px; color: rgba(245,242,236,.78); margin-bottom: 18px; line-height: 1.6; }
   .pt-feature .go { margin-top: auto; }
+  .enquire-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 14px 28px; background: var(--red); color: #fff !important; border: none !important; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s; box-shadow: 0 4px 18px rgba(226,36,27,.35); }
+  .enquire-btn:hover { background: #c41a13; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(226,36,27,.5); color: #fff !important; }
   .fineprint { margin-top: 22px; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
   .fineprint strong { color: rgba(245,242,236,.8); }
 
@@ -510,6 +512,7 @@
   .foot-social { display: flex; gap: 10px; }
   .foot-social a { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 700; transition: all .2s; }
   .foot-social a:hover { border-color: var(--red); color: var(--red-bright); }
+  .foot-social svg { display: block; }
   .fcol h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--red-bright); margin-bottom: 18px; }
   .fcol ul { list-style: none; }
   .fcol li { margin-bottom: 9px; }
@@ -522,11 +525,12 @@
 
   /* ============ FLOATING CTA ============ */
   .floats { position: fixed; right: 22px; bottom: 22px; z-index: 999; display: flex; flex-direction: column; gap: 12px; }
-  .float-btn { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 22px; box-shadow: 0 6px 20px rgba(0,0,0,.4); transition: transform .2s; }
+  .float-btn { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 22px; box-shadow: 0 6px 20px rgba(0,0,0,.4); transition: all .2s; }
   .float-btn:hover { transform: scale(1.08); }
-  .float-wa { background: #25d366; color: #fff; }
-  .float-call { background: var(--red); color: #fff; animation: pulse 2.6s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { box-shadow: 0 6px 20px rgba(226,36,27,.4); } 50% { box-shadow: 0 6px 30px rgba(226,36,27,.75); } }
+  .float-wa { background: #25d366; color: #fff; animation: pulse-wa 2.6s ease-in-out infinite; }
+  .float-wa:hover { background: #1fa155; }
+  .float-wa svg { display: block; }
+  @keyframes pulse-wa { 0%,100% { box-shadow: 0 6px 20px rgba(37, 211, 102, .4); } 50% { box-shadow: 0 6px 30px rgba(37, 211, 102, .75); } }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 1000px) {
@@ -832,7 +836,7 @@
         <h3>Transformation</h3>
         <div class="big"><span class="cur">₹</span>38,000</div>
         <p>72 fully-coached sessions engineered for a complete fat-loss &amp; muscle-gain transformation. Our most committed track.</p>
-        <a href="#contact" class="go" style="border:none;background:var(--red);color:#fff">Enquire Now</a>
+        <a href="#contact" class="go enquire-btn">Enquire Now →</a>
       </div>
     </div>
 
@@ -1004,10 +1008,15 @@
       </a>
       <p>Chennai's results-driven fitness studio on East Coast Road, Neelankarai. Train with purpose, coach with passion, and join a pride that lifts each other up.</p>
       <div class="foot-social">
-        <a href="https://wa.me/917305251385" aria-label="WhatsApp">W</a>
-        <a href="#" aria-label="Instagram">IG</a>
-        <a href="#" aria-label="Facebook">f</a>
-        <a href="#" aria-label="YouTube">▶</a>
+        <a href="https://wa.me/917305251385" aria-label="WhatsApp" title="WhatsApp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        </a>
+        <a href="https://instagram.com" aria-label="Instagram" title="Instagram" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+        </a>
+        <a href="https://facebook.com" aria-label="Facebook" title="Facebook" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
       </div>
     </div>
     <div class="fcol">
@@ -1046,16 +1055,17 @@
 
 <!-- FLOATING CTA -->
 <div class="floats">
-  <a class="float-btn float-wa" href="https://wa.me/917305251385" aria-label="WhatsApp us" title="WhatsApp">💬</a>
-  <a class="float-btn float-call" href="tel:+917305251385" aria-label="Call us" title="Call">📞</a>
+  <a class="float-btn float-wa" href="https://wa.me/917305251385" aria-label="WhatsApp us" title="Chat on WhatsApp">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
 </div>
 
 <!-- ============ SCRIPTS ============ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script defer>
-window.addEventListener('DOMContentLoaded', function () {
+<script>
+(function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -1118,24 +1128,28 @@ window.addEventListener('DOMContentLoaded', function () {
   }, { threshold: 0.5 });
   counters.forEach(function (c) { cObs.observe(c); });
 
-  /* ---- reveal on scroll (GSAP if present, else IntersectionObserver) ---- */
+  /* ---- reveal on scroll ---- */
   var reveals = document.querySelectorAll('.reveal');
   if (window.gsap && window.ScrollTrigger && !reduce) {
     gsap.registerPlugin(ScrollTrigger);
     reveals.forEach(function (el) {
       gsap.fromTo(el, { y: 28, opacity: 0 }, {
-        y: 0, opacity: 1, duration: .8, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 88%' }
+        y: 0, opacity: 1, duration: .75, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', once: true }
       });
     });
-    /* subtle parallax on gallery + crest */
     gsap.utils.toArray('.about-media img, .gitem.feature img').forEach(function (img) {
       gsap.fromTo(img, { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: img, scrub: true } });
     });
+    /* ensure positions are correct after fonts/images load */
+    window.addEventListener('load', function () { ScrollTrigger.refresh(); });
   } else {
+    /* IntersectionObserver fallback */
     var rObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-in'); rObs.unobserve(en.target); } });
-    }, { threshold: 0.12 });
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('is-in'); rObs.unobserve(en.target); }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(function (el) { rObs.observe(el); });
   }
 
@@ -1160,60 +1174,62 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* ---- subtle low-poly 3D background (Three.js) ---- */
-  (function () {
-    var canvas = document.getElementById('bg3d');
-    if (!canvas || reduce || !window.THREE) return;
-    try {
-      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
-      camera.position.z = 16;
+}());
 
-      function size() {
-        var w = canvas.clientWidth, h = canvas.clientHeight;
-        renderer.setSize(w, h, false);
-        camera.aspect = w / h; camera.updateProjectionMatrix();
-      }
+/* ---- subtle low-poly 3D background (Three.js — deferred, init on load) ---- */
+window.addEventListener('load', function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canvas = document.getElementById('bg3d');
+  if (!canvas || reduce || !window.THREE) return;
+  try {
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+    camera.position.z = 16;
 
-      var group = new THREE.Group();
-      var geos = [new THREE.IcosahedronGeometry(1, 0), new THREE.TetrahedronGeometry(1.2, 0), new THREE.OctahedronGeometry(1.1, 0)];
-      var cols = [0xe2241b, 0xe2241b, 0xf5f2ec, 0x6b6b73, 0x2dd4bf];
-      var shards = [];
-      for (var i = 0; i < 26; i++) {
-        var g = geos[i % geos.length];
-        var m = new THREE.MeshBasicMaterial({ color: cols[i % cols.length], wireframe: true, transparent: true, opacity: 0.45 });
-        var mesh = new THREE.Mesh(g, m);
-        mesh.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 18, (Math.random() - 0.5) * 12);
-        var s = 0.4 + Math.random() * 1.3; mesh.scale.set(s, s, s);
-        mesh.userData.sp = (Math.random() - 0.5) * 0.004;
-        group.add(mesh); shards.push(mesh);
-      }
-      scene.add(group);
+    function size() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
 
-      var mx = 0, my = 0, tx = 0, ty = 0;
-      window.addEventListener('mousemove', function (e) {
-        tx = (e.clientX / window.innerWidth - 0.5);
-        ty = (e.clientY / window.innerHeight - 0.5);
-      });
+    var group = new THREE.Group();
+    var geos = [new THREE.IcosahedronGeometry(1, 0), new THREE.TetrahedronGeometry(1.2, 0), new THREE.OctahedronGeometry(1.1, 0)];
+    var cols = [0xe2241b, 0xe2241b, 0xf5f2ec, 0x6b6b73, 0x2dd4bf];
+    var shards = [];
+    for (var i = 0; i < 26; i++) {
+      var g = geos[i % geos.length];
+      var m = new THREE.MeshBasicMaterial({ color: cols[i % cols.length], wireframe: true, transparent: true, opacity: 0.45 });
+      var mesh = new THREE.Mesh(g, m);
+      mesh.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 18, (Math.random() - 0.5) * 12);
+      var s = 0.4 + Math.random() * 1.3; mesh.scale.set(s, s, s);
+      mesh.userData.sp = (Math.random() - 0.5) * 0.004;
+      group.add(mesh); shards.push(mesh);
+    }
+    scene.add(group);
 
-      size(); window.addEventListener('resize', size);
-      var raf;
-      function loop() {
-        raf = requestAnimationFrame(loop);
-        mx += (tx - mx) * 0.04; my += (ty - my) * 0.04;
-        group.rotation.y += 0.0016; group.rotation.x = my * 0.4;
-        group.rotation.y += mx * 0.002;
-        for (var j = 0; j < shards.length; j++) { shards[j].rotation.x += shards[j].userData.sp; shards[j].rotation.y += shards[j].userData.sp * 0.7; }
-        renderer.render(scene, camera);
-      }
-      loop();
-      document.addEventListener('visibilitychange', function () {
-        if (document.hidden) cancelAnimationFrame(raf); else loop();
-      });
-    } catch (err) { /* WebGL unavailable — gradient fallback stays */ }
-  })();
+    var mx = 0, my = 0, tx = 0, ty = 0;
+    window.addEventListener('mousemove', function (e) {
+      tx = (e.clientX / window.innerWidth - 0.5);
+      ty = (e.clientY / window.innerHeight - 0.5);
+    });
+
+    size(); window.addEventListener('resize', size);
+    var raf;
+    function loop() {
+      raf = requestAnimationFrame(loop);
+      mx += (tx - mx) * 0.04; my += (ty - my) * 0.04;
+      group.rotation.y += 0.0016; group.rotation.x = my * 0.4;
+      group.rotation.y += mx * 0.002;
+      for (var j = 0; j < shards.length; j++) { shards[j].rotation.x += shards[j].userData.sp; shards[j].rotation.y += shards[j].userData.sp * 0.7; }
+      renderer.render(scene, camera);
+    }
+    loop();
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) cancelAnimationFrame(raf); else loop();
+    });
+  } catch (err) { /* WebGL unavailable — gradient fallback stays */ }
 });
 </script>
 </body>
