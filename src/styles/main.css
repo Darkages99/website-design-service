@@ -9,10 +9,6 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* Reserve scrollbar space so content never shifts left when the bar appears.
-     Combined with hiding the visual bar below, this kills the left-alignment
-     shift entirely. */
-  scrollbar-gutter: stable;
 }
 
 body {
