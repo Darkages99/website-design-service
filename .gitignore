@@ -33,5 +33,8 @@ desktop.ini
 # Private business data — never publish to the repo
 Sales/
 
+# Portfolio sites kept local-only (not yet published)
+portfolio/ancient-combat-evolution/
+
 # NOTE: brand-alchemy/assets/dist/ is intentionally COMMITTED so the theme is
 # deployable without a build step. Do not ignore it.
