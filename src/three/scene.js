@@ -167,7 +167,11 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     composer.addPass(new EffectPass(camera, bloom))
   }
 
-  // --- Layout: bias the nebula toward center-right on wide screens ----------
+  // --- Layout: keep the nebula centred on screen ----------------------------
+  // The orb sits on the screen's vertical axis (x = 0) at every aspect ratio, so
+  // it reads as a centred bloom behind the centred hero copy — no dead space on
+  // the left. Only the camera distance adapts so the sphere stays fully framed
+  // on narrow (portrait) viewports.
   function layout() {
     const w = window.innerWidth
     const h = window.innerHeight
@@ -176,8 +180,7 @@ export function mountScene(canvas, { tier = 'full' } = {}) {
     camera.updateProjectionMatrix()
     renderer.setSize(w, h)
     if (composer) composer.setSize(w, h)
-    const offsetX = aspect > 1 ? THREE.MathUtils.clamp((aspect - 1) * 1.2, 0, 1.7) : 0
-    points.position.x = offsetX
+    points.position.x = 0
     camera.position.z = aspect < 0.85 ? 4.6 : 3.6
   }
   layout()
