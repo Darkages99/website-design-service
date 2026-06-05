@@ -10,7 +10,7 @@ import { defineConfig } from 'vite'
 // base: './' keeps every asset reference relative, so dist/ works whether it is
 // served from a domain root or a sub-path.
 export default defineConfig({
-  base: './',
+  base: '/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
