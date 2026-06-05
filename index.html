@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#0a0a0f">
+
+	<!-- Primary SEO (ported from the former inc/seo.php) -->
+	<title>Brand-Alchemy — AI-Powered Web Design for Chennai SMBs</title>
+	<meta name="description" content="AI-powered web design for Chennai SMBs. Fast, conversion-first websites built in days and tracked for leads — we transmute clicks into customers.">
+	<meta name="robots" content="index, follow, max-image-preview:large">
+	<!-- Update if the production domain differs from brand-alchemy.info -->
+	<link rel="canonical" href="https://brand-alchemy.info/">
+
+	<!-- Inline SVG favicon (gold alchemy mark) so there is no 404 before a real icon is added -->
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230a0a0f'/%3E%3Cpath d='M16 5l9 18H7z' fill='none' stroke='%23ff9933' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='17' r='3.2' fill='%231fe08a'/%3E%3C/svg%3E">
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Brand-Alchemy">
+	<meta property="og:title" content="Brand-Alchemy — AI-Powered Web Design for Chennai SMBs">
+	<meta property="og:description" content="AI-powered web design for Chennai SMBs. Fast, conversion-first websites built in days and tracked for leads — we transmute clicks into customers.">
+	<meta property="og:url" content="https://brand-alchemy.info/">
+	<meta property="og:locale" content="en_IN">
+	<!-- TODO: add a 1200x630 og-image and uncomment:
+	<meta property="og:image" content="https://brand-alchemy.info/og-image.png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630"> -->
+
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Brand-Alchemy — AI-Powered Web Design for Chennai SMBs">
+	<meta name="twitter:description" content="AI-powered web design for Chennai SMBs. Fast, conversion-first websites built in days and tracked for leads — we transmute clicks into customers.">
+
+	<!-- JSON-LD structured data (ported from the former inc/schema.php). Keep the FAQ entries in sync with the on-page FAQ below. -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "Organization",
+				"@id": "https://brand-alchemy.info/#organization",
+				"name": "Brand-Alchemy",
+				"url": "https://brand-alchemy.info/",
+				"description": "AI-powered web design agency for Chennai SMBs — fast, conversion-first websites tracked for leads.",
+				"slogan": "We Transmute Clicks into Customers.",
+				"areaServed": ["Chennai", "Coimbatore", "Madurai", "Bangalore", "Tamil Nadu"]
+			},
+			{
+				"@type": "WebSite",
+				"@id": "https://brand-alchemy.info/#website",
+				"url": "https://brand-alchemy.info/",
+				"name": "Brand-Alchemy",
+				"inLanguage": "en-IN",
+				"publisher": { "@id": "https://brand-alchemy.info/#organization" }
+			},
+			{
+				"@type": ["LocalBusiness", "ProfessionalService"],
+				"@id": "https://brand-alchemy.info/#localbusiness",
+				"name": "Brand-Alchemy",
+				"url": "https://brand-alchemy.info/",
+				"priceRange": "₹",
+				"parentOrganization": { "@id": "https://brand-alchemy.info/#organization" },
+				"areaServed": ["Chennai", "Coimbatore", "Madurai", "Bangalore", "Tamil Nadu"],
+				"address": {
+					"@type": "PostalAddress",
+					"addressLocality": "Chennai",
+					"addressRegion": "Tamil Nadu",
+					"addressCountry": "IN"
+				},
+				"telephone": "+919940140907"
+			},
+			{
+				"@type": "WebPage",
+				"@id": "https://brand-alchemy.info/#webpage",
+				"url": "https://brand-alchemy.info/",
+				"name": "Brand-Alchemy — AI-Powered Web Design for Chennai SMBs",
+				"isPartOf": { "@id": "https://brand-alchemy.info/#website" },
+				"about": { "@id": "https://brand-alchemy.info/#organization" },
+				"inLanguage": "en-IN"
+			},
+			{
+				"@type": "Service",
+				"name": "Essential Web Presence",
+				"serviceType": "Web design and development",
+				"provider": { "@id": "https://brand-alchemy.info/#organization" },
+				"areaServed": ["Chennai", "Coimbatore", "Madurai", "Bangalore", "Tamil Nadu"],
+				"description": "5-page responsive website with free domain, hosting and SSL for one year, Google Business Profile and on-page SEO setup, WhatsApp chat and click-to-call, an enquiry form with lead tracking, and 5 business email accounts. Live in 3–5 days.",
+				"offers": {
+					"@type": "Offer",
+					"priceCurrency": "INR",
+					"availability": "https://schema.org/InStock",
+					"price": 4999,
+					"priceSpecification": {
+						"@type": "PriceSpecification",
+						"priceCurrency": "INR",
+						"price": 4999
+					}
+				}
+			},
+			{
+				"@type": "FAQPage",
+				"@id": "https://brand-alchemy.info/#faq",
+				"mainEntity": [
+					{ "@type": "Question", "name": "Do you guarantee Google rankings?", "acceptedAnswer": { "@type": "Answer", "text": "No — and be wary of anyone who does. We guarantee a technically perfect, search-ready site. Rankings depend on ongoing off-page work, which is yours to arrange for now — we would rather be upfront than point you to someone we do not yet trust." } },
+					{ "@type": "Question", "name": "How fast can my site go live?", "acceptedAnswer": { "@type": "Answer", "text": "The Essential Web Presence build typically goes live in 3–5 days once we have your content and a short discovery call." } },
+					{ "@type": "Question", "name": "What does it cost?", "acceptedAnswer": { "@type": "Answer", "text": "The Essential Web Presence starts at a one-time ₹4,999. We quote a fixed price on the discovery call — no surprises." } },
+					{ "@type": "Question", "name": "Do I need to know anything technical?", "acceptedAnswer": { "@type": "Answer", "text": "Not a thing. You bring the business knowledge; we handle every technical detail and explain the rest in plain English." } },
+					{ "@type": "Question", "name": "Can I edit the site myself later?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We hand you the keys and show you how to update text, images, and prices yourself." } },
+					{ "@type": "Question", "name": "Do you handle ongoing SEO and backlinks?", "acceptedAnswer": { "@type": "Answer", "text": "We build the on-page and technical SEO foundation. Off-page work — backlinks, guest posts, digital PR — is yours to arrange for now; we will not refer you to someone we do not yet trust." } }
+				]
+			},
+			{
+				"@type": "BreadcrumbList",
+				"itemListElement": [
+					{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://brand-alchemy.info/" }
+				]
+			}
+		]
+	}
+	</script>
+
+	<!-- Analytics placeholders (inert). Paste your GA4 / GTM / Meta Pixel snippet here when ready. -->
+
+	<script type="module" src="/src/main.js"></script>
+</head>
+<body>
+	<a class="ba-skip-link" href="#main">Skip to content</a>
+	<canvas id="alchemy-bg" aria-hidden="true"></canvas>
+
+	<header class="ba-header">
+		<div class="ba-nav">
+			<div class="ba-nav__brand"><a href="#hero">Brand-Alchemy</a></div>
+			<nav class="ba-nav__links" aria-label="Primary">
+				<a class="ba-nav-link" href="#services">Services</a>
+				<a class="ba-nav-link" href="#work">Work</a>
+				<a class="ba-nav-link" href="#faq">FAQ</a>
+				<a class="ba-btn-link ba-btn--primary" href="#contact">Book a Call</a>
+			</nav>
+		</div>
+	</header>
+
+	<main id="main" class="ba-main">
+
+		<!-- Hero -->
+		<section class="ba-section ba-hero" id="hero">
+			<div class="ba-hero__inner">
+				<p class="ba-eyebrow">AI-Powered Web Design · Chennai</p>
+				<h1 class="ba-hero__title">We Transmute Clicks into Customers.</h1>
+				<p class="ba-hero__sub">AI-powered web design for Chennai SMBs. Built in days. Tracked for leads. Proven with ROI.</p>
+				<div class="ba-hero__cta">
+					<a class="ba-btn-link ba-btn--primary" href="#contact">Get Your Free Website Audit</a>
+					<a class="ba-btn-link ba-btn--ghost" href="https://wa.me/919940140907?text=Hi%20Brand-Alchemy%2C%20I%27d%20like%20a%20free%20website%20audit." target="_blank" rel="noopener">Talk on WhatsApp</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Problem -->
+		<section class="ba-section ba-section--problem" id="problem">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">The Problem</p>
+				<h2 class="ba-sec-title">Most SMB websites quietly lose money every day.</h2>
+				<p class="ba-sec-intro">If your site isn't actively turning visitors into enquiries, it's not an asset — it's an expense.</p>
+			</div>
+			<ul class="ba-grid ba-grid--3 ba-problems">
+				<li class="ba-card ba-problem">
+					<span class="ba-problem__no" aria-hidden="true">01</span>
+					<h3 class="ba-card__title">A brochure, not a salesperson</h3>
+					<p class="ba-card__text">It lists what you do, but never asks for the sale, captures a lead, or follows up. It just sits there looking pretty while enquiries slip away.</p>
+				</li>
+				<li class="ba-card ba-problem">
+					<span class="ba-problem__no" aria-hidden="true">02</span>
+					<h3 class="ba-card__title">Months of waiting, lakhs spent</h3>
+					<p class="ba-card__text">Traditional agencies take months and bill in lakhs — then hand you a slow site that buries you on page three of Google.</p>
+				</li>
+				<li class="ba-card ba-problem">
+					<span class="ba-problem__no" aria-hidden="true">03</span>
+					<h3 class="ba-card__title">No idea if it makes money</h3>
+					<p class="ba-card__text">No tracking, no leads dashboard, no proof. You're flying blind on the one asset that should be driving revenue.</p>
+				</li>
+			</ul>
+		</section>
+
+		<!-- Process -->
+		<section class="ba-section ba-section--process" id="process">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">The Process</p>
+				<h2 class="ba-sec-title">From first call to live leads — in days, not months.</h2>
+				<p class="ba-sec-intro">A sales-led process, an AI-powered build. You stay focused on your business; we handle the rest.</p>
+			</div>
+			<ol class="ba-grid ba-grid--4 ba-steps">
+				<li class="ba-card ba-step">
+					<span class="ba-step__no">1</span>
+					<h3 class="ba-card__title">Discovery Call</h3>
+					<p class="ba-card__text">A focused 15-minute call. We learn your business, your customers, and exactly what a lead is worth to you.</p>
+				</li>
+				<li class="ba-card ba-step">
+					<span class="ba-step__no">2</span>
+					<h3 class="ba-card__title">AI Build</h3>
+					<p class="ba-card__text">Our AI stack builds a fast, modern, conversion-first site — engineered to ask for the sale on every page.</p>
+				</li>
+				<li class="ba-card ba-step">
+					<span class="ba-step__no">3</span>
+					<h3 class="ba-card__title">Lead Tracking</h3>
+					<p class="ba-card__text">Forms, calls, and WhatsApp clicks are wired to tracking before launch — so every enquiry is captured and counted.</p>
+				</li>
+				<li class="ba-card ba-step">
+					<span class="ba-step__no">4</span>
+					<h3 class="ba-card__title">Launch + Report</h3>
+					<p class="ba-card__text">We go live in 3–5 days and hand you a plain-English report: what's tracked, what's next, and how to read it.</p>
+				</li>
+			</ol>
+		</section>
+
+		<!-- Services -->
+		<section class="ba-section ba-section--services" id="services">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">Services &amp; Pricing</p>
+				<h2 class="ba-sec-title">Start with what you need. Grow when you're ready.</h2>
+				<p class="ba-sec-intro">Right now we're focused on doing one thing exceptionally well: getting your essential web presence live and converting. More is coming.</p>
+			</div>
+			<div class="ba-grid ba-grid--3 ba-tiers">
+				<div class="ba-card ba-tier ba-tier--active">
+					<h3 class="ba-tier__name">Essential Web Presence</h3>
+					<div class="ba-tier__price">
+						<p class="ba-tier__amount">₹4,999</p>
+						<p class="ba-tier__note">one-time · live in 3–5 days</p>
+					</div>
+					<ul class="ba-tier__features">
+						<li>Free domain, hosting &amp; SSL — 1 year</li>
+						<li>5-page responsive, mobile-friendly website</li>
+						<li>WhatsApp chat + click-to-call buttons</li>
+						<li>Enquiry form with lead tracking</li>
+						<li>Google Business Profile + on-page SEO setup</li>
+						<li>5 business email accounts</li>
+					</ul>
+					<div class="ba-tier__cta">
+						<a class="ba-btn-link ba-btn--primary" href="#contact">Book a Call</a>
+					</div>
+				</div>
+
+				<div class="ba-card ba-tier ba-tier--soon">
+					<span class="ba-badge ba-badge--soon">Coming Soon</span>
+					<h3 class="ba-tier__name">Lead Generation Website</h3>
+					<ul class="ba-tier__features">
+						<li>Everything in Essential</li>
+						<li>AI chatbot + call tracking</li>
+						<li>Structured data for local SEO</li>
+						<li>One dedicated landing page</li>
+						<li>CRM + monthly lead report</li>
+					</ul>
+					<span class="ba-tier__lock" role="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1112 0v2m-9 0h6a3 3 0 013 3v5a3 3 0 01-3 3H9a3 3 0 01-3-3v-5a3 3 0 013-3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Coming soon</span>
+				</div>
+
+				<div class="ba-card ba-tier ba-tier--soon">
+					<span class="ba-badge ba-badge--soon">Coming Soon</span>
+					<h3 class="ba-tier__name">Digital Growth Partner</h3>
+					<ul class="ba-tier__features">
+						<li>Everything in Lead Generation</li>
+						<li>Multi-service landing pages</li>
+						<li>Analytics dashboard + A/B testing</li>
+						<li>Email nurture sequences</li>
+						<li>Quarterly strategy reviews</li>
+					</ul>
+					<span class="ba-tier__lock" role="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1112 0v2m-9 0h6a3 3 0 013 3v5a3 3 0 01-3 3H9a3 3 0 01-3-3v-5a3 3 0 013-3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Coming soon</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- Boundary -->
+		<section class="ba-section ba-section--boundary" id="boundary">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">Radical Honesty</p>
+				<h2 class="ba-sec-title">What we do — and what we honestly don't.</h2>
+				<p class="ba-sec-intro">We deliver a site that's search-ready and built to convert. We don't pretend to do everything — and we're honest about what you'll need to handle yourself.</p>
+			</div>
+			<div class="ba-boundary">
+				<div class="ba-card ba-bcol ba-bcol--do">
+					<h3 class="ba-bcol__head">We build this in</h3>
+					<ul class="ba-checklist">
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> Technical SEO foundation</li>
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> On-page SEO</li>
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> On-page AEO <em>(answer-engine ready)</em></li>
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> On-page GEO <em>(generative-engine ready)</em></li>
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> Speed &amp; Core Web Vitals</li>
+						<li><span class="ba-ic ba-ic--yes" aria-hidden="true">✓</span> Conversion &amp; lead tracking</li>
+					</ul>
+				</div>
+				<div class="ba-card ba-bcol ba-bcol--dont">
+					<h3 class="ba-bcol__head">You'll handle this yourself</h3>
+					<ul class="ba-checklist">
+						<li><span class="ba-ic ba-ic--out" aria-hidden="true">→</span> Off-page SEO campaigns</li>
+						<li><span class="ba-ic ba-ic--out" aria-hidden="true">→</span> Backlink building</li>
+						<li><span class="ba-ic ba-ic--out" aria-hidden="true">→</span> Guest posts</li>
+						<li><span class="ba-ic ba-ic--out" aria-hidden="true">→</span> Ongoing blog content</li>
+						<li><span class="ba-ic ba-ic--out" aria-hidden="true">→</span> Digital PR</li>
+					</ul>
+				</div>
+			</div>
+			<p class="ba-boundary__note">We make you search-ready. Off-page ranking work — backlinks, guest posts, digital PR — is yours to arrange for now. We'd rather be upfront than point you to someone we don't yet trust.</p>
+		</section>
+
+		<!-- Work -->
+		<section class="ba-section ba-section--work" id="work">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">Our Work</p>
+				<h2 class="ba-sec-title">See what we'd build for a business like yours.</h2>
+				<p class="ba-sec-intro">A live build for MAC Studio Fitness, alongside concept demos that show our range across industries we know. Yours could be next.</p>
+			</div>
+			<ul class="ba-grid ba-grid--3 ba-works">
+				<li class="ba-card ba-work ba-work--featured">
+					<div class="ba-work__thumb" aria-hidden="true" style="background:radial-gradient(120% 120% at 30% 20%,#e2241b 0%,#5a0a05 50%,#0b0b0d 100%)"><span class="ba-work__concept">Live Build — Fitness &amp; Gym</span></div>
+					<h3 class="ba-card__title">MAC Studio Fitness</h3>
+					<p class="ba-card__text">A conversion-first gym website with GSAP scroll reveals, Three.js 3D hero, full pricing &amp; programs, class schedule, and WhatsApp CTA — built for serious lead capture.</p>
+					<a class="ba-work__link" href="portfolio/mac-studio-fitness/">View the Live Site <span aria-hidden="true">→</span></a>
+				</li>
+				<li class="ba-card ba-work">
+					<div class="ba-work__thumb" aria-hidden="true" style="background:radial-gradient(120% 120% at 28% 18%,#d4af37 0%,#8a1f27 52%,#0a0a0f 100%)"><span class="ba-work__concept">Live Build — Combat Sports</span></div>
+					<h3 class="ba-card__title">Ancient Combat Evolution</h3>
+					<p class="ba-card__text">A fight-night site for an Alwarpet MMA &amp; boxing gym — interactive ring-canvas background, GSAP scroll animations, and WhatsApp booking.</p>
+					<a class="ba-work__link" href="portfolio/ancient-combat-evolution/">View the Live Site <span aria-hidden="true">→</span></a>
+				</li>
+				<li class="ba-card ba-work">
+					<div class="ba-work__thumb ba-work__thumb--mfg" aria-hidden="true"><span class="ba-work__concept">Concept Work — Your Brand Here</span></div>
+					<h3 class="ba-card__title">Manufacturing &amp; Logistics</h3>
+					<p class="ba-card__text">A Chennai manufacturer's site built to win RFQs — spec sheets, enquiry capture, and credibility up front.</p>
+					<a class="ba-work__link" href="#">View Interactive Case Study <span aria-hidden="true">→</span></a>
+				</li>
+				<li class="ba-card ba-work">
+					<div class="ba-work__thumb ba-work__thumb--health" aria-hidden="true"><span class="ba-work__concept">Concept Work — Your Brand Here</span></div>
+					<h3 class="ba-card__title">Healthcare Diagnostics</h3>
+					<p class="ba-card__text">A multi-location diagnostics brand with online booking, location pages, and trust signals patients look for.</p>
+					<a class="ba-work__link" href="#">View Interactive Case Study <span aria-hidden="true">→</span></a>
+				</li>
+			</ul>
+		</section>
+
+		<!-- Proof -->
+		<section class="ba-section ba-section--proof" id="proof">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">Proof &amp; Promise</p>
+				<h2 class="ba-sec-title">We hit these standards — or your money back.</h2>
+			</div>
+			<ul class="ba-grid ba-grid--3 ba-metrics">
+				<li class="ba-card ba-metric">
+					<span class="ba-metric__num" data-count-to="2" data-prefix="&lt;" data-suffix="s">&lt;2s</span>
+					<span class="ba-metric__label">Page-load target on every build</span>
+				</li>
+				<li class="ba-card ba-metric">
+					<span class="ba-metric__num">Day 1</span>
+					<span class="ba-metric__label">Lead tracking live before you launch</span>
+				</li>
+				<li class="ba-card ba-metric">
+					<span class="ba-metric__num" data-count-to="90" data-suffix=" days">90 days</span>
+					<span class="ba-metric__label">Of hands-on help after launch — plus the keys to edit your own site</span>
+				</li>
+			</ul>
+		</section>
+
+		<!-- About -->
+		<section class="ba-section ba-section--about" id="about">
+			<p class="ba-eyebrow">Why Brand-Alchemy</p>
+			<h2 class="ba-sec-title">Built by students, powered by AI.</h2>
+			<p class="ba-about__lead">We're two Chennai-based students who got tired of watching local businesses pay lakhs for slow websites that never bring in a single enquiry. So we pair a modern AI build stack with hands-on, personal attention — and price it honestly, not like a big agency.</p>
+			<p class="ba-about__body">No bloated agency, no months of waiting, no jargon. Just a website that works as hard as you do — and the honesty to tell you what it will and won't do for your business.</p>
+		</section>
+
+		<!-- FAQ -->
+		<section class="ba-section ba-section--faq" id="faq">
+			<div class="ba-sec-head">
+				<p class="ba-eyebrow">FAQ</p>
+				<h2 class="ba-sec-title">Questions, answered straight.</h2>
+			</div>
+			<div class="ba-faq">
+				<details class="ba-faq__item"><summary>Do you guarantee Google rankings?</summary>
+					<p>No — and be wary of anyone who does. We guarantee a technically perfect, search-ready site. Rankings depend on ongoing off-page work, which is yours to arrange for now — we'd rather be upfront than point you to someone we don't yet trust.</p>
+				</details>
+				<details class="ba-faq__item"><summary>How fast can my site go live?</summary>
+					<p>The Essential Web Presence build typically goes live in 3–5 days once we have your content and a short discovery call.</p>
+				</details>
+				<details class="ba-faq__item"><summary>What does it cost?</summary>
+					<p>The Essential Web Presence starts at a one-time ₹4,999. We'll quote you a fixed price on the discovery call — no surprises.</p>
+				</details>
+				<details class="ba-faq__item"><summary>Do I need to know anything technical?</summary>
+					<p>Not a thing. You bring the business knowledge; we handle every technical detail and explain the rest in plain English.</p>
+				</details>
+				<details class="ba-faq__item"><summary>Can I edit the site myself later?</summary>
+					<p>Yes. We hand you the keys and show you how to update text, images, and prices yourself.</p>
+				</details>
+				<details class="ba-faq__item"><summary>Do you handle ongoing SEO and backlinks?</summary>
+					<p>We build the on-page and technical SEO foundation. Off-page work — backlinks, guest posts, digital PR — is yours to arrange for now; we won't refer you to someone we don't yet trust.</p>
+				</details>
+			</div>
+		</section>
+
+		<!-- Final CTA -->
+		<section class="ba-section ba-section--final" id="contact">
+			<div class="ba-final__inner">
+				<h2 class="ba-final__title">Stop Losing Leads to a Slow Website.</h2>
+				<p class="ba-final__sub">Book a free 15-minute audit. We'll show you exactly where your current site leaks customers — and what a Brand-Alchemy build would change.</p>
+				<div class="ba-final__cta">
+					<a class="ba-btn-link ba-btn--primary" href="https://wa.me/919940140907?text=Hi%20Brand-Alchemy%2C%20I%27d%20like%20to%20book%20my%20free%20audit.">Book My Free Audit</a>
+					<a class="ba-btn-link ba-btn--ghost" href="https://wa.me/919940140907?text=Hi%20Brand-Alchemy%2C%20I%27d%20like%20a%20free%20website%20audit." target="_blank" rel="noopener">Talk on WhatsApp</a>
+				</div>
+
+				<form class="ba-form" action="https://formspree.io/f/your-form-id" method="POST">
+					<p class="ba-form__lead">Prefer email? Send your details and we'll reach out.</p>
+					<div class="ba-form__grid">
+						<div class="ba-field">
+							<label for="ba-name">Name</label>
+							<input id="ba-name" name="name" type="text" autocomplete="name" required>
+						</div>
+						<div class="ba-field">
+							<label for="ba-contact">Phone or email</label>
+							<input id="ba-contact" name="contact" type="text" autocomplete="tel" required>
+						</div>
+					</div>
+					<div class="ba-field">
+						<label for="ba-message">What does your business do? <span>(optional)</span></label>
+						<textarea id="ba-message" name="message" rows="3"></textarea>
+					</div>
+					<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+					<input type="hidden" name="_subject" value="New website enquiry — Brand-Alchemy">
+					<button class="ba-btn-link ba-btn--primary ba-form__submit" type="submit">Send Enquiry</button>
+				</form>
+				<!-- TODO: replace formspree.io/f/your-form-id with your real Formspree endpoint -->
+			</div>
+		</section>
+
+	</main>
+
+	<footer class="ba-footer">
+		<div class="ba-footer__inner">
+			<p>© Brand-Alchemy — We Transmute Clicks into Customers. · Chennai, Tamil Nadu</p>
+		</div>
+	</footer>
+
+	<a class="ba-whatsapp-fab" href="https://wa.me/919940140907?text=Hi%20Brand-Alchemy%20team%2C%20I%20want%20to%20discuss%20a%20new%20website%20for%20my%20business." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+	</a>
+</body>
+</html>

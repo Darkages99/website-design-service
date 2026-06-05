@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Brand-Alchemy WordPress block theme — 3D interactive portfolio. Vite-built JS/CSS/Three.js bundle.",
+  "description": "Brand-Alchemy — standalone static site (no WordPress). Vite-built JS/CSS/Three.js bundle; deploys to any static host.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && node scripts/copy-portfolio.mjs",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "vite": "^8.0.15"

@@ -1,19 +1,19 @@
 import { defineConfig } from 'vite'
 
-// Builds src/ into the theme's assets/dist with a manifest.
-// functions.php (inc/enqueue.php) reads the manifest and enqueues the hashed files.
-// We deploy by syncing brand-alchemy/ into the Studio site (see sync.ps1) — no dev server needed.
+// Standalone static build — no WordPress.
+//
+// `vite build` processes the root index.html, bundles src/ (JS, CSS, Three.js,
+// GSAP, Lenis) into hashed assets, and writes a self-contained site to dist/
+// that can be hosted on ANY static host (Netlify, Vercel, GitHub Pages, S3,
+// Cloudflare Pages…). `npm run dev` serves the same index.html with HMR.
+//
+// base: './' keeps every asset reference relative, so dist/ works whether it is
+// served from a domain root or a sub-path.
 export default defineConfig({
   base: './',
   build: {
-    outDir: 'brand-alchemy/assets/dist',
+    outDir: 'dist',
     emptyOutDir: true,
-    manifest: true,
     target: 'es2020',
-    rollupOptions: {
-      input: {
-        main: 'src/main.js',
-      },
-    },
   },
 })
