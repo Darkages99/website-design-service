@@ -424,11 +424,12 @@ html.lenis body { height: auto; }
    §3 Process
    --------------------------------------------------------------------------- */
 .ba-steps { counter-reset: none; }
+.ba-step { text-align: center; }
 .ba-step__no {
   display: grid;
   place-items: center;
   width: 40px; height: 40px;
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--gold), #ffb866);
   color: #0a0a0f;
@@ -444,6 +445,15 @@ html.lenis body { height: auto; }
   margin: 0 0 0.75rem;
   font-size: 1.25rem;
   font-weight: 700;
+  text-align: center;
+}
+.ba-tier__tagline {
+  margin: 0 0 1.25rem;
+  font-size: 0.88rem;
+  color: var(--green);
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.04em;
 }
 .ba-tier__price {
   margin: 0 0 1.25rem;
@@ -477,7 +487,7 @@ html.lenis body { height: auto; }
   color: var(--green);
   font-weight: 700;
 }
-.ba-tier__cta { align-self: flex-start; }
+.ba-tier__cta { align-self: center; text-align: center; width: 100%; }
 
 .ba-tier--active {
   border-color: rgba(255, 153, 51, 0.4);
@@ -524,6 +534,8 @@ html.lenis body { height: auto; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(1rem, 2vw, 1.5rem);
+  max-width: 860px;
+  margin-inline: auto;
 }
 @media (max-width: 720px) { .ba-boundary { grid-template-columns: 1fr; } }
 .ba-bcol__head {
@@ -596,10 +608,12 @@ html.lenis body { height: auto; }
   font-weight: 600;
   letter-spacing: 0.04em;
 }
-.ba-work .ba-card__title { margin: 1.2rem clamp(1.4rem, 2.5vw, 2rem) 0.5rem; }
-.ba-work .ba-card__text { margin: 0 clamp(1.4rem, 2.5vw, 2rem); }
+.ba-work .ba-card__title { margin: 1.2rem clamp(1.4rem, 2.5vw, 2rem) 0.5rem; text-align: center; }
+.ba-work .ba-card__text { margin: 0 clamp(1.4rem, 2.5vw, 2rem); text-align: center; }
 .ba-work__link {
-  margin: 1.1rem clamp(1.4rem, 2.5vw, 2rem) clamp(1.4rem, 2.5vw, 2rem);
+  margin: 1.1rem auto clamp(1.4rem, 2.5vw, 2rem);
+  display: flex;
+  justify-content: center;
   color: var(--gold);
   font-weight: 700;
   font-size: 0.95rem;
