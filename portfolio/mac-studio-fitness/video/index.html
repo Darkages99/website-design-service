@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1920px;height:1080px;overflow:hidden;background:#0b0b0d;font-family:'Barlow',sans-serif;color:#f5f2ec}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden}
+.scene{position:absolute;top:0;left:0;width:1920px;height:1080px;overflow:hidden}
+
+/* ── SHARED TOKENS ── */
+:root{
+  --ink:#0b0b0d;--ink2:#111114;--surf:#16161a;--surf2:#1e1e23;
+  --red:#e2241b;--rb:#ff3b30;--rd:#a8120b;--rg:rgba(226,36,27,.16);
+  --teal:#2dd4bf;--amber:#f5a524;--bone:#f5f2ec;
+  --line:rgba(245,242,236,.1);--muted:rgba(245,242,236,.45);
+}
+
+/* ── S1 HERO ── */
+#s1{background:var(--ink);z-index:1}
+.topbar{background:#000;border-bottom:1px solid var(--line);padding:0 80px;height:38px;display:flex;align-items:center;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--muted);letter-spacing:.5px}
+.topbar-icons{display:flex;gap:8px;align-items:center}
+.tb-icon{width:24px;height:24px;border:1px solid var(--line);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.nav-bar{background:rgba(11,11,13,.92);border-bottom:1px solid var(--line);padding:0 80px;height:72px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:13px}
+.brand-badge{width:46px;height:46px;border-radius:11px;background:#fff;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 6px 18px rgba(0,0,0,.4)}
+.brand-badge img{width:100%;height:100%;object-fit:contain}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:2px;color:var(--bone)}
+.brand-name em{font-style:normal;color:var(--rb)}
+.brand-tag{display:block;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.nav-links{display:flex;gap:30px;list-style:none}
+.nav-links li{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.nav-cta{background:var(--red);color:#fff;padding:11px 24px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.hero-inner{position:absolute;top:110px;left:0;right:0;bottom:60px;display:grid;grid-template-columns:1.2fr 0.9fr;gap:60px;align-items:center;padding:0 80px;max-width:1920px}
+.hero-label{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--rb);margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.hero-label::before{content:'';width:42px;height:2px;background:var(--red)}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:118px;line-height:.9;letter-spacing:2px;margin-bottom:24px}
+.hero-h1 em{font-style:normal;color:var(--rb);display:block}
+.hero-sub{font-size:20px;font-weight:300;color:rgba(245,242,236,.72);max-width:520px;margin-bottom:34px;line-height:1.75}
+.hero-btns{display:flex;gap:14px;margin-bottom:44px}
+.btn-p{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:15px 36px;border-radius:4px;box-shadow:0 8px 28px rgba(226,36,27,.4)}
+.btn-o{border:2px solid rgba(245,242,236,.2);color:var(--bone);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:13px 34px;border-radius:4px}
+.hero-stats{display:flex;gap:42px;padding-top:36px;border-top:1px solid var(--line)}
+.hstat .n{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;color:var(--bone)}
+.hstat .n em{font-style:normal;color:var(--rb)}
+.hstat .l{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.crest-wrap{position:relative;width:480px;height:480px;margin:0 auto}
+.crest-out{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(226,36,27,.2)}
+.crest-in{position:absolute;inset:44px;border-radius:50%;border:1px solid rgba(226,36,27,.15)}
+.crest-plate{position:absolute;inset:84px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 60px rgba(226,36,27,.2)}
+.crest-plate img{width:78%;height:78%;object-fit:contain}
+.crest-tag-el{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:8px 22px;border-radius:30px;white-space:nowrap;box-shadow:0 8px 22px rgba(226,36,27,.45)}
+.scroll-cue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.scroll-bar{width:1px;height:34px;background:linear-gradient(var(--red),transparent)}
+.hero-bg-glow{position:absolute;top:-100px;right:-50px;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(226,36,27,.14) 0%,transparent 65%);z-index:0}
+.hero-ghost{position:absolute;bottom:-60px;right:-40px;font-family:'Bebas Neue',sans-serif;font-size:500px;color:rgba(226,36,27,.05);z-index:0;user-select:none}
+
+/* ── S2 MARQUEE + ABOUT ── */
+#s2{background:var(--ink2);z-index:2;opacity:0}
+.marquee-band{position:absolute;top:0;left:0;right:0;height:50px;background:var(--red);border-bottom:1px solid rgba(0,0,0,.18);overflow:hidden;display:flex;align-items:center}
+.marquee-track{display:inline-flex;white-space:nowrap}
+.mq-item{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;padding:0 34px;color:rgba(0,0,0,.8)}
+.mq-item::after{content:'◆';margin-left:34px;font-size:12px;vertical-align:middle}
+.about-inner{position:absolute;top:70px;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:60px;padding:60px 80px;align-items:center}
+.about-left{}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:4.5px;text-transform:uppercase;color:var(--rb);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:26px;height:2px;background:var(--red)}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:.98;letter-spacing:1px;margin-bottom:18px}
+.stitle em{font-style:normal;color:var(--rb)}
+.ssub{font-size:19px;font-weight:300;color:rgba(245,242,236,.62);max-width:560px;line-height:1.8;margin-bottom:32px}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini-card{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:22px 20px}
+.mini-ic{width:40px;height:40px;border-radius:9px;background:var(--rg);color:var(--rb);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:13px}
+.mini-h{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;color:var(--bone)}
+.mini-p{font-size:14px;color:var(--muted);line-height:1.55}
+.about-photo{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);height:100%}
+.about-photo img{width:100%;height:100%;object-fit:cover}
+.about-photo-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,13,.85) 0%,rgba(11,11,13,.1) 45%,transparent 70%),linear-gradient(120deg,rgba(226,36,27,.18),transparent 55%)}
+.about-cap{position:absolute;left:22px;bottom:20px;z-index:2}
+.about-cap .q{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1.05}
+.about-cap .q span{color:var(--rb)}
+.about-cap .m{font-size:13px;color:rgba(245,242,236,.8);margin-top:4px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── S3 PROGRAMS ── */
+#s3{background:var(--ink);z-index:3;opacity:0}
+.section-wrap{position:absolute;inset:0;padding:70px 80px}
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.prog-card{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:28px 24px;overflow:hidden;position:relative}
+.prog-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% -10%,var(--rg),transparent 55%);opacity:0}
+.prog-num{font-family:'Bebas Neue',sans-serif;font-size:44px;color:rgba(226,36,27,.22);line-height:1}
+.prog-icon-box{width:52px;height:52px;border-radius:12px;background:linear-gradient(140deg,var(--red),var(--rd));display:flex;align-items:center;justify-content:center;font-size:24px;margin:-52px 0 18px auto;box-shadow:0 10px 22px rgba(226,36,27,.32)}
+.prog-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.8px;margin-bottom:9px}
+.prog-desc{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.prog-list{list-style:none}
+.prog-list li{font-size:13px;color:rgba(245,242,236,.74);padding:7px 0;border-top:1px solid var(--line);display:flex;gap:9px;align-items:center}
+.prog-list li::before{content:'▸';color:var(--rb);font-size:11px}
+
+/* ── S4 PILLARS ── */
+#s4{background:var(--ink2);z-index:4;opacity:0}
+.pill-head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:36px;margin-bottom:40px}
+.pill-sub{font-size:18px;font-weight:300;color:rgba(245,242,236,.55);max-width:500px;line-height:1.75}
+.pill-grid-wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pill-cell{background:var(--surf);padding:28px 20px;position:relative;overflow:hidden}
+.pill-cell::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--acc,var(--red))}
+.pill-num{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;color:var(--acc,rgba(226,36,27,.3));opacity:.55;margin-bottom:6px}
+.pill-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;color:var(--bone)}
+.pill-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ── S5 PRICING ── */
+#s5{background:var(--ink);z-index:5;opacity:0}
+.price-grid-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.pc{position:relative;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:28px 22px}
+.pc.feat{border-color:var(--red);background:linear-gradient(180deg,rgba(226,36,27,.1),var(--surf) 40%)}
+.pc-ribbon{position:absolute;top:14px;right:-2px;background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:4px 0 0 4px}
+.pc-tier{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.pc.feat .pc-tier{color:var(--rb)}
+.pc-amt{font-family:'Bebas Neue',sans-serif;font-size:68px;line-height:1;margin:10px 0 2px}
+.pc-cur{font-size:28px;vertical-align:top;color:var(--muted)}
+.pc-per{font-size:14px;color:var(--muted);margin-bottom:16px}
+.pc-save{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block}
+.pc-btn{display:block;text-align:center;padding:13px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--red);color:var(--rb);margin-top:auto}
+.pc.feat .pc-btn{background:var(--red);color:#fff}
+.incl-bar{margin-top:28px;background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:22px 28px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
+.incl-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--rb);font-size:13px}
+.incl-chip{font-size:15px;color:rgba(245,242,236,.8);display:inline-flex;align-items:center;gap:8px}
+.incl-chip::before{content:'✓';color:var(--teal);font-weight:700}
+
+/* ── S6 PT PACKAGES ── */
+#s6{background:var(--ink);z-index:6;opacity:0}
+.pt-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:40px}
+.pt-table-wrap{background:var(--surf);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pt-head-row{padding:20px 26px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.pt-head-row h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.8px}
+.pt-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;padding:16px 26px;border-bottom:1px solid var(--line);align-items:center}
+.pt-row:last-child{border-bottom:none}
+.pt-row.hd{background:rgba(255,255,255,.02)}
+.pt-row.hd span{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.pt-row-name{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;letter-spacing:.4px;color:var(--bone)}
+.pt-row-name small{display:block;color:var(--muted);font-size:12px;font-weight:400}
+.pt-price{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--bone)}
+.pt-feat{background:linear-gradient(160deg,rgba(226,36,27,.14),var(--surf) 55%);border:1px solid var(--red);border-radius:14px;padding:28px 26px;display:flex;flex-direction:column}
+.pt-feat-tag{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--rb)}
+.pt-feat h3{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;margin:10px 0}
+.pt-feat-price{font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;margin:4px 0}
+.pt-feat-price .cur{font-size:30px;vertical-align:top;color:var(--muted)}
+.pt-feat-desc{font-size:15px;color:rgba(245,242,236,.75);margin-bottom:18px;line-height:1.6}
+.enquire-btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 28px;background:var(--red);color:#fff;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;text-transform:uppercase;box-shadow:0 4px 18px rgba(226,36,27,.35);margin-top:auto}
+
+/* ── S7 GALLERY ── */
+#s7{background:var(--ink2);z-index:7;opacity:0}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:14px;margin-top:40px}
+.gitem{position:relative;overflow:hidden;border-radius:12px;border:1px solid var(--line)}
+.gitem img{width:100%;height:100%;object-fit:cover;filter:grayscale(.18) brightness(.9)}
+.gitem::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,13,.7),transparent 58%)}
+.glabel{position:absolute;left:16px;bottom:14px;z-index:2;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:14px;color:var(--bone)}
+.gitem.tall{grid-row:span 2}
+.gitem.wide{grid-column:span 2}
+
+/* ── S8 SCHEDULE ── */
+#s8{background:var(--ink2);z-index:8;opacity:0}
+.sched-tbl{width:100%;border-collapse:collapse;margin-top:40px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sched-tbl th{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--rb);background:rgba(255,255,255,.02);border-bottom:1px solid var(--line);padding:16px 20px;text-align:left}
+.sched-tbl td{padding:17px 20px;border-bottom:1px solid var(--line);font-size:16px;color:var(--bone)}
+.sched-tbl tr:last-child td{border-bottom:none}
+.t-time{color:var(--rb);font-weight:600;font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.5px}
+.badge{display:inline-block;padding:4px 10px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.b-red{background:var(--rg);color:var(--rb);border:1px solid rgba(226,36,27,.3)}
+.b-teal{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.3)}
+.b-amber{background:rgba(245,165,36,.12);color:var(--amber);border:1px solid rgba(245,165,36,.3)}
+
+/* ── S9 TESTIMONIALS ── */
+#s9{background:var(--ink);z-index:9;opacity:0}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.tcard{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:30px 26px}
+.tcard-stars{color:var(--rb);letter-spacing:2px;margin-bottom:14px;font-size:18px}
+.tcard-txt{font-size:17px;font-style:italic;color:rgba(245,242,236,.8);line-height:1.7;margin-bottom:22px}
+.tcard-who{display:flex;align-items:center;gap:13px}
+.tcard-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(140deg,var(--red),var(--rd));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff}
+.tcard-nm{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:16px;color:var(--bone)}
+.tcard-role{font-size:13px;color:var(--muted)}
+
+/* ── S10 FAQ ── */
+#s10{background:var(--ink);z-index:10;opacity:0}
+.faq-wrap{max-width:1000px;margin:40px auto 0}
+.faq-item{border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden;background:var(--surf)}
+.faq-q{width:100%;text-align:left;background:none;border:none;color:var(--bone);padding:20px 24px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.faq-sign{color:var(--rb);font-size:24px}
+.faq-a{overflow:hidden;max-height:0}
+.faq-a p{padding:0 24px 20px;font-size:16px;color:var(--muted);line-height:1.7}
+
+/* ── S11 CONTACT ── */
+#s11{background:var(--ink2);z-index:11;opacity:0}
+.contact-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:50px;margin-top:40px}
+.ci-h{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.8px;margin-bottom:22px;color:var(--bone)}
+.crow{display:flex;gap:15px;margin-bottom:18px;align-items:flex-start}
+.crow-ic{width:40px;height:40px;flex-shrink:0;background:var(--rg);border:1px solid rgba(226,36,27,.3);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--rb);font-size:16px}
+.crow-lbl{font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.crow-val{font-size:16px;color:var(--bone);line-height:1.5}
+.form-box{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:36px}
+.form-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.8px;margin-bottom:6px;color:var(--bone)}
+.form-sub{font-size:15px;color:var(--muted);margin-bottom:24px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.form-field{background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:13px 15px;color:var(--bone);font-family:'Barlow',sans-serif;font-size:15px;width:100%;margin-bottom:16px}
+.form-field-focus{background:var(--ink);border:1px solid var(--red);border-radius:6px;padding:13px 15px;color:var(--bone);font-family:'Barlow',sans-serif;font-size:15px;width:100%;margin-bottom:16px}
+.submit-btn{width:100%;background:var(--red);color:#fff;padding:16px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── S12 FOOTER ── */
+#s12{background:#050506;z-index:12;opacity:0}
+.footer-inner{position:absolute;inset:0;padding:60px 80px 40px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:40px;margin-bottom:46px}
+.foot-logo{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+.foot-logo-badge{width:46px;height:46px;border-radius:11px;background:#fff;overflow:hidden}
+.foot-logo-badge img{width:100%;height:100%;object-fit:contain}
+.foot-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:18px;max-width:300px}
+.foot-social{display:flex;gap:10px}
+.fs-icon{width:36px;height:36px;border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.fcol-h{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--rb);margin-bottom:18px}
+.fcol-link{font-size:15px;color:var(--muted);margin-bottom:10px;display:block}
+.ftime{font-size:14px;color:var(--muted);line-height:2}
+.ftime strong{color:var(--bone)}
+.foot-bot{border-top:1px solid var(--line);padding-top:22px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+.wa-float{position:absolute;right:50px;bottom:50px;width:60px;height:60px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(37,211,102,.5)}
+.wa-float svg{display:block}
+.fade-veil{position:absolute;inset:0;background:#050506;opacity:0;z-index:20}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="mac-website-tour" data-width="1920" data-height="1080" data-start="0" data-duration="65">
+
+<!-- ═══ S1: HERO (0–9s) ═══ -->
+<div id="s1" class="scene">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-ghost">DEN</div>
+  <!-- Topbar -->
+  <div class="topbar" id="s1-topbar">
+    <span>📍 2nd Floor, East Coast Road (near Bank of Maharashtra), Neelankarai, Chennai – 600 115 &#160;·&#160; ⏰ Mon–Sat: 5:30 AM – 10:00 PM</span>
+    <div class="topbar-icons">
+      <div class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(245,242,236,0.5)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg></div>
+      <div class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(245,242,236,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg></div>
+      <div class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(245,242,236,0.5)"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg></div>
+    </div>
+  </div>
+  <!-- Nav -->
+  <div class="nav-bar" id="s1-nav">
+    <div class="brand">
+      <div class="brand-badge"><img src="assets/logo.jpg" alt="MAC logo"></div>
+      <div><div class="brand-name">MAC<em>.</em>FITNESS</div><span class="brand-tag">Den of a Healthy Lifestyle</span></div>
+    </div>
+    <ul class="nav-links">
+      <li>About</li><li>Programs</li><li>Pricing</li><li>Gallery</li><li>Schedule</li><li>FAQ</li>
+    </ul>
+    <div class="nav-cta">Book Free Trial</div>
+  </div>
+  <!-- Hero content -->
+  <div class="hero-inner">
+    <div>
+      <div class="hero-label" id="s1-label">Den of a Healthy Lifestyle</div>
+      <div class="hero-h1" id="s1-h1">TRAIN<br>HARD.<br><em>LIVE FIT.</em></div>
+      <div class="hero-sub" id="s1-sub">Chennai's premier fitness studio on East Coast Road, Neelankarai. Personal training, group classes &amp; transformation programs — built around you.</div>
+      <div class="hero-btns" id="s1-btns">
+        <div class="btn-p">Book Free Trial</div>
+        <div class="btn-o">Explore Programs</div>
+      </div>
+      <div class="hero-stats" id="s1-stats">
+        <div class="hstat"><div class="n">500<em>+</em></div><div class="l">Active Members</div></div>
+        <div class="hstat"><div class="n">72</div><div class="l">Session Transform</div></div>
+        <div class="hstat"><div class="n">6<em>+</em></div><div class="l">Programs</div></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center">
+      <div class="crest-wrap" id="s1-crest">
+        <div class="crest-out" id="s1-ring-o"></div>
+        <div class="crest-in" id="s1-ring-i"></div>
+        <div class="crest-plate"><img src="assets/logo.jpg" alt="MAC Fitness Studio"></div>
+        <div class="crest-tag-el">Est. Neelankarai · ECR</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue" id="s1-cue"><span>SCROLL</span><div class="scroll-bar" id="s1-bar"></div></div>
+</div>
+
+<!-- ═══ S2: MARQUEE + ABOUT (9.2–15s) ═══ -->
+<div id="s2" class="scene">
+  <div class="marquee-band" id="s2-marq">
+    <div class="marquee-track" id="s2-track">
+      <span class="mq-item">Personal Training</span><span class="mq-item">Group Classes</span><span class="mq-item">Indoor Cycling</span><span class="mq-item">Strength &amp; Conditioning</span><span class="mq-item">72-Day Transformation</span><span class="mq-item">Steam &amp; Recovery</span><span class="mq-item">Neelankarai ECR</span><span class="mq-item">Personal Training</span><span class="mq-item">Group Classes</span><span class="mq-item">Indoor Cycling</span><span class="mq-item">Strength &amp; Conditioning</span><span class="mq-item">72-Day Transformation</span><span class="mq-item">Steam &amp; Recovery</span>
+    </div>
+  </div>
+  <div class="about-inner">
+    <div class="about-left">
+      <div class="eyebrow" id="s2-eye">Why MAC Fitness Studio</div>
+      <div class="stitle" id="s2-h">Because Your Goals<br>Deserve A <em>Pride.</em></div>
+      <div class="ssub" id="s2-sub">Every session is coached, charted and tailored. We don't just hand you equipment — we build you a plan, put a trainer beside you and back it with a community that lifts each other up.</div>
+      <div class="mini-grid" id="s2-cards">
+        <div class="mini-card"><div class="mini-ic">🏋️</div><div class="mini-h">Personal Trainer</div><div class="mini-p">A dedicated trainer guides every session.</div></div>
+        <div class="mini-card"><div class="mini-ic">📊</div><div class="mini-h">Progress Tracking</div><div class="mini-p">Fitness tests and workout charts from day one.</div></div>
+        <div class="mini-card"><div class="mini-ic">👥</div><div class="mini-h">Community</div><div class="mini-p">A pride that pushes each other forward.</div></div>
+        <div class="mini-card"><div class="mini-ic">♨️</div><div class="mini-h">Steam &amp; Recovery</div><div class="mini-p">Steam bath, shower and lockers included.</div></div>
+      </div>
+    </div>
+    <div class="about-photo" id="s2-photo-wrap">
+      <img id="s2-photo" src="assets/photos/lion-mural.webp" alt="Low-poly lion mural inside MAC Fitness Studio">
+      <div class="about-photo-ov"></div>
+      <div class="about-cap"><div class="q">Train <span>Smarter.</span><br>Not Just Harder.</div><div class="m">Est. Neelankarai · ECR</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S3: PROGRAMS (15.2–21s) ═══ -->
+<div id="s3" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s3-eye">What We Offer</div>
+    <div class="stitle" id="s3-h">Our <em>Programs</em></div>
+    <div class="prog-grid">
+      <div class="prog-card" id="s3-p1"><div class="prog-num">01</div><div class="prog-icon-box">🏋️</div><div class="prog-name">Personal Training</div><div class="prog-desc">1-on-1 coaching — General &amp; Premium tracks, 12 or 24 sessions.</div><ul class="prog-list"><li>General &amp; Premium tracks</li><li>12 or 24 session packs</li><li>Custom workout chart</li></ul></div>
+      <div class="prog-card" id="s3-p2"><div class="prog-num">02</div><div class="prog-icon-box">🔥</div><div class="prog-name">72-Day Transformation</div><div class="prog-desc">Our flagship program — a complete body and mindset overhaul.</div><ul class="prog-list"><li>72 structured sessions</li><li>Nutrition &amp; progress tracking</li><li>Weekly check-ins</li></ul></div>
+      <div class="prog-card" id="s3-p3"><div class="prog-num">03</div><div class="prog-icon-box">⚡</div><div class="prog-name">Group Classes</div><div class="prog-desc">High-energy coached group sessions for fat loss and muscle gain.</div><ul class="prog-list"><li>Fat loss &amp; muscle gain</li><li>Coached, scalable</li><li>12-session packs</li></ul></div>
+      <div class="prog-card" id="s3-p4"><div class="prog-num">04</div><div class="prog-icon-box">💪</div><div class="prog-name">Strength &amp; Conditioning</div><div class="prog-desc">Full-equipment floor with free weights, machines and functional rigs.</div><ul class="prog-list"><li>Free weights &amp; machines</li><li>Progressive overload</li><li>Open floor access</li></ul></div>
+      <div class="prog-card" id="s3-p5"><div class="prog-num">05</div><div class="prog-icon-box">🚴</div><div class="prog-name">Indoor Cycling</div><div class="prog-desc">Dedicated spin bikes — low-impact, high-burn cardio sessions.</div><ul class="prog-list"><li>Dedicated spin bikes</li><li>Low-impact, high burn</li><li>All fitness levels</li></ul></div>
+      <div class="prog-card" id="s3-p6"><div class="prog-num">06</div><div class="prog-icon-box">♨️</div><div class="prog-name">Steam &amp; Recovery</div><div class="prog-desc">Steam bath and shower included with every membership.</div><ul class="prog-list"><li>Steam bath included</li><li>Shower &amp; lockers</li><li>Full recovery support</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S4: PILLARS (21.2–26s) ═══ -->
+<div id="s4" class="scene">
+  <div class="section-wrap">
+    <div class="pill-head-row">
+      <div>
+        <div class="eyebrow" id="s4-eye">Our Training Philosophy</div>
+        <div class="stitle" id="s4-h">10 Pillars Of <em>Fitness</em></div>
+      </div>
+      <div class="pill-sub" id="s4-sub">True fitness is more than lifting. Our programs are built around the complete athletic spectrum — so you don't just look fit, you are fit.</div>
+    </div>
+    <div class="pill-grid-wrap" id="s4-grid">
+      <div class="pill-cell" style="--acc:var(--red)"><div class="pill-num">01</div><div class="pill-name">Endurance</div><div class="pill-desc">Lasting stamina &amp; cardiovascular strength.</div></div>
+      <div class="pill-cell" style="--acc:var(--amber)"><div class="pill-num">02</div><div class="pill-name">Strength</div><div class="pill-desc">Raw power via structured resistance.</div></div>
+      <div class="pill-cell" style="--acc:var(--teal)"><div class="pill-num">03</div><div class="pill-name">Stamina</div><div class="pill-desc">Perform longer with sustained focus.</div></div>
+      <div class="pill-cell" style="--acc:#4f7cff"><div class="pill-num">04</div><div class="pill-name">Flexibility</div><div class="pill-desc">Full range of motion and injury prevention.</div></div>
+      <div class="pill-cell" style="--acc:#e34ba9"><div class="pill-num">05</div><div class="pill-name">Power</div><div class="pill-desc">Explosive output and fast-twitch activation.</div></div>
+      <div class="pill-cell" style="--acc:var(--red)"><div class="pill-num">06</div><div class="pill-name">Speed</div><div class="pill-desc">Agility, reaction time and sprint capacity.</div></div>
+      <div class="pill-cell" style="--acc:var(--amber)"><div class="pill-num">07</div><div class="pill-name">Coordination</div><div class="pill-desc">Mind-muscle connection and balance.</div></div>
+      <div class="pill-cell" style="--acc:var(--teal)"><div class="pill-num">08</div><div class="pill-name">Accuracy</div><div class="pill-desc">Precise movement patterns and technique.</div></div>
+      <div class="pill-cell" style="--acc:#4f7cff"><div class="pill-num">09</div><div class="pill-name">Agility</div><div class="pill-desc">Change of direction and spatial awareness.</div></div>
+      <div class="pill-cell" style="--acc:#e34ba9"><div class="pill-num">10</div><div class="pill-name">Balance</div><div class="pill-desc">Stability under load and in motion.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S5: PRICING (26.2–32s) ═══ -->
+<div id="s5" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s5-eye">Membership Fees</div>
+    <div class="stitle" id="s5-h">Join The <em>Den.</em></div>
+    <div class="price-grid-wrap">
+      <div class="pc" id="s5-c1"><div class="pc-tier">1 Month</div><div class="pc-amt"><span class="pc-cur">₹</span>2,000</div><div class="pc-per">Pay as you go</div><div class="pc-btn">Get Started</div></div>
+      <div class="pc" id="s5-c2"><div class="pc-tier">3 Months</div><div class="pc-amt"><span class="pc-cur">₹</span>5,000</div><div class="pc-per">≈ ₹1,667 / month</div><span class="pc-save">Save ₹1,000</span><div class="pc-btn">Get Started</div></div>
+      <div class="pc" id="s5-c3"><div class="pc-tier">6 Months</div><div class="pc-amt"><span class="pc-cur">₹</span>8,000</div><div class="pc-per">≈ ₹1,333 / month</div><span class="pc-save">Save ₹4,000</span><div class="pc-btn">Get Started</div></div>
+      <div class="pc feat" id="s5-c4"><div class="pc-ribbon">Best Value</div><div class="pc-tier">12 Months</div><div class="pc-amt"><span class="pc-cur">₹</span>12,500</div><div class="pc-per">≈ ₹1,042 / month</div><span class="pc-save">Save ₹11,500</span><div class="pc-btn">Get Started</div></div>
+    </div>
+    <div class="incl-bar" id="s5-incl">
+      <span class="incl-lbl">Every membership includes</span>
+      <span class="incl-chip">Fitness Test</span><span class="incl-chip">Personalised Workout Chart</span><span class="incl-chip">General Trainer</span><span class="incl-chip">Steam Bath &amp; Shower</span><span class="incl-chip">Temporary Lockers</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S6: PT PACKAGES (32.2–37s) ═══ -->
+<div id="s6" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s6-eye">Personal Training Packages</div>
+    <div class="stitle" id="s6-h">Go <em>1-on-1.</em></div>
+    <div class="pt-grid">
+      <div class="pt-table-wrap" id="s6-tbl">
+        <div class="pt-head-row"><div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(140deg,var(--red),var(--rd));display:flex;align-items:center;justify-content:center;font-size:20px">🏋️</div><h3>Training Packages</h3></div>
+        <div class="pt-row hd"><span>Package</span><span>12 Sessions</span><span>24 Sessions</span></div>
+        <div class="pt-row"><div class="pt-row-name">General<small>1-on-1 coaching</small></div><div class="pt-price">₹6,000</div><div class="pt-price">₹10,000</div></div>
+        <div class="pt-row"><div class="pt-row-name">Premium<small>Advanced 1-on-1</small></div><div class="pt-price">₹8,000</div><div class="pt-price">₹14,000</div></div>
+        <div class="pt-row">&lt;div class="pt-price" data-hf-text-key="child:0:div"&gt; ₹4,000&lt;/div&gt;&lt;div class="pt-price" data-hf-text-key="child:1:div" style="color: var(--muted)"&gt;—&lt;/div&gt;</div>
+      </div>
+      <div class="pt-feat" id="s6-feat">
+        <span class="pt-feat-tag">Flagship Program</span>
+        <h3>Transformation</h3>
+        <div class="pt-feat-price"><span class="cur">₹</span>38,000</div>
+        <div class="pt-feat-desc">72 fully-coached sessions engineered for a complete fat-loss &amp; muscle-gain transformation. Our most committed track.</div>
+        <div class="enquire-btn">Enquire Now →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S7: GALLERY (37.2–42s) ═══ -->
+<div id="s7" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s7-eye">Inside The Den</div>
+    <div class="stitle" id="s7-h">Where It <em>Happens.</em></div>
+    <div class="gal-grid">
+      <div class="gitem tall" id="s7-g1"><img src="assets/photos/lion-mural.webp" alt="Lion mural"><span class="glabel">The Lion Wall</span></div>
+      <div class="gitem wide" id="s7-g2"><img src="assets/photos/floor.avif" alt="Training floor"><span class="glabel">Training Floor</span></div>
+      <div class="gitem" id="s7-g3"><img src="assets/photos/spin.webp" alt="Spin bikes"><span class="glabel">Spin Studio</span></div>
+      <div class="gitem" id="s7-g4"><img src="assets/photos/dumbbells.webp" alt="Free weights"><span class="glabel">Free Weights</span></div>
+      <div class="gitem wide" id="s7-g5"><img src="assets/photos/training.webp" alt="Training"><span class="glabel">The Community</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S8: SCHEDULE (42.2–47s) ═══ -->
+<div id="s8" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s8-eye">Weekly Timetable</div>
+    <div class="stitle" id="s8-h">Class <em>Schedule</em></div>
+    <table class="sched-tbl" id="s8-tbl">
+      <thead><tr><th>Time</th><th>Mon – Wed</th><th>Thu – Sat</th><th>Type</th><th>Duration</th></tr></thead>
+      <tbody>
+        <tr id="s8-r1"><td class="t-time">5:30 AM</td><td>Group Class (Fat Loss)</td><td>Group Class (Fat Loss)</td><td><span class="badge b-red">Group</span></td><td>60 min</td></tr>
+        <tr id="s8-r2"><td class="t-time">7:00 AM</td><td>Strength &amp; Conditioning</td><td>Indoor Cycling</td><td><span class="badge b-amber">Mixed</span></td><td>60 min</td></tr>
+        <tr id="s8-r3"><td class="t-time">9:00 AM</td><td>Personal Training</td><td>Personal Training</td><td><span class="badge b-teal">1-on-1</span></td><td>60 min</td></tr>
+        <tr id="s8-r4"><td class="t-time">6:00 PM</td><td>Group Class (Muscle Gain)</td><td>Group Class (Muscle Gain)</td><td><span class="badge b-red">Group</span></td><td>60 min</td></tr>
+        <tr id="s8-r5"><td class="t-time">7:30 PM</td><td>Indoor Cycling</td><td>Strength &amp; Conditioning</td><td><span class="badge b-amber">Mixed</span></td><td>60 min</td></tr>
+        <tr id="s8-r6"><td class="t-time">9:00 PM</td><td>Open Floor / PT</td><td>Open Floor / PT</td><td><span class="badge b-teal">Flexible</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ S9: TESTIMONIALS (47.2–52s) ═══ -->
+<div id="s9" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s9-eye">Member Stories</div>
+    <div class="stitle" id="s9-h">Real People. <em>Real Results.</em></div>
+    <div class="testi-grid">
+      <div class="tcard" id="s9-t1"><div class="tcard-stars">★★★★★</div><div class="tcard-txt">"Did the transformation program and the change is unreal. The trainers track everything — form, weights, diet. Best decision on ECR."</div><div class="tcard-who"><div class="tcard-av">RK</div><div><div class="tcard-nm">Ravi Krishnan</div><div class="tcard-role">Transformation · Neelankarai</div></div></div></div>
+      <div class="tcard" id="s9-t2"><div class="tcard-stars">★★★★★</div><div class="tcard-txt">"The group classes are addictive — high energy and never the same twice. Lost weight and gained so much strength in 3 months."</div><div class="tcard-who"><div class="tcard-av">PS</div><div><div class="tcard-nm">Priya Shankar</div><div class="tcard-role">Group Classes · 3 Months</div></div></div></div>
+      <div class="tcard" id="s9-t3"><div class="tcard-stars">★★★★★</div><div class="tcard-txt">"Finally a gym on ECR that actually coaches you. The personal training is worth every rupee — results speak for themselves."</div><div class="tcard-who"><div class="tcard-av">AM</div><div><div class="tcard-nm">Arjun Mehta</div><div class="tcard-role">Personal Training · 6 Months</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S10: FAQ (52.2–57s) ═══ -->
+<div id="s10" class="scene">
+  <div class="section-wrap">
+    <div style="text-align:center;margin-bottom:0">
+      <div class="eyebrow" style="justify-content:center" id="s10-eye">Good To Know</div>
+      <div class="stitle" style="text-align:center" id="s10-h">Frequently Asked <em>Questions</em></div>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item" id="s10-f1"><div class="faq-q">Where is MAC Fitness Studio located?<span class="faq-sign">+</span></div></div>
+      <div class="faq-item" id="s10-f2" style="border-color:rgba(226,36,27,.35)"><div class="faq-q" style="color:var(--rb)">How much does membership cost?<span class="faq-sign" style="transform:rotate(45deg)">+</span></div><div class="faq-a" id="s10-ans" style="max-height:0"><p>₹2,000 for 1 month, ₹5,000 for 3 months, ₹8,000 for 6 months and ₹12,500 for 12 months. One-time ₹500 registration fee applies, plus government tax.</p></div></div>
+      <div class="faq-item" id="s10-f3"><div class="faq-q">What's included in my membership?<span class="faq-sign">+</span></div></div>
+      <div class="faq-item" id="s10-f4"><div class="faq-q">Do you offer personal training?<span class="faq-sign">+</span></div></div>
+      <div class="faq-item" id="s10-f5"><div class="faq-q">Can I try before I join?<span class="faq-sign">+</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S11: CONTACT (57.2–62s) ═══ -->
+<div id="s11" class="scene">
+  <div class="section-wrap">
+    <div class="eyebrow" id="s11-eye">Get In Touch</div>
+    <div class="stitle" id="s11-h">Start Your <em>Free Trial</em></div>
+    <div class="contact-grid">
+      <div id="s11-info">
+        <div class="ci-h">Visit The Studio</div>
+        <div class="crow"><div class="crow-ic">📍</div><div><div class="crow-lbl">Address</div><div class="crow-val">No. 4/349, 2nd Floor, East Coast Road<br>(near Bank of Maharashtra), Neelankarai<br>Chennai – 600 115, Tamil Nadu</div></div></div>
+        <div class="crow"><div class="crow-ic">📞</div><div><div class="crow-lbl">Phone</div><div class="crow-val">073052 51385 · 098844 91385</div></div></div>
+        <div class="crow"><div class="crow-ic">💬</div><div><div class="crow-lbl">WhatsApp</div><div class="crow-val">wa.me/917305251385</div></div></div>
+        <div class="crow"><div class="crow-ic">⏰</div><div><div class="crow-lbl">Hours</div><div class="crow-val">Mon–Sat: 5:30 AM – 10:00 PM<br>Sunday: 7:00 AM – 12:00 PM</div></div></div>
+      </div>
+      <div class="form-box" id="s11-form">
+        <div class="form-title">Book Your Trial</div>
+        <div class="form-sub">Drop your details and we'll call you back within 24 hours.</div>
+        <div class="form-row">
+          <input class="form-field" placeholder="First Name" readonly>
+          <input class="form-field" placeholder="Last Name" readonly>
+        </div>
+        <div class="form-row">
+          <input class="form-field" placeholder="+91 XXXXX XXXXX" readonly>
+          <input class="form-field" placeholder="you@email.com" readonly>
+        </div>
+        <input class="form-field-focus" placeholder="Interested In: 72-Day Transformation" readonly>
+        <div class="submit-btn">Book Free Trial →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ S12: FOOTER (62.2–65s) ═══ -->
+<div id="s12" class="scene">
+  <div class="footer-inner">
+    <div class="foot-grid" id="s12-grid">
+      <div>
+        <div class="foot-logo"><div class="foot-logo-badge"><img src="assets/logo.jpg" alt="MAC logo"></div><div><div class="brand-name">MAC<em>.</em>FITNESS</div><span class="brand-tag">Den of a Healthy Lifestyle</span></div></div>
+        <div class="foot-desc">Chennai's results-driven fitness studio on East Coast Road, Neelankarai. Train with purpose, coach with passion.</div>
+        <div class="foot-social">
+          <div class="fs-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(245,242,236,0.5)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg></div>
+          <div class="fs-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(245,242,236,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg></div>
+          <div class="fs-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(245,242,236,0.5)"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg></div>
+        </div>
+      </div>
+      <div><div class="fcol-h">Programs</div><span class="fcol-link">Personal Training</span><span class="fcol-link">Transformation</span><span class="fcol-link">Group Classes</span><span class="fcol-link">Indoor Cycling</span></div>
+      <div><div class="fcol-h">Explore</div><span class="fcol-link">About</span><span class="fcol-link">Pricing</span><span class="fcol-link">Gallery</span><span class="fcol-link">FAQ</span></div>
+      <div><div class="fcol-h">Opening Hours</div><div class="ftime"><strong>Mon – Saturday</strong><br>5:30 AM – 10:00 PM<br><br><strong>Sunday</strong><br>7:00 AM – 12:00 PM</div></div>
+    </div>
+    <div class="foot-bot" id="s12-bot"><span>© 2026 MAC Fitness Studio · Neelankarai, Chennai. All rights reserved.</span><span style="color:var(--rb)">macfitnessstudio.in</span></div>
+  </div>
+  <div class="wa-float" id="s12-wa">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
+  </div>
+  <div class="fade-veil" id="fade-out"></div>
+</div>
+
+</div><!-- #root -->
+
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+
+// ══════════════════════════════════════════════
+// S1: HERO  0 – 9s
+// ══════════════════════════════════════════════
+tl.fromTo('#s1-topbar', {y:-38,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, 0.1);
+tl.fromTo('#s1-nav', {y:-30,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power3.out'}, 0.3);
+tl.fromTo('#s1 .hero-bg-glow', {scale:0.7,opacity:0}, {scale:1,opacity:1,duration:1.4,ease:'power2.out'}, 0.2);
+tl.fromTo('#s1 .hero-ghost', {x:60,opacity:0}, {x:0,opacity:1,duration:2.0,ease:'power1.out'}, 0.4);
+tl.fromTo('#s1-label', {x:-24,opacity:0}, {x:0,opacity:1,duration:0.55,ease:'power2.out'}, 0.7);
+tl.fromTo('#s1-h1', {y:50,opacity:0}, {y:0,opacity:1,duration:0.7,ease:'expo.out'}, 0.95);
+tl.fromTo('#s1-sub', {y:28,opacity:0}, {y:0,opacity:1,duration:0.6,ease:'power2.out'}, 1.4);
+tl.fromTo('#s1-btns', {y:22,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power3.out'}, 1.7);
+tl.fromTo('#s1-stats', {y:18,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, 2.0);
+// Crest entrance
+tl.fromTo('#s1-ring-o', {scale:1.5,opacity:0}, {scale:1,opacity:1,duration:0.9,ease:'expo.out'}, 0.5);
+tl.fromTo('#s1-ring-i', {scale:1.7,opacity:0}, {scale:1,opacity:1,duration:1.0,ease:'expo.out'}, 0.7);
+tl.fromTo('#s1-crest .crest-plate', {scale:0.8,opacity:0}, {scale:1,opacity:1,duration:0.75,ease:'back.out(1.3)'}, 0.9);
+tl.fromTo('#s1-crest .crest-tag-el', {y:12,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, 1.4);
+// Crest ring slow rotation (seekable)
+tl.fromTo('#s1-ring-o', {rotation:0}, {rotation:90,duration:9,ease:'none'}, 0);
+// Scroll cue pulses
+tl.fromTo('#s1-cue', {opacity:0}, {opacity:1,duration:0.5,ease:'power2.out'}, 2.4);
+tl.fromTo('#s1-bar', {scaleY:0.4,opacity:0.3}, {scaleY:1,opacity:1,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:5,transformOrigin:'top'}, 2.6);
+
+// ── TRANSITION 1→2: blur crossfade t=8.5 ──
+tl.to('#s1', {filter:'blur(14px)',scale:1.03,opacity:0,duration:0.6,ease:'power2.inOut'}, 8.5);
+tl.fromTo('#s2', {opacity:0,filter:'blur(14px)',scale:0.97}, {opacity:1,filter:'blur(0px)',scale:1,duration:0.6,ease:'power2.inOut'}, 8.6);
+
+// ══════════════════════════════════════════════
+// S2: MARQUEE + ABOUT  9.2 – 15s
+// ══════════════════════════════════════════════
+var S2=9.3;
+// Marquee track scrolls across
+tl.fromTo('#s2-track', {x:0}, {x:-1400,duration:5.7,ease:'none'}, S2);
+// About content reveals
+tl.fromTo('#s2-eye', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'power2.out'}, S2+0.2);
+tl.fromTo('#s2-h', {y:30,opacity:0}, {y:0,opacity:1,duration:0.6,ease:'expo.out'}, S2+0.4);
+tl.fromTo('#s2-sub', {y:20,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power2.out'}, S2+0.75);
+tl.fromTo('#s2-cards', {y:24,opacity:0}, {y:0,opacity:1,duration:0.6,ease:'power3.out'}, S2+1.0);
+// Photo Ken Burns (wrap for entrance, img for scale — separate elements)
+tl.fromTo('#s2-photo-wrap', {x:30,opacity:0}, {x:0,opacity:1,duration:0.8,ease:'power3.out'}, S2+0.3);
+tl.fromTo('#s2-photo', {scale:1.0}, {scale:1.05,duration:5.7,ease:'none'}, S2);
+
+// ── TRANSITION 2→3: blur crossfade t=14.5 ──
+tl.to('#s2', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 14.5);
+tl.fromTo('#s3', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 14.65);
+
+// ══════════════════════════════════════════════
+// S3: PROGRAMS  15.2 – 21s
+// ══════════════════════════════════════════════
+var S3=15.3;
+tl.fromTo('#s3-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S3+0.1);
+tl.fromTo('#s3-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S3+0.3);
+// Cards stagger from alternating directions
+tl.fromTo('#s3-p1', {x:-36,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'power3.out'}, S3+0.5);
+tl.fromTo('#s3-p2', {y:36,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, S3+0.65);
+tl.fromTo('#s3-p3', {x:36,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'power3.out'}, S3+0.8);
+tl.fromTo('#s3-p4', {x:-36,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'expo.out'}, S3+0.95);
+tl.fromTo('#s3-p5', {y:36,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, S3+1.1);
+tl.fromTo('#s3-p6', {x:36,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'power3.out'}, S3+1.25);
+// Simulate hover glow on card 2 (flagship)
+tl.fromTo('#s3-p2', {boxShadow:'0 0 0 rgba(226,36,27,0)'}, {boxShadow:'0 0 40px rgba(226,36,27,0.22)',duration:1.0,ease:'sine.inOut',yoyo:true,repeat:1}, S3+2.5);
+
+// ── TRANSITION 3→4: blur crossfade t=20.5 ──
+tl.to('#s3', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 20.5);
+tl.fromTo('#s4', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 20.65);
+
+// ══════════════════════════════════════════════
+// S4: PILLARS  21.2 – 26s
+// ══════════════════════════════════════════════
+var S4=21.3;
+tl.fromTo('#s4-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+0.1);
+tl.fromTo('#s4-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S4+0.3);
+tl.fromTo('#s4-sub', {x:20,opacity:0}, {x:0,opacity:1,duration:0.5,ease:'power2.out'}, S4+0.5);
+// Pill grid reveals with stagger
+tl.fromTo('#s4-grid .pill-cell:nth-child(1)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+0.7);
+tl.fromTo('#s4-grid .pill-cell:nth-child(2)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+0.82);
+tl.fromTo('#s4-grid .pill-cell:nth-child(3)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+0.94);
+tl.fromTo('#s4-grid .pill-cell:nth-child(4)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.06);
+tl.fromTo('#s4-grid .pill-cell:nth-child(5)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.18);
+tl.fromTo('#s4-grid .pill-cell:nth-child(6)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.30);
+tl.fromTo('#s4-grid .pill-cell:nth-child(7)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.42);
+tl.fromTo('#s4-grid .pill-cell:nth-child(8)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.54);
+tl.fromTo('#s4-grid .pill-cell:nth-child(9)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.66);
+tl.fromTo('#s4-grid .pill-cell:nth-child(10)', {y:28,opacity:0}, {y:0,opacity:1,duration:0.45,ease:'power2.out'}, S4+1.78);
+// Accent bars draw on bottom of first few cells
+tl.fromTo('#s4-grid .pill-cell:nth-child(1)::after', {width:0}, {width:'100%',duration:0.5,ease:'power3.out'}, S4+2.2);
+tl.fromTo('#s4-grid .pill-cell:nth-child(2)::after', {width:0}, {width:'100%',duration:0.5,ease:'power3.out'}, S4+2.4);
+
+// ── TRANSITION 4→5: blur crossfade t=25.5 ──
+tl.to('#s4', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 25.5);
+tl.fromTo('#s5', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 25.65);
+
+// ══════════════════════════════════════════════
+// S5: PRICING  26.2 – 32s
+// ══════════════════════════════════════════════
+var S5=26.3;
+tl.fromTo('#s5-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S5+0.1);
+tl.fromTo('#s5-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S5+0.3);
+tl.fromTo('#s5-c1', {y:50,opacity:0,scale:0.96}, {y:0,opacity:1,scale:1,duration:0.55,ease:'power3.out'}, S5+0.55);
+tl.fromTo('#s5-c2', {y:60,opacity:0,scale:0.96}, {y:0,opacity:1,scale:1,duration:0.55,ease:'power3.out'}, S5+0.7);
+tl.fromTo('#s5-c3', {y:70,opacity:0,scale:0.96}, {y:0,opacity:1,scale:1,duration:0.55,ease:'power3.out'}, S5+0.85);
+tl.fromTo('#s5-c4', {y:80,opacity:0,scale:0.93}, {y:0,opacity:1,scale:1,duration:0.65,ease:'back.out(1.2)'}, S5+1.0);
+// Best Value card glows
+tl.fromTo('#s5-c4', {boxShadow:'0 0 0 rgba(226,36,27,0)'}, {boxShadow:'0 0 55px rgba(226,36,27,0.28)',duration:1.2,ease:'sine.inOut',yoyo:true,repeat:1}, S5+2.0);
+tl.fromTo('#s5-incl', {y:16,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, S5+1.7);
+
+// ── TRANSITION 5→6: blur crossfade t=31.5 ──
+tl.to('#s5', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 31.5);
+tl.fromTo('#s6', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 31.65);
+
+// ══════════════════════════════════════════════
+// S6: PT PACKAGES  32.2 – 37s
+// ══════════════════════════════════════════════
+var S6=32.3;
+tl.fromTo('#s6-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S6+0.1);
+tl.fromTo('#s6-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S6+0.3);
+tl.fromTo('#s6-tbl', {x:-30,opacity:0}, {x:0,opacity:1,duration:0.6,ease:'power3.out'}, S6+0.55);
+tl.fromTo('#s6-feat', {x:30,opacity:0}, {x:0,opacity:1,duration:0.6,ease:'back.out(1.1)'}, S6+0.7);
+tl.fromTo('#s6-feat', {boxShadow:'0 0 0 rgba(226,36,27,0)'}, {boxShadow:'0 0 50px rgba(226,36,27,0.22)',duration:1.2,ease:'sine.inOut',yoyo:true,repeat:1}, S6+2.2);
+
+// ── TRANSITION 6→7: blur crossfade t=36.5 ──
+tl.to('#s6', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 36.5);
+tl.fromTo('#s7', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 36.65);
+
+// ══════════════════════════════════════════════
+// S7: GALLERY  37.2 – 42s
+// ══════════════════════════════════════════════
+var S7=37.3;
+tl.fromTo('#s7-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S7+0.1);
+tl.fromTo('#s7-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S7+0.3);
+tl.fromTo('#s7-g1', {scale:0.94,opacity:0}, {scale:1,opacity:1,duration:0.6,ease:'power3.out'}, S7+0.5);
+tl.fromTo('#s7-g2', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power2.out'}, S7+0.65);
+tl.fromTo('#s7-g3', {scale:0.94,opacity:0}, {scale:1,opacity:1,duration:0.55,ease:'power3.out'}, S7+0.8);
+tl.fromTo('#s7-g4', {y:24,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, S7+0.95);
+tl.fromTo('#s7-g5', {scale:0.96,opacity:0}, {scale:1,opacity:1,duration:0.6,ease:'expo.out'}, S7+1.1);
+// Simulate hover on g1 — photo comes to full colour
+tl.fromTo('#s7-g1 img', {filter:'grayscale(0.18) brightness(0.9)'}, {filter:'grayscale(0) brightness(1)',duration:0.8,ease:'power2.out'}, S7+2.0);
+
+// ── TRANSITION 7→8: blur crossfade t=41.5 ──
+tl.to('#s7', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 41.5);
+tl.fromTo('#s8', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 41.65);
+
+// ══════════════════════════════════════════════
+// S8: SCHEDULE  42.2 – 47s
+// ══════════════════════════════════════════════
+var S8=42.3;
+tl.fromTo('#s8-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S8+0.1);
+tl.fromTo('#s8-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S8+0.3);
+tl.fromTo('#s8-tbl', {y:20,opacity:0}, {y:0,opacity:1,duration:0.5,ease:'power2.out'}, S8+0.55);
+// Rows reveal one by one
+tl.fromTo('#s8-r1', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+0.75);
+tl.fromTo('#s8-r2', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+0.9);
+tl.fromTo('#s8-r3', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+1.05);
+tl.fromTo('#s8-r4', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+1.2);
+tl.fromTo('#s8-r5', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+1.35);
+tl.fromTo('#s8-r6', {x:-20,opacity:0}, {x:0,opacity:1,duration:0.4,ease:'power2.out'}, S8+1.5);
+// Hover effect on row 1
+tl.fromTo('#s8-r1', {backgroundColor:'transparent'}, {backgroundColor:'#16161a',duration:0.4,ease:'power2.out'}, S8+2.4);
+
+// ── TRANSITION 8→9: blur crossfade t=46.5 ──
+tl.to('#s8', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 46.5);
+tl.fromTo('#s9', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 46.65);
+
+// ══════════════════════════════════════════════
+// S9: TESTIMONIALS  47.2 – 52s
+// ══════════════════════════════════════════════
+var S9=47.3;
+tl.fromTo('#s9-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S9+0.1);
+tl.fromTo('#s9-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S9+0.3);
+tl.fromTo('#s9-t1', {y:36,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power3.out'}, S9+0.55);
+tl.fromTo('#s9-t2', {y:40,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'power2.out'}, S9+0.72);
+tl.fromTo('#s9-t3', {y:44,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S9+0.89);
+// Hover lift on middle card
+tl.fromTo('#s9-t2', {borderColor:'rgba(245,242,236,.1)',y:0}, {borderColor:'rgba(226,36,27,.4)',y:-6,duration:0.5,ease:'power2.out'}, S9+2.2);
+
+// ── TRANSITION 9→10: blur crossfade t=51.5 ──
+tl.to('#s9', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 51.5);
+tl.fromTo('#s10', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 51.65);
+
+// ══════════════════════════════════════════════
+// S10: FAQ  52.2 – 57s
+// ══════════════════════════════════════════════
+var S10=52.3;
+tl.fromTo('#s10-eye', {opacity:0}, {opacity:1,duration:0.45,ease:'power2.out'}, S10+0.1);
+tl.fromTo('#s10-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S10+0.3);
+tl.fromTo('#s10-f1', {y:16,opacity:0}, {y:0,opacity:1,duration:0.4,ease:'power2.out'}, S10+0.55);
+tl.fromTo('#s10-f2', {y:16,opacity:0}, {y:0,opacity:1,duration:0.4,ease:'power2.out'}, S10+0.7);
+tl.fromTo('#s10-f3', {y:16,opacity:0}, {y:0,opacity:1,duration:0.4,ease:'power2.out'}, S10+0.85);
+tl.fromTo('#s10-f4', {y:16,opacity:0}, {y:0,opacity:1,duration:0.4,ease:'power2.out'}, S10+1.0);
+tl.fromTo('#s10-f5', {y:16,opacity:0}, {y:0,opacity:1,duration:0.4,ease:'power2.out'}, S10+1.15);
+// FAQ accordion opens — animate max-height and show answer
+tl.fromTo('#s10-ans', {maxHeight:0}, {maxHeight:120,duration:0.5,ease:'power2.out'}, S10+2.0);
+
+// ── TRANSITION 10→11: blur crossfade t=56.5 ──
+tl.to('#s10', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 56.5);
+tl.fromTo('#s11', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 56.65);
+
+// ══════════════════════════════════════════════
+// S11: CONTACT  57.2 – 62s
+// ══════════════════════════════════════════════
+var S11=57.3;
+tl.fromTo('#s11-eye', {x:-16,opacity:0}, {x:0,opacity:1,duration:0.45,ease:'power2.out'}, S11+0.1);
+tl.fromTo('#s11-h', {y:24,opacity:0}, {y:0,opacity:1,duration:0.55,ease:'expo.out'}, S11+0.3);
+tl.fromTo('#s11-info', {x:-28,opacity:0}, {x:0,opacity:1,duration:0.6,ease:'power3.out'}, S11+0.55);
+tl.fromTo('#s11-form', {x:28,opacity:0}, {x:0,opacity:1,duration:0.6,ease:'power3.out'}, S11+0.7);
+// Form field focus highlight animation
+tl.fromTo('.form-field-focus', {borderColor:'rgba(245,242,236,.1)'}, {borderColor:'var(--red)',duration:0.5,ease:'power2.out'}, S11+1.8);
+
+// ── TRANSITION 11→12: blur crossfade t=61.5 ──
+tl.to('#s11', {filter:'blur(12px)',opacity:0,duration:0.55,ease:'power2.inOut'}, 61.5);
+tl.fromTo('#s12', {opacity:0,filter:'blur(12px)'}, {opacity:1,filter:'blur(0px)',duration:0.55,ease:'power2.inOut'}, 61.65);
+
+// ══════════════════════════════════════════════
+// S12: FOOTER  62.2 – 65s
+// ══════════════════════════════════════════════
+var S12=62.3;
+tl.fromTo('#s12-grid', {y:20,opacity:0}, {y:0,opacity:1,duration:0.65,ease:'expo.out'}, S12+0.2);
+tl.fromTo('#s12-bot', {opacity:0}, {opacity:1,duration:0.5,ease:'power2.out'}, S12+0.8);
+// WhatsApp float button appears and pulses
+tl.fromTo('#s12-wa', {scale:0,opacity:0}, {scale:1,opacity:1,duration:0.5,ease:'back.out(1.5)'}, S12+1.0);
+tl.fromTo('#s12-wa', {boxShadow:'0 6px 24px rgba(37,211,102,.5)'}, {boxShadow:'0 6px 40px rgba(37,211,102,.85)',duration:0.6,ease:'sine.inOut',yoyo:true,repeat:1}, S12+1.6);
+// Final fade to black
+tl.fromTo('#fade-out', {opacity:0}, {opacity:1,duration:1.2,ease:'power2.inOut'}, 63.8);
+
+window.__timelines['mac-website-tour'] = tl;
+</script>
+</body>
+</html>
