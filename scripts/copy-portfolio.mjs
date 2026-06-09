@@ -17,7 +17,6 @@ const root = process.cwd()
 const out = join(root, 'dist', 'portfolio')
 
 const macSrc = join(root, 'portfolio', 'mac-studio-fitness')
-const aceSrc = join(root, 'portfolio', 'ancient-combat-evolution', 'dist')
 
 const jobs = [
   {
@@ -32,11 +31,15 @@ const jobs = [
     ],
   },
   {
+    // Vite app — ship its built dist/ (run `npm run build` inside the folder first).
     name: 'ancient-combat-evolution',
     dest: join(out, 'ancient-combat-evolution'),
-    // Vite app — its root index.html is the DEV entry (/src/main.jsx), so ship
-    // its built dist/ instead.
-    items: [{ src: aceSrc, dest: join(out, 'ancient-combat-evolution') }],
+    items: [
+      {
+        src: join(root, 'portfolio', 'ancient-combat-evolution', 'dist'),
+        dest: join(out, 'ancient-combat-evolution'),
+      },
+    ],
   },
 ]
 

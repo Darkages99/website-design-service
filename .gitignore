@@ -30,11 +30,17 @@ desktop.ini
 .env.*
 !.env.example
 
-# Private business data — never publish to the repo
+# Private business data — never publish (this repo is PUBLIC)
 Sales/
+Web-design agency/
+deploy-scalable.ps1
+deploy-scalable.sh
+deploy-scalable-keyauth.ps1
 
-# Portfolio sites kept local-only (not yet published)
-portfolio/ancient-combat-evolution/
+# ACE site (portfolio/ancient-combat-evolution/) IS published and tracked.
+# Keep only its heavy raw source footage out — the site ships processed assets
+# in public/assets/, and `npm run media` can regenerate from local originals.
+portfolio/ace/assets/*.mp4
 
 # NOTE: brand-alchemy/assets/dist/ is intentionally COMMITTED so the theme is
 # deployable without a build step. Do not ignore it.
