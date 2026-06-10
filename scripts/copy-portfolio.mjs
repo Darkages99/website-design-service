@@ -7,8 +7,7 @@
 //
 //   • mac-studio-fitness   — a plain static HTML site (relative asset paths);
 //                            ship the folder as-is, minus node_modules.
-//   • ancient-combat-evolution — a Vite app; its root index.html is the DEV entry
-//                            (/src/main.jsx), so we ship its built dist/ instead.
+//   • ace — Ancient Combat Evolution Vite app; ship its built dist/.
 
 import { cpSync, existsSync } from 'node:fs'
 import { join, sep } from 'node:path'
@@ -32,12 +31,12 @@ const jobs = [
   },
   {
     // Vite app — ship its built dist/ (run `npm run build` inside the folder first).
-    name: 'ancient-combat-evolution',
-    dest: join(out, 'ancient-combat-evolution'),
+    name: 'ace',
+    dest: join(out, 'ace'),
     items: [
       {
-        src: join(root, 'portfolio', 'ancient-combat-evolution', 'dist'),
-        dest: join(out, 'ancient-combat-evolution'),
+        src: join(root, 'portfolio', 'ace', 'dist'),
+        dest: join(out, 'ace'),
       },
     ],
   },
@@ -51,8 +50,8 @@ for (const { name, items } of jobs) {
   for (const { src, dest } of items) {
     if (!existsSync(src)) {
       console.warn(`[copy-portfolio] SKIP ${name}: missing ${src}`)
-      if (name === 'ancient-combat-evolution') {
-        console.warn('  → run "npm run build" inside portfolio/ancient-combat-evolution first.')
+      if (name === 'ace') {
+        console.warn('  → run "npm run build" inside portfolio/ace first.')
       }
       ok = false
       continue

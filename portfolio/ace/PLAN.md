@@ -16,7 +16,7 @@ and tiered rendering.
 | Decision | Answer |
 |---|---|
 | Starting point | **Rebuild from scratch.** Reuse only real business facts. |
-| Output location | `portfolio/ancient-combat-evolution/` (matches `scripts/copy-portfolio.mjs`). Old scraped-asset code archived/removed. Raw inputs stay in `portfolio/ace/assets/`. |
+| Output location | `portfolio/ace/` (matches `scripts/copy-portfolio.mjs`). Raw inputs in `portfolio/ace/assets/`. |
 | 3D scope | Push wow **as far as performance allows**. Build perf-first in layers; 3D is the top enhancement layer, fully deferred + tier-gated. |
 | Data | **Hybrid** — real where known; flagged placeholders only for the genuinely unknown. |
 | Palette | **Underground Luxury** — `#0a0a0a` matte black, `#161616` charcoal, `#d4af37` championship gold, off-white text. No acid green. |
@@ -56,7 +56,7 @@ All raw inputs live in `portfolio/ace/assets/` (all video is **9:16 vertical, br
   them code-split out of the critical path; a framework adds runtime we don't need here.
 - **Vanilla CSS with custom-property design tokens** (`styles/tokens.css`), mirroring the
   main site. No utility framework in the critical path.
-- **`base: './'`** so the bundle drops into `/portfolio/ancient-combat-evolution/` on any host.
+- **`base: './'`** so the bundle drops into `/portfolio/ace/` on any host.
 - **Three.js** for the arena background (deferred, tier-gated). **GSAP + ScrollTrigger**
   for reveals/count-ups, **Lenis** for smooth scroll — all dynamic-imported after idle on
   the `full` tier only.
@@ -168,7 +168,7 @@ message. Every section funnels toward Book Trial.
 > Each phase ends shippable. Phases 0–2 deliver a **fast, converting, indexable site with
 > ZERO 3D** — that locks the performance gate before any enhancement.
 
-- **Phase 0 — Scaffold.** Fresh Vite project in `portfolio/ancient-combat-evolution/`
+- **Phase 0 — Scaffold.** Fresh Vite project in `portfolio/ace/`
   (archive old code), tokens, fonts, base HTML shell, perf/verify harness.
 - **Phase 1 — Media pipeline.** §3 outputs. **Gate: overlay words/timing approval.**
 - **Phase 2 — Static skeleton + content.** All sections in semantic HTML, real copy, CRO

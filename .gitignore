@@ -37,7 +37,7 @@ deploy-scalable.ps1
 deploy-scalable.sh
 deploy-scalable-keyauth.ps1
 
-# ACE site (portfolio/ancient-combat-evolution/) IS published and tracked.
+# ACE site (portfolio/ace/) IS published and tracked.
 # Keep only its heavy raw source footage out — the site ships processed assets
 # in public/assets/, and `npm run media` can regenerate from local originals.
 portfolio/ace/assets/*.mp4
